@@ -1,0 +1,65 @@
+* Mybatis
+namespace is used to distinct mapper file, good practice is keep same with java class full path
+SqlSession is not thread safe
+typeHandler is used to convert between sql data and java object
+ObjectFactory used to from sql data to build java object
+** basic query
+    - (ExpectType) session.selectOne("<mapper file full name>", id)
+    - session.getMapper(class).selectXX(id)
+** page limit
+   use RowBounds class
+** DSL 
+*** typeAliases
+    set type aliases
+*** id
+    set this column is id, useGeneratedKeys set this id is from database generated
+*** resultType
+    this column return type
+*** resultMap
+    custom type for this column return
+** Dynamic sql
+   #{x} in dynamic sql is from two source, one is get("x") method, another is getX(), get("x") is high priority.
+   <if test="<condition>"> <sentence></if>
+   <where test="<condition"></where> can handle where and and nicely
+   <set> can handle set and , nicely
+   <foreach>
+** setting
+   <setting name="logIm
+
+   
+
+    
+
+   
+* Elastic Search
+  use bin/elasticsearch start es, default port is 9200
+  bin/plugin -i install plugin
+** http api
+  Get to query data
+  Put to insert data
+  location is <index>/<type>/<id>
+  <location>/_search?q=<condition> or POST <location>/_search pass query condition to query data
+  Index(table) -> Document(row) -> Field(cell)
+  _shutdown shutdown es
+  _plugin/<plugin name> access plugin
+  filter like where, aggregation like group
+  _cluster/health get every node info
+  shard is basic data unit, one index include multiple shard, only exist one primary shard, exist zero to many replica shard
+  primary shard is decide when start up, can't changed except restart, replica shar
+* Concurrency
+  mutable is root cause when concurrency
+  count++ is race condition, also is data race
+  race condition general case is check-then-act or read-modify-write
+  static method use lock is class
+  if need protect a class multiple field, should use same lock to protect together
+  concurrency should solve two sub-problem, one is atomic, another is visibility
+  64 bit operate is not atomic, use volatile can ensure atomic
+  lock ensure atomic and visibility
+  volatile let variable can't be re-order, can't be cache, visibility to all thread
+  volatile only suit those scenarios
+    1) write a variable not depend on current value
+    2) only one thread to write this variable, this variable is not a part of object same
+  walk on a object can reach field means is public, pass a object to a method also means public this object, public a internal object means public it outside object
+  don't public this on constructor, general case is create thread on constructor
+  Thread Confinement, keep a object only exist on one thread, it ensure thread safe.
+
