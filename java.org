@@ -62,4 +62,17 @@ ObjectFactory used to from sql data to build java object
   walk on a object can reach field means is public, pass a object to a method also means public this object, public a internal object means public it outside object
   don't public this on constructor, general case is create thread on constructor
   Thread Confinement, keep a object only exist on one thread, it ensure thread safe.
-
+  Thread local object, when first thread first call get method, initialValue will be called
+  Immutable object always thread safe.
+  safe publish object way:
+    1) static field initial a object
+    2) use volatile or AtomicReference
+    3) final field save initialed object
+    4) use lock to publish object
+    5) thread safe collection to publish
+  use private object to as lock
+  an object has multiple field, use separate thread safe collection to ensure every field can make object safe if every field is independent
+  if document not declare it is thread safe, means it is not thread safe
+  when use iterator on thread safe collection, will record a count, if count change, any then getNext and hasNext will throw ConcurrentMOdificationException
+  collection toString, xxAll, hasCode maybe use iterator
+  Queue is add after 5.0, purpose is improve performance when random access, BlockingQueue is good choice to implement producer/consumer strategy
