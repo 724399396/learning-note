@@ -30,7 +30,6 @@ ObjectFactory used to from sql data to build java object
 
     
 
-   
 * Elastic Search
   use bin/elasticsearch start es, default port is 9200
   bin/plugin -i install plugin
@@ -76,3 +75,51 @@ ObjectFactory used to from sql data to build java object
   when use iterator on thread safe collection, will record a count, if count change, any then getNext and hasNext will throw ConcurrentMOdificationException
   collection toString, xxAll, hasCode maybe use iterator
   Queue is add after 5.0, purpose is improve performance when random access, BlockingQueue is good choice to implement producer/consumer strategy
+* Spring
+spring core is IoC and AOP
+IoC is let container maintain object lifecycle
+** IOC
+   two initial way:
+     1) BeanFactory only IoC, initialize lazy
+     2) ApplicationContext, extend from BeanFactory, support AOP, egar initialize
+   bean initialize way:
+     1) default constructor
+     2) factory-method set initialize method of this class static method
+     3) set factory-bean and factory-method
+     4) <constructor-arg>, can set by type, by index or by name
+   cycle depedency will throw BeanCurrentlyInCreationException
+   constructor:
+      <null/> use to set null
+      depende-on set the class will initialize after depende-on class
+   @autowire inject by name or by type, if same type has multiple instance, throw exception
+   lifecycle:
+      - singleton
+      - prototype, multiple instance
+      - request, one request one instance
+      - session
+      - application
+** AOP
+   <aop: scoped-proxy proxy-target-class="false"> set base on interface proxy
+   @Around to implement aop
+** Spring mvc
+   two container:
+     - tomcat ContextLoaderListener, this class will initialize WebAppicationContext,
+       keep DAO and service, then register a DispatcherServlet, this class will read
+       <servlet-name>-servlet.xml then construct the second container
+     - the second container's parent is above container, so can read service and dao
+       instance, incluse HanlderMapping(for http), HandlerAdapter, ModelAndView is
+       use to response, ViewResolver is to find view.
+   three implement method:
+     - implement HttpRequestHandler then override handleRequest, then register on
+       second on container
+     - extend AbstractController, implement RequestInternal method, return ModelAndView
+     - use @Controller on class, @RequestMapping on Method then return ModelAndView, @RequestParam bind
+       parameter from request, @RequestHeader get Header value, @CookieValue get coockie, @RequestBody
+       @PathVariable get url path, @ResponseBody custom response format
+   extend HandlerExceptionResolver then implement resolveExcpeiton then register in container to handle global exception
+   @ExceptionHandler set non global exception handler
+   HandlerInterceptor intercept request before handle, after handle then after view resolve
+   <welcome-file-list> set 404 error page
+   
+       
+   
