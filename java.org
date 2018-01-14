@@ -29,7 +29,6 @@ ObjectFactory used to from sql data to build java object
    
 
     
-
 * Elastic Search
   use bin/elasticsearch start es, default port is 9200
   bin/plugin -i install plugin
@@ -123,3 +122,80 @@ IoC is let container maintain object lifecycle
    
        
    
+* Servlet
+** Lifecycle
+   The servlet is initialized by calling the init() method. only called once
+   The servlet calls service() method to process a client request, every request will call this method
+   The servlet is terminated by calling the destroy() method. only called once
+   Finally, servlet is collected by the garbage collector of the JVM.
+** how run
+   put compiled servlet class file on webapps/ROOT/WEB-INF/classed directory with same class package name,
+   then modify web.xml, <servlet> mapping to class name, <servlet-mapping> mapping to url address
+** parameter
+   use getParameter of class HttpServletRequest to get parameter(Get, Post),
+   getParamterNames get all name, getParamterValues get all value
+   HttpServletResponse to response to client
+   getCookies() get cookie
+   getSession() get or create session
+** url match pattern
+   - full path
+   - partial path
+   - extension
+   - default
+ filter can be called for every request
+   
+* Guava
+** MultiSet and MultiMap
+   used count duplicate
+** Iterators
+   support pipe operator
+** ForwardingList
+   need implement delegate, this method define which class implement behind this, can override any you want custom method.
+** PeekingIterator
+   can access next element after current, will cause iterator go to next, next access direct use this field
+** AbstractIterator
+   need implement computerNext(), like filter
+** AbstractSequential
+   support stream opeartion
+** LaodingCache
+   get used to access no exception value, getUnchecked access maybe throw exception, loadAll describe by self
+** Cache
+   base on time or capacity or reference type eviction
+* Maven
+  finalName is used to set build out jar fileName, default format is <artifactId>-<version>
+** depedency scope
+   - compile: compile and runtime
+   - test: test
+   - provided: compile and test
+   - runtime: test and runtime
+   - system: compile and test(use systemPath to locate)
+   - import
+  exclusion set some package dont import
+** lifecycle
+*** clean
+    - preclean
+    - clean
+    - post clean
+*** default
+    - process-sources
+    - compile
+    - process-test-sources
+    - test-compile
+    - test
+    - package
+    - install
+    - deploy
+*** site
+    - pre-site
+    - post-site
+    - site-deploy
+** parent and child
+   relativePath set parent pom location
+   parent pom use dependenciesManager set global depedency version, not import any package
+** command argument
+   -pl: xx only build this module
+   -am also build depedency module
+   -amd build dependency module child module
+   -rf set some module dont build
+   -DskipTests skip test
+   -Dtest=xx 
