@@ -199,3 +199,22 @@ IoC is let container maintain object lifecycle
    -rf set some module dont build
    -DskipTests skip test
    -Dtest=xx 
+* substring
+** 1.6
+   base is a array, substring return new object but point to same array with different offset
+   but maybe cause memory leak, like substring from multiple big string only use a little part
+** 1.7
+   copy array
+* Basic
+  object head is 16 bytes
+  array head is 24 bytes
+  one char is 2 byte
+  Serilizable only implement this class can serilize, don't need implement any thing. The real
+  implement method is defaultReadObject/readObject of class ObjectOutputStream/ObjectInputStream,
+  if class implement writeObject/readObject, then use those. SerilizalVersionUID use to demonstrate
+  the class is same class, static field can't be serilize, @Transient will not be write out
+* debug
+  JAVA_OPTS or CATALINA_OPTS add -agentlib:jdwp=transport=db_socket,server=y,suspend=n,address=<port>
+* jvm  
+  java 9, java.lang.ref.Reference.reachabilityFence(Object ref), assure ref is reachable on this location
+  
