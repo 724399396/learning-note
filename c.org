@@ -1,0 +1,28 @@
+* Basic
+** Syntax
+   #define <source> <aliase>
+   >> logical shift
+   >>> airthmetical
+   & | ^ ~ is bit operation
+   && || is boolean opeartion
+   & get address
+   sizeof get variable size(in byte)
+   void * is machine special pointer
+   %u unsigned, %d signed, %x decimal
+ 0 is false, otherwise is true
+ read binary file should use char to receive response, if use unsigned, 0xff will convert to -1
+ <limits.h> define kinds of number type bound
+ if signed and unsigned operation mix, will implicit convert to unsigned, if need add bit, first add bit then convert
+  
+* gcc
+  -O set optimize level
+  -S generate assembly code
+  -m32 32 bit 
+  -c generate object code
+  -o execute file name
+* gdb
+  x/17xb
+  objdump -d <objectFile> can deassembly output assembly file
+* Assembly
+  movb %dh, %al, move %dh to %dl
+  stack descrese from high to low
