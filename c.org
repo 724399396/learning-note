@@ -7,22 +7,77 @@
    && || is boolean opeartion
    & get address
    sizeof get variable size(in byte)
+   malloc alloc byte number memory
+   realloc re-alloc a pointer to new size
    void * is machine special pointer
-   %u unsigned, %d signed, %x decimal
+   %u unsigned, %d signed, %x decimal, %p pointer
+   struct <option name> { ... } define struct, *s.x equal s->x, struct inner field is under other namespace, struct <type> <variable> = {<initial>} to initial, structure can include self pointer
+   \0 is char ending, NULL is 0
+   #include <> standard library, #include "" is currency directory header file
+   typedef <origin> <alias>
+   external variable is reference from other file
+   enum <enum name>{<value 1>, <value 2>..} declare enum
+   const means variable can't be change, can use at parameter
+   static, two usage, first is let those definition not public to outside, second is keep field not re-initialize
+   register, suggest compiler assign auto variable(parameter, local variable) to register
+   #undef cancel #define
+   #if <condition> #endif
+   #ifndef or #ifdef check define
+   (* name) is pointer to function
+   ...is means any number, any type parameter, only possible on last argument, va_list is type, va_start intialize, va_arg get one and step one, var_end clear
  0 is false, otherwise is true
  read binary file should use char to receive response, if use unsigned, 0xff will convert to -1
  <limits.h> define kinds of number type bound
  if signed and unsigned operation mix, will implicit convert to unsigned, if need add bit, first add bit then convert
-  
+ pointer arithmetic is base on sizeof pointer type
+ c parameter pass is by value on stack
+ x & (x-1) can clear right most bit
+ || and && precedence is not sure, use prancese to ensure
+ + + precedence is high than *, so *p++ is equal (*p)++
+ char [] = "" is different from char * = "", first will allocate on stack, modify will affect this memory, second is point to const "", modify is undefined
+ two-dim array, the second dim size must be set
+ [] precedence is high than *, *++argv[0] is point to argv[0][1], (*++argv)[0] is point to argv[1][0]
 * gcc
   -O set optimize level
   -S generate assembly code
   -m32 32 bit 
   -c generate object code
   -o execute file name
+  -masm=intel, default is att
 * gdb
   x/17xb
   objdump -d <objectFile> can deassembly output assembly file
 * Assembly
   movb %dh, %al, move %dh to %dl
   stack descrese from high to low
+* Makefile
+  CC set compiler
+  CFLAGS set compiler options
+  EXE set executable file name
+  HDRS set header file
+  LIB set library file
+  SRCS source file
+* API
+ strlen is size of character, not include \0
+ fopen open new file, get a file descriptor
+ fprintf(fd, character) output to fd
+ flose(fd) close a file descriptor
+ xrand48 use to generate random value, srand48 set seed
+ fgets(fd) get character from fd one by one
+ getchar() get character from stdin
+ putchar() put character to stdout
+ strcat(char *[], char* []) concat str
+ squeeze(char *[], char) delete special char
+ strpbrk(char *[], char *[]) location sub-str
+ strstr(char *[], char *[]) location sub-str
+ strchr(s,c) location sub-str
+ getbits(x,p,n) return n bit start from p of x
+ isspace
+ isdigit
+ strtol convert string to long
+ strtod convert string to double
+ system("xx") call command xx
+* Tools
+ echo $? get previous command exit code
+ xxd -c <line_byte_number> -g <group_number> -s <offset> <input file> explore file by hex value
+ valgrind is a memory check util, usage: valgrind -v --leak-check=full <execute file>
