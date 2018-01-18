@@ -13,7 +13,7 @@
  read binary file should use char to receive response, if use unsigned, 0xff will convert to -1
  <limits.h> define kinds of number type bound
  if signed and unsigned operation mix, will implicit convert to unsigned, if need add bit, first add bit then convert
-  
+ any computer file is binary, what it is depende on context
 * gcc
   -O set optimize level
   -S generate assembly code
@@ -22,7 +22,55 @@
   -o execute file name
 * gdb
   x/17xb
+  gdb xx start gdb
+  run <args> start program
+  print <format> <variable> show variable value with format
+  x /<num> <size> <format> <location> show register value with format
+  strings -t x <file> show all strings
+  backtrack(bt) show call stack, up let frame go up
+  step(s) execute one line code
+  si execute one line assembly
+  break set break point, can break on function, file_name:line
+  delete can delete break point
+  watch <expression>, can stop when expression is true
+  watch -l <address>, stop when address content change
+  info register show register info
+  info frame
+  disas show current frame assembly
+  list show source code
+* Objdump
   objdump -d <objectFile> can deassembly output assembly file
+  -h show every seg info, include .data, .bss, .text
+  -x show program header, section, symbol table
+  -f show entry_point, assembly start address
+  
 * Assembly
   movb %dh, %al, move %dh to %dl
   stack descrese from high to low
+* Compile work flow
+  [[./compile-work-flow.png]]
+** Preprocessor
+   read all start with #, replace include content, generate .i file
+** Compiler
+   generate assembly
+** Assembler
+   assembly -> binary
+** Linker
+   combine every binary file(.o), generate a execute file
+* Operation system
+** Process/Thread
+  process provide a abstract, every process can use whole system resource
+  different process switch by context-switch
+  Thread is base on process, one process can have multiple thread
+ system provider three abstraction:
+   - file is io device abstraction
+   - virtual memory is file and main memory abstraction
+   - process is processor, main memory and io device abstraction
+ word size is machine related, equal to cpu address width
+ little endian(Intel) num is store from low bit to high bit(byte is unit) with low address to high address, big endian(Sum) is opposite
+ endian is important on those scenario:
+   - network
+   - assembly
+   - data on memory
+ w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
+
