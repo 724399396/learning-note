@@ -25,6 +25,7 @@
    #ifndef or #ifdef check define
    (* name) is pointer to function
    ...is means any number, any type parameter, only possible on last argument, va_list is type, va_start intialize, va_arg get one and step one, var_end clear
+** Other
  0 is false, otherwise is true
  read binary file should use char to receive response, if use unsigned, 0xff will convert to -1
  <limits.h> define kinds of number type bound
@@ -38,6 +39,7 @@
  two-dim array, the second dim size must be set
  [] precedence is high than *, *++argv[0] is point to argv[0][1], (*++argv)[0] is point to argv[1][0]
  any computer file is binary, what it is depende on context
+ same bit convert, like unsigned -> signed will keep bit same, extend bit, 0 for unsigned, sign bit for signed, if both signed and bit length change, first extend bit then convert
 * gcc
   -O set optimize level
   -S generate assembly code
@@ -129,3 +131,4 @@
    - assembly
    - data on memory
  w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
+ 2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
