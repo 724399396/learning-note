@@ -58,6 +58,7 @@
   step(s) execute one line code
   si execute one line assembly
   break set break point, can break on function, file_name:line
+  continue skip breakpoint
   delete can delete break point
   watch <expression>, can stop when expression is true
   watch -l <address>, stop when address content change
@@ -70,10 +71,20 @@
   -h show every seg info, include .data, .bss, .text
   -x show program header, section, symbol table
   -f show entry_point, assembly start address
-  
+
 * Assembly
-  movb %dh, %al, move %dh to %dl
+  w means word, 16 bit
+  dw means double word, 32 bit
+  lw means long word, 64 bit
+  movb source, dest
   stack descrese from high to low
+  %eax is get register store value, (%eax) is use %eax store value as address to get value from memory
+  lea (load effective address), only get address, not address point to value
+  mul source, %edx:%eax <- source * %eax
+** register  
+   %esp, stack point
+   %ebp, frame point
+   %eax, general register, %ax 16 bit, %ah 8 bit, %al 8 bit
 * Makefile
   CC set compiler
   CFLAGS set compiler options
@@ -132,3 +143,15 @@
    - data on memory
  w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
  2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
+* IEEE float point number
+  float: s=1, k=8, n=23, s is sign, k is exponent, n is fraction
+  double: s=1, k=11, n=52
+  V = (-1)^s * M * 2^E, M is k - (2^(k-1) - 1)
+  when all bit is 0, E is 1 - (2^(k-1)-1), M is nnnnn without plus 1
+  when k is all 1, value is infinity
+  when k is not all 1 or not all 0, is normal, E is kkkk - (2^(k-1)-1), M is calculate with 1.nnnnn
+  round way:
+    - round to even, first at close to round, if is 0.5 round to even
+    - round to zero
+    - round up(x cross)
+    - round down
