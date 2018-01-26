@@ -81,6 +81,13 @@
   %eax is get register store value, (%eax) is use %eax store value as address to get value from memory
   lea (load effective address), only get address, not address point to value
   mul source, %edx:%eax <- source * %eax
+  div source, %edx:%eax / source, quotient -> %eax, remainder -> %edx
+  cmp a,b use b -a result update flag register
+  test a,b use a&b result update flag register
+  setXX, use to set flag register
+  data select performance is better than condition jump on modern processor, data select is used on both branch no side effect
+  some register value is keep by caller, some by callee
+  when start method call, first push esp, then push return address, this location is new ebp, then push parameter, when return, use ebp to re-set esp, ebp, then return
 ** register  
    %esp, stack point
    %ebp, frame point
