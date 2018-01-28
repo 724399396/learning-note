@@ -7,7 +7,7 @@
    && || is boolean opeartion
    & get address
    sizeof get variable size(in byte)
-   malloc alloc byte number memory
+   malloc alloc byte number memory, the memory must be align, so structure align is depende on internal field
    realloc re-alloc a pointer to new size
    void * is machine special pointer
    %u unsigned, %d signed, %x decimal, %p pointer
@@ -25,6 +25,9 @@
    #ifndef or #ifdef check define
    (* name) is pointer to function
    ...is means any number, any type parameter, only possible on last argument, va_list is type, va_start intialize, va_arg get one and step one, var_end clear
+   int (* f)(int * ) is a pointer to function which parameter is pointer to int return int
+   int * f(int * ) is a function definition which parameter is int pointer return int pointer
+   function pointer can be called with <pointer variable>(args) format
 ** Other
  0 is false, otherwise is true
  read binary file should use char to receive response, if use unsigned, 0xff will convert to -1
