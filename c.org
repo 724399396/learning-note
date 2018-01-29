@@ -59,9 +59,11 @@
   strings -t x <file> show all strings
   backtrack(bt) show call stack, up let frame go up
   step(s) execute one line code
-  si execute one line assembly
-  break set break point, can break on function, file_name:line
-  continue skip breakpoint
+  stepi(si) execute one line assembly
+  nexti similar as stepi, but don't go into method
+  break(b) set break point, can break on function, file_name:line
+  continue skip breakpoint, resume execute
+  finish run to current method finish
   delete can delete break point
   watch <expression>, can stop when expression is true
   watch -l <address>, stop when address content change
@@ -69,6 +71,8 @@
   info frame
   disas show current frame assembly
   list show source code
+  :quit, exit gdb
+  kill, stop program
 * Objdump
   objdump -d <objectFile> can deassembly output assembly file
   -h show every seg info, include .data, .bss, .text
@@ -79,7 +83,7 @@
   w means word, 16 bit
   dw means double word, 32 bit
   lw means long word, 64 bit
-  movb source, dest
+  mov source, dest
   stack descrese from high to low
   %eax is get register store value, (%eax) is use %eax store value as address to get value from memory
   lea (load effective address), only get address, not address point to value
@@ -91,10 +95,22 @@
   data select performance is better than condition jump on modern processor, data select is used on both branch no side effect
   some register value is keep by caller, some by callee
   when start method call, first push esp, then push return address, this location is new ebp, then push parameter, when return, use ebp to re-set esp, ebp, then return
+  x86_64 will allocate enough space, then use %rsp to access stack, %rbp is a general register
+  CISC(complete-instruction-structure-computer) is IA32 sequence processor instructor set
+  RISC(reduce-instruction-structure-computer) is ARM sequence processor
+  CISC cons is instruction is too much, some of them execute time is long, pipeline can't optimize, RISC cons is instruction is too little, then learn from each other, main reason is business not technical
+  push %esp, in intel specification, push current esp value to esp+1 location, pop esp, pop current esp value to esp-1
+  x87 float arithmetic is base on stack, sse is base on register 
+  split instruction to multiple stage can improve throughput, but will increase latency, too large stage will waste clock, too small stage will increase latency
+  for loop analyze, data dependency can get a critical path, then get CPE low bound
+  memory access is slow than register, so for loop try use more register than memory
 ** register  
    %esp, stack point
    %ebp, frame point
    %eax, general register, %ax 16 bit, %ah 8 bit, %al 8 bit
+*** x86_64
+    6 register can used pass argument: %rdi %rsi %rdx %rcx %r8 %r9
+    callee-save: %rbx, %rbp, %r12-%r15
 * Makefile
   CC set compiler
   CFLAGS set compiler options
@@ -153,6 +169,11 @@
    - data on memory
  w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
  2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
+** Buffer overflow
+   3 way to avoid:
+     - stack randomization, when program start, use a random stack base address, cons is if random size is small, can predicate, too large, waste memory space
+     - stack protection, set a canary value(random), before return check this value not be modified
+     - limit code execution region, split memory to read/write and execute, x86 use NX(no-execute) to distinguish
 * IEEE float point number
   float: s=1, k=8, n=23, s is sign, k is exponent, n is fraction
   double: s=1, k=11, n=52
@@ -165,3 +186,4 @@
     - round to zero
     - round up(x cross)
     - round down
+
