@@ -7,7 +7,7 @@
    && || is boolean opeartion
    & get address
    sizeof get variable size(in byte)
-   malloc alloc byte number memory, the memory must be align, so structure align is depende on internal field
+   malloc alloc byte number memory, the memory must be align, so structure align is depend on internal field, sort field from big to small can decrease memory usage
    realloc re-alloc a pointer to new size
    void * is machine special pointer
    %u unsigned, %d signed, %x decimal, %p pointer
@@ -18,7 +18,7 @@
    external variable is reference from other file
    enum <enum name>{<value 1>, <value 2>..} declare enum
    const means variable can't be change, can use at parameter
-   static, two usage, first is let those definition not public to outside, second is keep field not re-initialize
+   static, two usage, first is let those definition not public to outside, second is keep field not re-initialize, static filed will allocate at .data or .bss
    register, suggest compiler assign auto variable(parameter, local variable) to register
    #undef cancel #define
    #if <condition> #endif
@@ -43,6 +43,23 @@
  [] precedence is high than *, *++argv[0] is point to argv[0][1], (*++argv)[0] is point to argv[1][0]
  any computer file is binary, what it is depende on context
  same bit convert, like unsigned -> signed will keep bit same, extend bit, 0 for unsigned, sign bit for signed, if both signed and bit length change, first extend bit then convert
+ word size is machine related, equal to cpu address width
+ little endian(Intel) num is store from low bit to high bit(byte is unit) with low address to high address, big endian(Sum) is opposite
+ endian is important on those scenario:
+   - network
+   - assembly
+   - data on memory
+ w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
+ 2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
+ x[a][c] is continue in memory, *x[a] is not continue in memory
+ linker need perform two task:
+   1. symbol resolution, link find function or other not in current file
+   2. relocation, all object file address need relocate, assign a new address
+ object file format:
+   - linux: at first is COFF(common object file format), then change to ELF(executable and linkable file format)
+   - windows: PE(portable executable)
+ library file (extension is .a) is only need when previous object file miss some definition
+ share library (extension is .so on unix, .dll on windows), load on run time, multiple program share library on memory, reduce memory usage.
 * gcc
   -O set optimize level
   -S generate assembly code
@@ -50,6 +67,8 @@
   -c generate object code
   -o execute file name
   -masm=intel, default is att
+  -static set use static library, only copy used file
+  -shared -fPIC -o xx.so create a share library
 * gdb
   x/17xb
   gdb xx start gdb
@@ -78,7 +97,6 @@
   -h show every seg info, include .data, .bss, .text
   -x show program header, section, symbol table
   -f show entry_point, assembly start address
-
 * Assembly
   w means word, 16 bit
   dw means double word, 32 bit
@@ -142,6 +160,8 @@
  echo $? get previous command exit code
  xxd -c <line_byte_number> -g <group_number> -s <offset> <input file> explore file by hex value
  valgrind is a memory check util, usage: valgrind -v --leak-check=full <execute file>
+ gprof use to analyze c program performance, should use gcc -pg parameter
+ ar rcs <outputfile> <input files> use input file(object file) output a static library
 * Compile work flow
   [[./compile-work-flow.png]]
 ** Preprocessor
@@ -157,23 +177,23 @@
   process provide a abstract, every process can use whole system resource
   different process switch by context-switch
   Thread is base on process, one process can have multiple thread
- system provider three abstraction:
+  system provider three abstraction:
    - file is io device abstraction
    - virtual memory is file and main memory abstraction
    - process is processor, main memory and io device abstraction
- word size is machine related, equal to cpu address width
- little endian(Intel) num is store from low bit to high bit(byte is unit) with low address to high address, big endian(Sum) is opposite
- endian is important on those scenario:
-   - network
-   - assembly
-   - data on memory
- w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
- 2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
+  when fork a child process, with same stack, register, file description and so on.
+  execve use current process run argument special program.
+  exit will exit a process
+  wait, wait a process terminate
 ** Buffer overflow
    3 way to avoid:
      - stack randomization, when program start, use a random stack base address, cons is if random size is small, can predicate, too large, waste memory space
      - stack protection, set a canary value(random), before return check this value not be modified
      - limit code execution region, split memory to read/write and execute, x86 use NX(no-execute) to distinguish
+** Memory hierarchy
+   more high level, more expensive, more faster
+   more low level, more cheap, more slower
+   97% hit rate performance is 1/2 of 99% hit rate
 * IEEE float point number
   float: s=1, k=8, n=23, s is sign, k is exponent, n is fraction
   double: s=1, k=11, n=52
@@ -187,3 +207,5 @@
     - round up(x cross)
     - round down
 
+* Concurrency
+  S = 1 /((1-a) + (a/k)), a is parallel percent, k is parallel number
