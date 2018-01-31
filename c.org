@@ -60,6 +60,12 @@
    - windows: PE(portable executable)
  library file (extension is .a) is only need when previous object file miss some definition
  share library (extension is .so on unix, .dll on windows), load on run time, multiple program share library on memory, reduce memory usage.
+ when exception, use exception table indirect jump to exception handler, exception handler is diff with producer call:
+   - return address is decide by exception type
+   - flags will be maintain
+   - will run at kernel level
+ when child process terminate, os will keep it state until parent process repeat it. If parent forget reaped child process, those process named zombie process.
+ Init process will handle all process reaped, long time run process need carefully handle child process terminate, because it is hierarchy, init only reaped it direct process
 * gcc
   -O set optimize level
   -S generate assembly code
@@ -156,6 +162,23 @@
  strtol convert string to long
  strtod convert string to double
  system("xx") call command xx
+ waitpid will wait child process finish, argument control single/group/all, sync/async
+ sleep(unsigned int secs) let process sleep, return 0 when already sleep enough, bigger than 0 when be interrupted, return value is left time to slept
+ when fork a child process, with same stack, register, file description and so on. return twice
+ execve use current process run argument special program. never return
+ exit will exit a process
+ wait, wait a process terminate
+ kill, send signal to process
+ signal, register a asynchronies signal handler for current process, SIGKILL and SIGSTOP can't be change
+ sigprocmask, block/unblock/mask signal, use with sigemptyset, sigaddset, sigdeleteset
+ setjmp, longjmp, first call setjmp(buf), will return 0, the buf record pc, stack and register, then continue execute, longjmp(buf, code) can go to buf record location, code is setjmp return value, so setjmp call once return multiple times, first is set, then is setjmp goto with code, longjmp never return
+ mmap, create a virtual memory map to a file
+ munmap destroy a virtual memory
+ malloc create virtual memory, not initialize
+ calloc create virtual memory and initialize to 0
+ realloc, realloc a memory base on allocated memory
+ sbrk grow/shrink heap size
+ dup2(fd1, fd2), close fd2, then set fd1 to fd2
 * Tools
  echo $? get previous command exit code
  xxd -c <line_byte_number> -g <group_number> -s <offset> <input file> explore file by hex value
@@ -181,10 +204,8 @@
    - file is io device abstraction
    - virtual memory is file and main memory abstraction
    - process is processor, main memory and io device abstraction
-  when fork a child process, with same stack, register, file description and so on.
-  execve use current process run argument special program.
-  exit will exit a process
-  wait, wait a process terminate
+  every process has pending and block signal bit vector, each type signal only can pending one, exceed will be discard
+  when child process terminate, SIGCHLD will be send to parent process
 ** Buffer overflow
    3 way to avoid:
      - stack randomization, when program start, use a random stack base address, cons is if random size is small, can predicate, too large, waste memory space
@@ -194,6 +215,21 @@
    more high level, more expensive, more faster
    more low level, more cheap, more slower
    97% hit rate performance is 1/2 of 99% hit rate
+** Virtual memory
+   use access bit to protect memory
+   VPO(virtual page offset) = PPO(physical page offset)
+   VPN(virtual page number) = virtual address number / page size
+   VPN = TLBT(TLB tag) + TLBI(TLB index)
+   TLB(translation lookaside buffer) is cache for pte
+** IO
+   when call read/write, maybe encounter short counts, this maybe cause by eof, or occur on network data transfer, so you need repeate call read/write until get you wanted byte transferred
+   file descriptor table is bold by each process
+   file table is shared by all process
+   record position, vnode, vnode table is shared by all process
+   open, close, write, read, lseek, is provider by unix system, execute on kernel
+   fopen, fclose is provider by library, use buffer to improve performance
+   process file use io lib
+   process network use rio lib
 * IEEE float point number
   float: s=1, k=8, n=23, s is sign, k is exponent, n is fraction
   double: s=1, k=11, n=52
