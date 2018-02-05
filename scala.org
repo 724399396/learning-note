@@ -1,0 +1,15 @@
+* Basic
+  because foldRight is not tail rec, will cause stackoverflow, foldRight can use foldLeft to presentation, two way implement:
+   - foldRight f acc xs = foldLeft (x y -> f y x) acc (reverse xs)
+   - foldRight f acc xs = (foldLeft (x y -> z -> x(f y z)) (x -> x) xs) acc
+  trait Map[Key,Value] extends (Key => Value)
+  trait Seq[Elem] extends (Int => Elem)
+  case { xx => yy } is a PartialFunction, compiler auto generate isDefiendAt function for top level case
+  
+* frp(function reactive programming)
+  signal is use to replace event, signal can update, all depend on this signal's signal will be updated
+  simple implement:  keep a stack, stack top is it's next level's observer, bottom is above's notifier, when call update, will cancel all notify this signal's notifier, because this signal watch value changed, then push this signal to stack top, evaluate new value, then cancel all this signal notifited(it will re-added on their update)
+  T => Try[S] express a maybe throw exception expression
+  Feature[T] express a need time to calculate expression
+* Library
+  quickCheck: let class extend Peropeties, forAll { a: Type => xx }, a is generated, last expression is bool
