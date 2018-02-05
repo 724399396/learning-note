@@ -179,6 +179,7 @@
  realloc, realloc a memory base on allocated memory
  sbrk grow/shrink heap size
  dup2(fd1, fd2), close fd2, then set fd1 to fd2
+ select(int numfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout), is synchronous IO multiplexing, fd_set is a file description set, some MACRO is operation for this, FD_ISSET,FD_SET,FD_CLR, any socket match condition will return, timeval set to 0 means return immediate, NULL never timeout
 * Tools
  echo $? get previous command exit code
  xxd -c <line_byte_number> -g <group_number> -s <offset> <input file> explore file by hex value
@@ -245,3 +246,91 @@
 
 * Concurrency
   S = 1 /((1-a) + (a/k)), a is parallel percent, k is parallel number
+* Socket
+  network is file on unix, can use read/write operation, but send/recv will be better
+  Internet Socket:
+    - STREAM_SOCKET, TCP(Transmission Control Protocol), bidirectional, error-free
+    - DATAGRAM_SOCKET, UDP(User Datagram Protocol), connectionless, not ensure arrive and not ensure arrive order
+  Ipv4, 32bit, format is byte.byte.byte.byte
+  Ipv6, 128bit, format is 2byte:...:2byte, full 0 can use :: presentation, ::1 is local address, ffff:ipv4 is compatible with ipv4
+  mask use to determine this ip on this network address, ip/mask
+  unix /etc/services contain all program port
+  network byte is big-endian order
+  htons, htonl convert host byte order to network byte order
+  ntohs, ntohl convert network byte order to host order
+  inet_aton, convert a dotted-decimal string to ip address, only work on ipv4
+  inet_ntoa, convert ip address to dotted-decimal string, only work on ipv4
+  inet_pton, convert string ip to ip address, both on ipv4 and ipv6
+  inet_ntop, convert ip address to string, both on ipv4 and ipv6
+  gethostbyname, gethostbyaddr query address info from dns server
+  #+BEGIN_SRC c
+  struct addrinfo {
+    int ai_flags;
+    int ai_family;
+    int ai_socktype;
+    int ai_protocol;
+    size_t ai_addrlen;
+    struct sockaddr *ai_addr;
+    char *ai_canonname;
+    struct addrinfo *ai_next;
+  }
+  struct sockaddr {
+    unsigned short sa_family;
+    char sa_data[14];
+  }
+  struct sockaddr_in {
+    short int sin_family;
+    unsigned short int sin_port;
+    struct in_addr sin_addr;
+    unsigned char sin_zero [8];
+  }
+  struct in_addr {
+    unit32_t s_addr;
+  }
+  struct sockaddr_n6 {
+    u_int16_t sin6_family;
+    u_int16_t sin6_port;
+    u_int32_t sin6_floinfo;
+    struct in6_addr sin6_addr;
+    u_int32_t sin6_scope_id;
+  }
+  struct in6_addr {
+    unsigned char s6_addr[16];
+  }
+  #+END_SRC
+  ai_family is set ipv4 or ipv6
+  sockaddr_in is ipv4, sockaddr can convert with sockaddr_in each other
+  sockaddr_storage use to save ipv4/ipv6 address, ss_family present type is ipv4 or ipv6
+  firewall, isolation acess, and use as NAT(network address translation)
+  api:
+    - getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res), from ip/address get connection info
+    - socket(int domain, int type, int protocol) get file descriptor
+    - connect(int sockfd, struct sockaddr *serv_addr, int addrlen) connect to remote
+    - bind(int sockfd, struct sockaddr *my_addr, int addrlen)
+    - listen(int sockfd, int backlog), wait connect, backlog is blocking size, any connect before accept will store on here
+    - accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen), return a new connect fd
+    - send(int sockfd, const void *msg, int len, int flags) return value is actually send byte number, (work on tcp and connected udp)
+    - sendTo(int sockfd, const void *msg, int len, unsigned int flags, const struct sockaddr *to, socklen_t tolen) (work on udp)
+    - recvfrom(int sockfd, void *buf, int len, unsgined int flags, struct sockaddr *from, int *fromlen) (work on udp)
+    - close(sock) close socket
+    - shutdown(sock) let socket not avaliable of this end, also need close
+    - getpeername(int sockfd, struct sockaddr *addr, int *addrlen) from socket get antoher end info
+    - gethostname(char *hostname, size_t size) return local host name
+    - setsockopt(int sockfd, SOL_SOCKET, filedtoSet, value, sizeof value) set socket property
+    - getnameinfo get service name from ip address
+  client-server mode:
+    tcp:
+      server: getaddrinfo -> socket -> bind -> listen -> accept -> recv/send -> close
+      client: getaddrinfo -> socket -> connect -> send/recv -> close
+    udp:
+      server: getaddrinfo -> socket -> bind -> recvfrom -> close
+      client: getaddrinfo -> socket -> sendto -> close
+  accept and recv will lock, if don't want lock, use fcntl
+  send, recv is work for text, if want send binary data, there are 3 way:
+    - convert binary to text, then convert back on reciver end
+    - send original binary data
+    - convert to portable format
+  udp send to broadcast address means send broadcast package
+  netstat get open socket, route info, -r means route table info
+  MTU is package size of each transfer
+  
