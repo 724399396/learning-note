@@ -11,5 +11,23 @@
   simple implement:  keep a stack, stack top is it's next level's observer, bottom is above's notifier, when call update, will cancel all notify this signal's notifier, because this signal watch value changed, then push this signal to stack top, evaluate new value, then cancel all this signal notifited(it will re-added on their update)
   T => Try[S] express a maybe throw exception expression
   Feature[T] express a need time to calculate expression
+* Future
+  Future {callBack} {ExecuteContext} create a Future, callBack is future execute body, executeContext is thread pool info
+  Future {blocking {call}} {ExecutingContext} use current thread to execute
+  ExecuteContext has a implicit parameter
+  Future has two state, uncomplete and complete, complete has success and failure status
+  Future's value can assign once
+  onComplete(Try[T] => Unit) is callback when future complete
+  onSuccess(T => Unit) is only called when success
+  onFailure(Throwable => Unit) is only called when failure
+  recover(Throwable => Unit) execute when failure, return a backup value
+  recoverWith(Throwable => Future[T]) execute when failure, cover failure use new Future
+  fallbackTo(Throwable => Future[T]), most same as recoverWith, but if failure again, recoverWith return second future error, this method return first future failure
+  andThen(T => Future[T]), execute when previous future finish, is in order execute
+  Awaitable is used to test future
+  Await.result(Future, delay time) after duration time return T
 * Library
   quickCheck: let class extend Peropeties, forAll { a: Type => xx }, a is generated, last expression is bool
+* Api
+  scala.language.postFixOps define well Duration format, e.g. 1826 minutes
+    scala.async.Async._ define async { await {}} syntax

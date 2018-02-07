@@ -1,0 +1,8 @@
+* Cli
+  - run <image>, run image as a container, -d run image process as domain 
+  - stop <container id>, stop container 
+  - start <container id>, start container 
+  - rm <container id>, delete container 
+  - rmi <image>, delete image 
+  - images, list local images 
+  - exec –it <container id> <command>, execute command in container 

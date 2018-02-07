@@ -246,6 +246,10 @@
 
 * Concurrency
   S = 1 /((1-a) + (a/k)), a is parallel percent, k is parallel number
+  3-way:
+    - process base
+    - IO multiplexing
+    - thread base
 * Socket
   network is file on unix, can use read/write operation, but send/recv will be better
   Internet Socket:
@@ -334,3 +338,13 @@
   netstat get open socket, route info, -r means route table info
   MTU is package size of each transfer
   
+* Threads
+  - pthread_create(pthread_t *, pthread_attr_t *attr, func *f, void *arg), create thread, thread id will assign to first arg, argument f is thread execute body, arg is argument to argument f
+  - pthread_join(pthread_t, NULL), wait thread return ,reap this thread resource
+  - pthread_t pthread_self(void), get current thread id
+  - pthread_exit(void *thread_return), stop thread, if main thread call this, will terminate all peer thread, peer thread call exit() will cause all thread under same process terminate
+  - int pthread_cancel(pthread_t tid), stop tid thread
+  - pthread_detach(pthread_t tid), thread has two state, this call change thread to detached state
+    1. joinable(default), can be killed or reaped by other thread, resource like stack will keep until other thread reap
+    2. detached, can't be killed or reaped, resource will auto release by system when it terminate
+  - pthread_once(pthread_once_t *, void (*int_routine)(void)), call once before thread start
