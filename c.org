@@ -348,3 +348,9 @@
     1. joinable(default), can be killed or reaped by other thread, resource like stack will keep until other thread reap
     2. detached, can't be killed or reaped, resource will auto release by system when it terminate
   - pthread_once(pthread_once_t *, void (*int_routine)(void)), call once before thread start
+  different thread has own stack, stack pointer, program count, condition code, then  share heap, file descriptor and so on, but other threads can access other thread stack 
+  define outside function variable is global variable, is share with all threads, only one location 
+  variable in function without static is local variable, keep on every thread stack 
+  Static variable in function is only one instance, share with all thread 
+
+ 
