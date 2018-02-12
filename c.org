@@ -250,6 +250,11 @@
     - process base
     - IO multiplexing
     - thread base
+  semaphore:
+    - int sem_init(sem_t *sem, 0, unsigned int value) 
+    - int sem_wait(sem_t *sem) 
+    - int sem_post(sem_t *sem) 
+  suffix with _r function is reentrant version for thread-unsafe function
 * Socket
   network is file on unix, can use read/write operation, but send/recv will be better
   Internet Socket:
