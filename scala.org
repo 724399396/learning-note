@@ -13,8 +13,41 @@
   closure means if function is out of function variable, will bind to fact variable, not just a value, be captured value will be replace from stack to heap by compiler
   final can disallow method or class be extend
   trait can mix multiple, class can't
-  trait no argument constructor, method can override, super is dynamic binding
+  trait no argument constructor, method can override, super is dynamic binding, super call is from right to left, initialize is from left to right
   def funcName {}, define a function
+  for (i <- list) iterate element, for generate element is immutable
+  <low> to <up> by <step> generate Range
+  (<e1>,<e2>) construct tuple, _1 or _2 access element
+  class <Name>(<values>) {body} define a class, all body is execute when create instance, def this() is help constructor(execute after initial sentence)
+  object <Name> defined a singleton object
+  var means variable, mutable
+  val means value, immutable
+  base collection: Seq, Map, Set
+  Any is root object type, Nothing is bottom object type
+  "<reg>".r is regular expression
+  xx match { case <match> [if <condition>]  => } is pattern match format
+  <instance>(<arg>) = <newValue> equal to instance.update(arg, newValue)
+  :: concat elem and list, ::: concat list and list
+  Console.err is standard err stream, Console.stdout is standard stream
+  iterator can only iterate once
+  every type can convert to Unit
+  scala can put class file in any .scala file
+  fsc(fast scala compiler), open a daemon to compile, only first open consume some time, fsc --shutdown close
+  integral is basica number type, numeric is float type
+  scala and java.lang package is auto imported
+  0x<num> write literal hex number
+  \u<num> unicode encode
+  """<string>""" define raw string, don't need any escape, | trim lead space
+  -2.0 is equal to (2.0).unary_-, only +, -, !, ~ can as unary prefix operator
+  == will call equals method, compiler will avoid NPE, eq compare object address, ne is symmetric
+  scala method first char decide precedence, = ended is lowest precedence, last character decide association order
+  require can check argument
+  implicit is use to convert type implicitly
+  scala assignment return type is Unit
+  for <clause> yield <body>
+  throw <exception>, exception can pattern match
+  scala function can nested
+  _ is variable place holder, fun _ can get a partially apply function
 * frp(function reactive programming)
   signal is use to replace event, signal can update, all depend on this signal's signal will be updated
   simple implement:  keep a stack, stack top is it's next level's observer, bottom is above's notifier, when call update, will cancel all notify this signal's notifier, because this signal watch value changed, then push this signal to stack top, evaluate new value, then cancel all this signal notifited(it will re-added on their update)
