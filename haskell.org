@@ -258,3 +258,70 @@ ApplicativeDo, allow Functor, Applicative use do syantax
        get = State $ \s -> (s, s)
        put s = State $ \_ -> ((), s)
    #+END_SRC
+* Monad Transfer
+IdentityT m ≃ mT Identity ≃ m
+m1Tm2T..mn, m1T will affect innerst, mn will in outst
+** MonadT class
+*** IdentityT
+   no any affect, isomorphism with inner monad
+   #+BEGIN_SRC haskell
+   newtype Identity a = Identity { runIdentity :: a }
+   newtype IdentityT m a = IdentityT { runIdentityT :: m a}
+   
+   instance (Monad m) => Monad (IdentityT m) where
+     return = IdentityT . return
+     m >>= k = IdentityT $ do
+      a <- runIdentityT m
+      runIdentityT (k a)
+   #+END_SRC
+*** MaybeT
+   #+BEGIN_SRC haskell
+   data Maybe a = Just a | Nothing
+   data MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
+   
+   instance Monad m => Monad (MaybeT m) where
+     return = return . Just
+     MaybeT a >>= f = 
+       MaybeT $ do
+         result <- a
+         case result of 
+           Nothing -> return Nothing
+           Just x -> runMaybeT (f x)
+   #+END_SRC
+*** StateT
+   #+BEGIN_SRC haskell
+     newtype State s a = State { runState :: s -> (a,s) }
+     newtype StateT s m a = StateT { runStateT :: s -> m (a,s) }
+
+     instance (Monad m) => (StateT s m) where
+       return a = StateT $ \s -> return (a, s)
+       m >>= k = StateT $ \s -> do
+         (a, s') <- (runStateT m) s
+         runStateT (k a) s'
+   #+END_SRC
+*** WriterT
+   #+BEGIN_SRC haskell
+     newtype WriterT w m a = WriterT { runWriterT :: m (a, w) }
+     instance (Monoid w, Monad m) => Monad (WriterT w m) where
+       return a = WriterT $ return (a, mempty)
+       m >>= k = WriterT $ do
+         (a,w) <- runWriterT m
+         (b, w') <- runWriterT (k a)
+         return (b, w `mappend` w')
+   #+END_SRC
+** MonadTrans
+   #+BEGIN_SRC haskell
+   class MonadTrans t where
+     lift :: Monad m => m a -> t m a
+
+   class (Monad m) => MonadIO m where
+     liftIO :: IO a -> m a
+     
+   class (Monad b, Monad m) => MonadBase b m | m -> b where
+     liftBase :: b a -> m a
+   #+END_SRC
+   liftIO is because IO no correspond Monad Transfer, any monad can use liftIO once to get top define
+   lift only determine once level, so if a high monad stack, need lift multiple times, liftBase provider a recursive definition, lift once get top definition
+*** Laws
+    lift . return = return
+    lift (m >>= f) = lift m >>= lift f
