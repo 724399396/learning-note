@@ -48,6 +48,10 @@
   throw <exception>, exception can pattern match
   scala function can nested
   _ is variable place holder, fun _ can get a partially apply function
+  when function is currying, {} can replace ()
+  :=> xx means pass by name(lazy evaluate)
+  abstract class, leave method no implement is abstract method
+  no parameter function is same as field, can override each other
 * frp(function reactive programming)
   signal is use to replace event, signal can update, all depend on this signal's signal will be updated
   simple implement:  keep a stack, stack top is it's next level's observer, bottom is above's notifier, when call update, will cancel all notify this signal's notifier, because this signal watch value changed, then push this signal to stack top, evaluate new value, then cancel all this signal notifited(it will re-added on their update)
