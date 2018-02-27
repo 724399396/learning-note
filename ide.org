@@ -49,3 +49,42 @@ tramp open remote file, /[protocol]:[[username@]host]:<file>
    M-|, execute current buffer as command and output
    C-x v is version control prefix
    C-q, C-j is newline
+* vim
+  Esc or Ctrl + [ return normal mode
+  i insert at cursor location
+  I insert at line start
+  a append after cursor location
+  A append at line end
+  o append in next line
+  O append in previous line
+  h j l k, left down up right
+  x, delete character
+  d$, delete to end of line
+  db, delete previous word start
+  dw, delete to next word start
+  de, this word end
+  dd, delete whole line
+  u, undo
+  Ctrl + R, redo
+  Ctrl + g, show current cursor location
+  <num> g, go to line number
+  G go to file end
+  gg go to file start
+  y, copy
+  p, paste
+  r, replace character
+  /, search forward, n, next, N, previous
+  ?, search backward
+  C+o, back to location before search
+  C+i, continue search
+  %, search correspond { [ (
+  :/s/<old>/<new>/g replace old with new
+  :<start>:<end>s/<old>/<new>/g only replace between start to end
+  :! <cmd>, execute cmd
+  0 go to line start, $ to line end
+  :e <filename> open file
+  :b <filename> switch to file
+  v go to visual mode, shift +v visual line mode, Ctrl +v visual rectangle mode
+  ~ toggle upper/lower
+  >> indent to right, << to left
+  :sp open new window, :vsp verticle open new window
