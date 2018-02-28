@@ -1,0 +1,14 @@
+four basic type:
+ * string
+ * number
+ * boolean
+ * null
+two compound type:
+ * array, ordered sequence of value
+ * object, un-ordered key value pair, key always string ,value is any type
+value ::= obj | arr | string literal | floating point number | null | true | false
+obj ::= "{" [members] "}"
+arr ::= "[" [values] "]"
+members ::= member {"," member}
+member ::= string literal ":" value
+value ::= value {"," value}
