@@ -258,6 +258,37 @@ ApplicativeDo, allow Functor, Applicative use do syantax
        get = State $ \s -> (s, s)
        put s = State $ \_ -> ((), s)
    #+END_SRC
+** Stream
+   Control.Monad.Stream, can used for get value from multiple stream
+** Free
+   Free monad is wrap a functor become a monad, monad core is join :: m m a -> m a different than functor
+   need define a seperate monadic explain to let a free monad go 'execute'
+   #+BEGIN_SRC haskell
+   data Free f a = Pure a | Free (f (Free f a))
+
+   instance Functor f => Monad (Free f) where
+     return = Pure
+     Pure x >>= f = f x
+     Free c >>= f = Free (fmap (>>= f) c)
+   #+END_SRC
+** Continuation
+  #+BEGIN_SRC haskell
+    newtype Cont r a = Cont { runCont :: (a -> r) -> r }
+
+    instance Applicative (Cont r) where
+      pure a = Cont \k -> k a
+      -- cab :: Cont r (a->b) = ((a->b)->r)->r
+      -- ca :: Cont r a = (a->r)->r
+      -- cab <*> ca :: Cont r b = (b->r)->r
+      cab <*> ca = Cont $ \br -> runCont cab (\ab -> runCont ca (\a -> br (ab a)))
+
+    instance Monad (Cont r) where
+      return = pure
+      -- ca :: Cont r a = (a->r)->r
+      -- acb :: a -> Cont r b = a -> (b->r)->r
+      -- ca >>= acb :: Cont r b = (b->r)->r
+      ca >>= acb = Cont $ \br -> runCont ca (\a -> runCont (acb a) (\b -> br b))
+  #+END_SRC
 * Monad Transfer
 IdentityT m ≃ mT Identity ≃ m
 m1Tm2T..mn, m1T will affect innerst, mn will in outst
