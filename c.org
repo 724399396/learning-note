@@ -61,31 +61,7 @@
    char [] = "" is different from char * = "", first will allocate on stack, modify will affect this memory, second is point to const "", modify is undefined
    two-dim array, the second dim size must be set
    [] precedence is high than *, *++argv[0] is point to argv[0][1], (*++argv)[0] is point to argv[1][0]
-   any computer file is binary, what it is depende on context
    same bit convert, like unsigned -> signed will keep bit same, extend bit, 0 for unsigned, sign bit for signed, if both signed and bit length change, first extend bit then convert
-   word size is machine related, equal to cpu address width
-   little endian(Intel) num is store from low bit to high bit(byte is unit) with low address to high address, big endian(Sum) is opposite
-   endian is important on those scenario:
-    - network
-    - assembly
-    - data on memory
-   w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
-   2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
-   x[a][c] is continue in memory, *x[a] is not continue in memory
-   linker need perform two task:
-    - symbol resolution, link find function or other not in current file
-    - relocation, all object file address need relocate, assign a new address
-   object file format:
-   - linux: at first is COFF(common object file format), then change to ELF(executable and linkable file format)
-   - windows: PE(portable executable)
-   library file (extension is .a) is only need when previous object file miss some definition
-   share library (extension is .so on unix, .dll on windows), load on run time, multiple program share library on memory, reduce memory usage.
-   when exception, use exception table indirect jump to exception handler, exception handler is diff with producer call:
-   - return address is decide by exception type
-   - flags will be maintain
-   - will run at kernel level
-   when child process terminate, os will keep it state until parent process repeat it. If parent forget reaped child process, those process named zombie process.
-   Init process will handle all process reaped, long time run process need carefully handle child process terminate, because it is hierarchy, init only reaped it direct process
 * gcc
   -O set optimize level
   -S generate assembly code
@@ -222,6 +198,30 @@
 ** Linker
    combine every binary file(.o), generate a execute file
 * Operation system
+   any computer file is binary, what it is depende on context
+   word size is machine related, equal to cpu address width
+   little endian(Intel) num is store from low bit to high bit(byte is unit) with low address to high address, big endian(Sum) is opposite
+   endian is important on those scenario:
+    - network
+    - assembly
+    - data on memory
+   w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
+   2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
+   x[a][c] is continue in memory, *x[a] is not continue in memory
+   linker need perform two task:
+    - symbol resolution, link find function or other not in current file
+    - relocation, all object file address need relocate, assign a new address
+   object file format:
+   - linux: at first is COFF(common object file format), then change to ELF(executable and linkable file format)
+   - windows: PE(portable executable)
+   library file (extension is .a) is only need when previous object file miss some definition
+   share library (extension is .so on unix, .dll on windows), load on run time, multiple program share library on memory, reduce memory usage.
+   when exception, use exception table indirect jump to exception handler, exception handler is diff with producer call:
+   - return address is decide by exception type
+   - flags will be maintain
+   - will run at kernel level
+   when child process terminate, os will keep it state until parent process repeat it. If parent forget reaped child process, those process named zombie process.
+   Init process will handle all process reaped, long time run process need carefully handle child process terminate, because it is hierarchy, init only reaped it direct process
 ** Process/Thread
   process provide a abstract, every process can use whole system resource
   different process switch by context-switch
