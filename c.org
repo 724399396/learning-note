@@ -1,71 +1,91 @@
 * Basic
-** Syntax
-   #define <source> <aliase>
+   #define <name> <value>, if value has multiple line, need end with \, define scope is on same file, define name can contain argument, then use same variable in value body
+   #undef cancel define
+   #if <expression>, if expression evaluate as non 0, will evaluate until #else/#elif/#endif
+   #ifndef and #ifdef use to check is define something, end with #endif
    >> logical shift
    >>> airthmetical
    & | ^ ~ is bit operation
-   && || is boolean opeartion
+   && || is boolean opeartion, early termination
    & get address
-   sizeof get variable size(in byte)
+   sizeof get variable size(in byte), for structure will get sturture real size in momery(include placehodler)
    malloc alloc byte number memory, the memory must be align, so structure align is depend on internal field, sort field from big to small can decrease memory usage
    realloc re-alloc a pointer to new size
    void * is machine special pointer
    %u unsigned, %d signed, %x decimal, %p pointer
    struct <option name> { ... } define struct, *s.x equal s->x, struct inner field is under other namespace, struct <type> <variable> = {<initial>} to initial, structure can include self pointer
-   \0 is char ending, NULL is 0
+   bit-field, follow on struct field type declaration, expression how many space this field need use
+   union syntax like struct, different is union use same address to keep different type value
    #include <> standard library, #include "" is currency directory header file
-   typedef <origin> <alias>
-   external variable is reference from other file
-   enum <enum name>{<value 1>, <value 2>..} declare enum
-   const means variable can't be change, can use at parameter
-   static, two usage, first is let those definition not public to outside, second is keep field not re-initialize, static filed will allocate at .data or .bss
+   typedef <name> <value>
+   external variable is reference from other file, if in same file, delcare external then can reference this field without external keyword, will init to 0 if not provide init value
+   enum <enum name>{<name 1>=<value 1>, <name2>=<value 2>..} declare enum, if not set value will start from 0
+   const means variable can't be change, can use at parameter to avoid method change argument
+   static, two usage, first is let those definition not public to outside, second is keep field not re-initialize, static filed will allocate at .data or .bss, will init to 0 if not provide value
    register, suggest compiler assign auto variable(parameter, local variable) to register
    #undef cancel #define
    #if <condition> #endif
    #ifndef or #ifdef check define
    (* name) is pointer to function
-   ...is means any number, any type parameter, only possible on last argument, va_list is type, va_start intialize, va_arg get one and step one, var_end clear
+   ...is means any number, any type parameter, only possible on last argument, on <stdarg.h> define some help macro: va_list is type, va_start(pointer, size) intialize, va_arg(pointer, type) get one and step one, var_end(pointer) clear
    int (* f)(int * ) is a pointer to function which parameter is pointer to int return int
    int * f(int * ) is a function definition which parameter is int pointer return int pointer
    function pointer can be called with <pointer variable>(args) format
-** Other
- 0 is false, otherwise is true
- read binary file should use char to receive response, if use unsigned, 0xff will convert to -1
- <limits.h> define kinds of number type bound
- if signed and unsigned operation mix, will implicit convert to unsigned, if need add bit, first add bit then convert
- pointer arithmetic is base on sizeof pointer type
- c parameter pass is by value on stack
- x & (x-1) can clear right most bit
- || and && precedence is not sure, use prancese to ensure
- + + precedence is high than *, so *p++ is equal (*p)++
- char [] = "" is different from char * = "", first will allocate on stack, modify will affect this memory, second is point to const "", modify is undefined
- two-dim array, the second dim size must be set
- [] precedence is high than *, *++argv[0] is point to argv[0][1], (*++argv)[0] is point to argv[1][0]
- any computer file is binary, what it is depende on context
- same bit convert, like unsigned -> signed will keep bit same, extend bit, 0 for unsigned, sign bit for signed, if both signed and bit length change, first extend bit then convert
- word size is machine related, equal to cpu address width
- little endian(Intel) num is store from low bit to high bit(byte is unit) with low address to high address, big endian(Sum) is opposite
- endian is important on those scenario:
-   - network
-   - assembly
-   - data on memory
- w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
- 2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
- x[a][c] is continue in memory, *x[a] is not continue in memory
- linker need perform two task:
-   1. symbol resolution, link find function or other not in current file
-   2. relocation, all object file address need relocate, assign a new address
- object file format:
+   0 is false, otherwise is true
+   read binary file should use int to receive response, if use char, 0xff will convert to -1, then -1 will be tread as EOF
+   EOF is value define in <stdio.h>
+   stack grow from high address to low, low address end is stack top
+   <limits.h> define kinds of number type bound
+   if signed and unsigned operation mix, will implicit convert to unsigned, e.g. -1 < 0 will evaluate to false
+   if opeartion need extend bit, will first extends bit with 0/1 then convert
+   pointer arithmetic is base on sizeof pointer type
+   void* is machine related pointer type(64 bit machine means void* point to structure is 8 byte)
+   \0 is string end
+   NULL is adrees 0
+   p && *p++ avoid access null
+   printf and putchar can use cross, result is call order
+   c parameter pass is by value on stack
+   % used on negative value maybe underflow/overflow, depend on compile and platform
+   operator precedence: arithmetic > relation > logic > assignment
+   when compare two number, left type will convert to right type, if convert is bettwen signed and unsigned, convert not change bit
+   when assign with convert, field value not change(but bit maybe)
+   comma operator, is in order on for init, but not ensure outside for
+   x & (x-1) can clear right most bit
+   except && and ||, other c expression evaluation is not defined, decide by compiler and platform
+   declaration is only delcare type, not malloc space. definiton is malloc space
+   .h file can used share type declaration
+   || and && precedence is not sure, use prancese to ensure
+   inner variable will hidden outside same name variable
+   declare int a, then &a get address of this variable, a is value store on this address, *a also is value store on this address
+   unary operation is right to left, e.g. *ip++ euqals *(ip++)
+   char [] = "" is different from char * = "", first will allocate on stack, modify will affect this memory, second is point to const "", modify is undefined
+   two-dim array, the second dim size must be set
+   [] precedence is high than *, *++argv[0] is point to argv[0][1], (*++argv)[0] is point to argv[1][0]
+   any computer file is binary, what it is depende on context
+   same bit convert, like unsigned -> signed will keep bit same, extend bit, 0 for unsigned, sign bit for signed, if both signed and bit length change, first extend bit then convert
+   word size is machine related, equal to cpu address width
+   little endian(Intel) num is store from low bit to high bit(byte is unit) with low address to high address, big endian(Sum) is opposite
+   endian is important on those scenario:
+    - network
+    - assembly
+    - data on memory
+   w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
+   2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
+   x[a][c] is continue in memory, *x[a] is not continue in memory
+   linker need perform two task:
+    - symbol resolution, link find function or other not in current file
+    - relocation, all object file address need relocate, assign a new address
+   object file format:
    - linux: at first is COFF(common object file format), then change to ELF(executable and linkable file format)
    - windows: PE(portable executable)
- library file (extension is .a) is only need when previous object file miss some definition
- share library (extension is .so on unix, .dll on windows), load on run time, multiple program share library on memory, reduce memory usage.
- when exception, use exception table indirect jump to exception handler, exception handler is diff with producer call:
+   library file (extension is .a) is only need when previous object file miss some definition
+   share library (extension is .so on unix, .dll on windows), load on run time, multiple program share library on memory, reduce memory usage.
+   when exception, use exception table indirect jump to exception handler, exception handler is diff with producer call:
    - return address is decide by exception type
    - flags will be maintain
    - will run at kernel level
- when child process terminate, os will keep it state until parent process repeat it. If parent forget reaped child process, those process named zombie process.
- Init process will handle all process reaped, long time run process need carefully handle child process terminate, because it is hierarchy, init only reaped it direct process
+   when child process terminate, os will keep it state until parent process repeat it. If parent forget reaped child process, those process named zombie process.
+   Init process will handle all process reaped, long time run process need carefully handle child process terminate, because it is hierarchy, init only reaped it direct process
 * gcc
   -O set optimize level
   -S generate assembly code
@@ -75,6 +95,7 @@
   -masm=intel, default is att
   -static set use static library, only copy used file
   -shared -fPIC -o xx.so create a share library
+  if link 32 bit object error, install gcc-multilib to fix
 * gdb
   x/17xb
   gdb xx start gdb
@@ -143,43 +164,47 @@
   LIB set library file
   SRCS source file
 * API
- strlen is size of character, not include \0
- fopen open new file, get a file descriptor
- fprintf(fd, character) output to fd
- flose(fd) close a file descriptor
- xrand48 use to generate random value, srand48 set seed
- fgets(fd) get character from fd one by one
- getchar() get character from stdin
- putchar() put character to stdout
- strcat(char *[], char* []) concat str
- squeeze(char *[], char) delete special char
- strpbrk(char *[], char *[]) location sub-str
- strstr(char *[], char *[]) location sub-str
- strchr(s,c) location sub-str
- getbits(x,p,n) return n bit start from p of x
- isspace
- isdigit
- strtol convert string to long
- strtod convert string to double
- system("xx") call command xx
- waitpid will wait child process finish, argument control single/group/all, sync/async
- sleep(unsigned int secs) let process sleep, return 0 when already sleep enough, bigger than 0 when be interrupted, return value is left time to slept
- when fork a child process, with same stack, register, file description and so on. return twice
- execve use current process run argument special program. never return
- exit will exit a process
- wait, wait a process terminate
- kill, send signal to process
- signal, register a asynchronies signal handler for current process, SIGKILL and SIGSTOP can't be change
- sigprocmask, block/unblock/mask signal, use with sigemptyset, sigaddset, sigdeleteset
- setjmp, longjmp, first call setjmp(buf), will return 0, the buf record pc, stack and register, then continue execute, longjmp(buf, code) can go to buf record location, code is setjmp return value, so setjmp call once return multiple times, first is set, then is setjmp goto with code, longjmp never return
- mmap, create a virtual memory map to a file
- munmap destroy a virtual memory
- malloc create virtual memory, not initialize
- calloc create virtual memory and initialize to 0
- realloc, realloc a memory base on allocated memory
- sbrk grow/shrink heap size
- dup2(fd1, fd2), close fd2, then set fd1 to fd2
- select(int numfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout), is synchronous IO multiplexing, fd_set is a file description set, some MACRO is operation for this, FD_ISSET,FD_SET,FD_CLR, any socket match condition will return, timeval set to 0 means return immediate, NULL never timeout
+  strlen is size of character, not include \0
+  fopen open new file, get a file descriptor
+  fprintf(fd, character) output to fd
+  flose(fd) close a file descriptor
+  sscanf(char *, char *, pointer1, pointer2, ...), on order get value from 1st parameter use 2nd parameter provide format to pointer1, pointer2 ..
+  scanf(char *, pointer1, pointer2, ...), get input from keyboard with arg provided format to pointer1, pointer2, ..
+  xrand48 use to generate random value, srand48 set seed
+  fgets(fd) get character from fd one by one
+  getchar() get character from stdin
+  putchar() put character to stdout
+  strcat(char *[], char* []) concat str
+  squeeze(char *[], char) delete special char
+  strpbrk(char *[], char *[]) location sub-str
+  strstr(char *[], char *[]) location sub-str
+  strchr(s,c) location sub-str
+  getbits(x,p,n) return n bit start from p location of x
+  isspace, from ctype.h
+  isdigit, from ctype.h
+  strtol convert string to long
+  double strtod(char *src, char *left), convert string to double, left character is put in left
+  system("xx") call command xx
+  waitpid will wait child process finish, argument control single/group/all, sync/async
+  sleep(unsigned int secs) let process sleep, return 0 when already sleep enough, bigger than 0 when be interrupted, return value is left time to slept
+  when fork a child process, with same stack, register, file description and so on. return twice
+  execve use current process run argument special program. never return
+  exit will exit a process
+  wait, wait a process terminate
+  kill, send signal to process
+  signal, register a asynchronies signal handler for current process, SIGKILL and SIGSTOP can't be change
+  sigprocmask, block/unblock/mask signal, use with sigemptyset, sigaddset, sigdeleteset
+  setjmp, longjmp, first call setjmp(buf), will return 0, the buf record pc, stack and register, then continue execute, longjmp(buf, code) can go to buf record location, code is setjmp return value, so setjmp call once return multiple times, first is set, then is setjmp goto with code, longjmp never return
+  mmap, create a virtual memory map to a file
+  munmap destroy a virtual memory
+  malloc create virtual memory on heap, not initialize, when not use, use free to free
+  calloc create virtual memory and initialize to 0
+  realloc, realloc a memory base on allocated memory
+  sbrk grow/shrink heap size
+  dup2(fd1, fd2), close fd2, then set fd1 to fd2
+  select(int numfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout), is synchronous IO multiplexing, fd_set is a file description set, some MACRO is operation for this, FD_ISSET,FD_SET,FD_CLR, any socket match condition will return, timeval set to 0 means return immediate, NULL never timeout
+  getc(*fp) get character from file handler
+  putc(*fp) put character to file handler
 * Tools
  echo $? get previous command exit code
  xxd -c <line_byte_number> -g <group_number> -s <offset> <input file> explore file by hex value
