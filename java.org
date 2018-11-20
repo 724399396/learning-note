@@ -103,13 +103,13 @@ spring core is IoC and AOP
 IoC is let container maintain object lifecycle
 ** IOC
    two initial way:
-     1) BeanFactory only IoC, initialize lazy
-     2) ApplicationContext, extend from BeanFactory, support AOP, egar initialize
+     1. BeanFactory only IoC, initialize lazy
+     2. ApplicationContext, extend from BeanFactory, support AOP, egar initialize
    bean initialize way:
-     1) default constructor
-     2) factory-method set initialize method of this class static method
-     3) set factory-bean and factory-method
-     4) <constructor-arg>, can set by type, by index or by name
+     1. default constructor
+     2. factory-method set initialize method of this class static method
+     3. set factory-bean and factory-method
+     4. <constructor-arg>, can set by type, by index or by name
    cycle depedency will throw BeanCurrentlyInCreationException
    constructor:
       <null/> use to set null
@@ -144,6 +144,8 @@ IoC is let container maintain object lifecycle
    HandlerInterceptor intercept request before handle, after handle then after view resolve
    <welcome-file-list> set 404 error page
    
+** configuration
+   legacy way is xml config file
 * Servlet
 ** Lifecycle
    The servlet is initialized by calling the init() method. only called once
@@ -164,23 +166,25 @@ IoC is let container maintain object lifecycle
    - partial path
    - extension
    - default
- filter can be called for every request
-   
+** filter
+   filter will execute before servlet, filter order is declare order in xml config
+** listener
+   listener will execute when some event is trigger
 * Guava
 ** MultiSet and MultiMap
-   used count duplicate
+   used count, find duplicate
 ** Iterators
-   support pipe operator
+   support pipe operator, sort, inverse, find, statistics
 ** ForwardingList
-   need implement delegate, this method define which class implement behind this, can override any you want custom method.
+   implement delegate method, then every method will execute on delegate return object
 ** PeekingIterator
-   can access next element after current, will cause iterator go to next, next access direct use this field
+   can access next element after current, will cause iterator go to next, next access direct use previous cache field 
 ** AbstractIterator
-   need implement computerNext(), like filter
+   need implement computerNext(), return what your want return, can used as filter function
 ** AbstractSequential
-   support stream opeartion
+   like functional stream
 ** LaodingCache
-   get used to access no exception value, getUnchecked access maybe throw exception, loadAll describe by self
+   get() used to access no exception value, getUnchecked() access maybe throw exception, loadAll load multiple value
 ** Cache
    base on time or capacity or reference type eviction
 * Maven
