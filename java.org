@@ -1,34 +1,44 @@
 * Mybatis
+general usage:
+ - Blog blog = (Blog) session.SelectOne(<mapper name>, args)
+ - BlogMapper mapper = session.getMapper(<mapper class>)
+   Blog blog = mapper.selectBlog(arg)
+
 namespace is used to distinct mapper file, good practice is keep same with java class full path
 SqlSession is not thread safe
-typeHandler is used to convert between sql data and java object
-ObjectFactory used to from sql data to build java object
+SqlSessionFactory is best only create single instance
 ** basic query
     - (ExpectType) session.selectOne("<mapper file full name>", id)
     - session.getMapper(class).selectXX(id)
 ** page limit
    use RowBounds class
-** DSL 
-*** typeAliases
-    set type aliases
-*** id
+** mapper file 
+  - id
     set this column is id, useGeneratedKeys set this id is from database generated
-*** resultType
+  - resultType
     this column return type
-*** resultMap
+  - resultMap
     custom type for this column return
+  - constructor
+    set return type constructor, maybe argument <idArg> <arg>
+  - association
+    complicate object
+  - cache
+    define cache on/off, choose cache implementation
 ** Dynamic sql
    #{x} in dynamic sql is from two source, one is get("x") method, another is getX(), get("x") is high priority.
-   <if test="<condition>"> <sentence></if>
+   <if test="<condition>"> <sentence></if>, add sentence when test condition return true
+   <choose>
    <where test="<condition"></where> can handle where and and nicely
    <set> can handle set and , nicely
-   <foreach>
+   <foreach>, iterate over collection
 ** setting
-   <setting name="logIm
-
-   
-
-    
+   - <properties> set property key value
+   - <typeAliases> set type aliases
+   - <typeHandler> is used to convert between sql data and java object, there are some general typeHandler, 
+     EnumTypeHandler is used for convert bettwen enum and int
+   - <objectFactory> used to from sql data to build java object, can extend from DefaultObjectFactory
+   - <setting name="logIml" value="STDOUT_LOGGING"/> let logback print out sql
 * Elastic Search
   use bin/elasticsearch start es, default port is 9200
   bin/plugin -i install plugin
@@ -121,7 +131,6 @@ IoC is let container maintain object lifecycle
    <welcome-file-list> set 404 error page
    
        
-   
 * Servlet
 ** Lifecycle
    The servlet is initialized by calling the init() method. only called once
