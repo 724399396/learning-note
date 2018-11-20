@@ -40,20 +40,31 @@ SqlSessionFactory is best only create single instance
    - <objectFactory> used to from sql data to build java object, can extend from DefaultObjectFactory
    - <setting name="logIml" value="STDOUT_LOGGING"/> let logback print out sql
 * Elastic Search
-  use bin/elasticsearch start es, default port is 9200
-  bin/plugin -i install plugin
-** http api
-  Get to query data
-  Put to insert data
-  location is <index>/<type>/<id>
-  <location>/_search?q=<condition> or POST <location>/_search pass query condition to query data
-  Index(table) -> Document(row) -> Field(cell)
-  _shutdown shutdown es
-  _plugin/<plugin name> access plugin
+  bin/elasticsearch start es, default listen port is 9200
+  bin/plugin -i, install plugin
+  document is index/search base unit
+  structure: indices(database) -> types(table) -> document(row) -> field(column)
   filter like where, aggregation like group
-  _cluster/health get every node info
   shard is basic data unit, one index include multiple shard, only exist one primary shard, exist zero to many replica shard
-  primary shard is decide when start up, can't changed except restart, replica shar
+  primary shard is decide when start up, can't changed, replica shard can change, search will get data from primary and replica together
+  unassigned_shard is shart that not assigned to node
+** http api
+  - Get to query data
+  - Put to insert data
+  - url patten is <index>/<type>/<id>
+  - <location>/_search?q=<condition> or POST <location>/_search pass query condition to query data
+  - q=<value> means equal, q=-<value> means not equal 
+  - _shutdown, shutdown es
+  - _plugin/<plugin name> access plugin
+  - _cluster/health get cluster health info
+  - put /index 
+    {
+      "settings": {
+        "number_of_shards": <num>,
+        "number_of_replicas":  <num>
+      }
+    }
+    change index shard setting
 * Concurrency
   mutable is root cause when concurrency
   count++ is race condition, also is data race
@@ -130,7 +141,6 @@ IoC is let container maintain object lifecycle
    HandlerInterceptor intercept request before handle, after handle then after view resolve
    <welcome-file-list> set 404 error page
    
-       
 * Servlet
 ** Lifecycle
    The servlet is initialized by calling the init() method. only called once
