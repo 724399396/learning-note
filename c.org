@@ -190,13 +190,13 @@
 * Compile work flow
   [[./compile-work-flow.png]]
 ** Preprocessor
-   read all start with #, replace include content, generate .i file
+   read all sentence start with #, replace include content, generate .i file
 ** Compiler
-   generate assembly
+   generate assembly, generate .s file
 ** Assembler
-   assembly -> binary
+   assembly -> binary, generate .o file
 ** Linker
-   combine every binary file(.o), generate a execute file
+   combine binary files(.o), generate a execute file
 * Operation system
    any computer file is binary, what it is depende on context
    word size is machine related, equal to cpu address width
@@ -223,9 +223,10 @@
    when child process terminate, os will keep it state until parent process repeat it. If parent forget reaped child process, those process named zombie process.
    Init process will handle all process reaped, long time run process need carefully handle child process terminate, because it is hierarchy, init only reaped it direct process
 ** Process/Thread
-  process provide a abstract, every process can use whole system resource
+  process provide a abstract, every process look like use whole system resource
   different process switch by context-switch
-  Thread is base on process, one process can have multiple thread
+  Thread is base on process, one process can have multiple thread, different thread on same process can share data
+  multi-core and hyperthreaded provide a parrallel runtime environment
   system provider three abstraction:
    - file is io device abstraction
    - virtual memory is file and main memory abstraction
