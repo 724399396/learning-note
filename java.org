@@ -240,6 +240,7 @@ IoC is let container maintain object lifecycle
   implement method is defaultReadObject/readObject of class ObjectOutputStream/ObjectInputStream,
   if class implement writeObject/readObject, then use those implements. SerilizalVersionUID use to demonstrate
   the class is same class, static field can't be serilize, @Transient will not be write out, set to default value when deserilize
+  try catch finally, if finally contain return, will use finally return as final value
 * debug
   JAVA_OPTS or CATALINA_OPTS add -agentlib:jdwp=transport=db_socket,server=y,suspend=n,address=<port> to enable remote debug
   javap, is decompile tool, -c decompile to bytecode
