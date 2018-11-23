@@ -221,7 +221,9 @@ source <(minikube completion <shell type>), need install bash-completion
 * Volume/ Persistent Volume 
   containers in same pod share cpu, ram, network interface but not share disk 
   volume is not top resource, it is part of pod, share same lifecycle with pod, containers in this pod can see this volume, container restart not lose data 
-  container want access volume, need declare volumeMount in container spec 
+  container want access volume, need declare volumeMount in container spec
+  Pod.spec.containers.volumeMounts.name to ref Pod.spec.volumes.name
+  Pod.spec.containers.volumeMounts.mountPath set mount path
   volume types:  
   - emptyDir, empty directory used for storing transient data 
   - hostPath, used for mounting directories from the worker node's filesystem 
@@ -232,6 +234,9 @@ source <(minikube completion <shell type>), need install bash-completion
   - configMap, secret, downwardAPI—special type used to expose certain k8s resource to pod 
   - PersistentVolumeClaim – a way use pre- or dynamic provisoned persistent storage 
   emptyDir data will lost when pod be deleted 
+  Pod.spec.volumes.empotyDir.medium: Memory, create a in memory tmpfs
+  gitRepo is base on emptyDir, then gets populated by clone a git repository, those step before container are created
+  gitRepo content only fetch when created, new commit not affect, but recreate pod will fetch new content
   persistenVolume is not belog to any namespace, is share by whole k8s 
   persistenVolumeClaim is belong to namespace, only can used by same namespace pod 
   rWO(read write once), RWX(read write many), ROX(read only many),  time ones same time how many ndoe can access(not pod) 
