@@ -4,7 +4,8 @@
   companion object apply call by className(), class apply call by instance()
   function is object, apply is function body
   try catch finally is also a expression, value is try or catch value, finally execute but not as expression value, but if finally call return, use finally result(java will keep try block return)
-  _* change seq to variadic argument
+  _* change seq to variadic argument, _* also used in match case means any element in list
+  case match can match type, mention type-earsure(Array is implement as java Array, type is keep)
   closure means if function is out of function variable, will bind to fact variable, not just a value, be captured value will be replace from stack to heap by compiler
   final can prevent method/field be override or class be extend
   trait can mix multiple, class can't
@@ -12,12 +13,14 @@
   rich interface is means has kinds of method interface, client use easy but implement is hard
   thin interface is means little method interface
   trait <A> extends <B> means mixed trait A must mixed trait B
+  if trait recompile, not affect subclass mixed trait(if class not recompile)
+  in trait, this : <other type> => means this trait must mixed with other type
   scala everything is amost object
   def funcName {}, define a function
   for (i <- list) iterate element, the variable i is immutable
   <low> to <up> by <step> generate Range, can omit by <step> then step is 1
   (<e1>,<e2>) construct tuple, _1 or _2 access element
-  class <Name>(<args>) {body} define a class, all body is execute when create instance, def this() is help constructor(execute after initial sentence), args can has modifier like private/override
+  class <Name>(<args>) {body} define a class, all body is execute when create instance, def this() is help constructor(execute after initial sentence), args can has modifier like private/override, arg is pass by value
   object <Name> defined a singleton object
   define a object use name same as class, then this object is called companion object, they can access each other
   plcae class to companion object to hide implement detial for client
@@ -29,12 +32,12 @@
   Any is root object type, Nothing is bottom object type, AnyVal is primary type root type, AnyRef is reference type root type, Unit is AnyVal subclass, all AnyVal is abstract, can't new only exist literal
   method ends with `:` is right association
   "reg".r is regular expression
-  xx match { case <match> [if <condition>]  => } is pattern match format
+  xx match { case <match> [if <condition>]  => } is pattern match format, literal match literal self, Upper start is literal, lower start is virable, `` is literal
+  <a>@<b>, in pattern match, a is b alias
   <instance>(<arg>) = <newValue> equal to instance.update(arg, newValue)
   :: concat elem and list, ::: concat list and list
   Console.err is standard err stream, Console.stdout is standard stream
-  iterator can only iterate once
-  every type can convert to Unit, if method not use concat `=` define and body, result will be Unit
+  every type can convert to Unit, if method not use concat `=` define and body, result will be Unia
   scala can put class file in any .scala file
   integral is basica number type, numeric is float type
   scala and java.lang package is auto imported
@@ -43,12 +46,11 @@
   """<string>""" define raw string, don't need any escape, | trim lead space
   'a is symbol a
   -2.0 is equal to (2.0).unary_-, only +, -, !, ~ can use as unary prefix operator
-  == will call equals method, compiler will avoid NPE, eq compare object address, ne is symmetric
+  == is define in Any, will call equals method, compiler will avoid NPE, eq compare object address, ne is symmetric, == call equals, don't try override == method
   scala method first character decide precedence, = ended is lowest precedence, last character decide association order
   require can used to check argument
   assert(condition) assert(condition, explanation) used to check state
   ensure(condition) used to check result
-  implicit is use to convert type implicitly
   scala assignment return type is Unit
   for <clause> yield <body>
   throw <exception>, exception can pattern match in catch
@@ -72,11 +74,118 @@
   scala permission modifer is scoped, e.g. private filed can be access from inner object
   private[X], X can be private,protected,this
   because foldRight is not tail rec, will cause stackoverflow, foldRight can use foldLeft to presentation, two way implement:
-   - foldRight f acc xs = foldLeft (x y -> f y x) acc (reverse xs)
-   - foldRight f acc xs = (foldLeft (x y -> z -> x(f y z)) (x -> x) xs) acc
+  - foldRight f acc xs = foldLeft (x y -> f y x) acc (reverse xs)
+  - foldRight f acc xs = (foldLeft (x y -> z -> x(f y z)) (x -> x) xs) acc
   trait Map[Key,Value] extends (Key => Value)
   trait Seq[Elem] extends (Int => Elem)
-  case { xx => yy } is a PartialFunction, compiler auto generate isDefiendAt function for top level case
+  case { xx => yy } is a PartialFunction, compiler auto generate isDefiendAt function for top level case, PartialFunction can concat use orElse
+  case class support pattern match(extractor), case class and case object field is immutable, case calss implement Serializable interface
+  case class extractor is implement by unapply method, for no field return type is Boolean, for one field return type is Some[T], otherwise is Option[TupleN]
+  case modifier has 3 effect:
+  - factory method
+  - all field is val
+  - auto toString hashCode euqals
+  isInstanceOf[] test is some type
+  asInstanceOf[] try to convert to some type
+  sealed let all child class must in same file(avoid other location extends)
+  <variable> : @<annotaiton>, use annotation, annotation can attach on val var def class object trait and type
+  common anotation:
+  - @deprecated
+  - @volatile
+  - @serializable
+  - @SerialVersionUID
+  - @transient
+  - @scala.reflect.BeanProperty
+  - @unchecked
+  - @throw
+  pattern matching also work on define val/var
+  for xx <- yy, xx also can use pattern matching
+  covariant: declaration C[+T], if S is T subclass, then C[S] is C[T] subclass
+  contravariant: declaration C[-T], is S is T subclass, then C[T] is C[S] subclass
+  for private[this] varibale, scala not check variant, because no outside can access this field
+  type inference is from left to right, scala is Rank 1 type, if method has multiple argument or one argument need infer multiple type, it not work
+  keyword `type` define a type alais
+  += -= ++= is syntax sugar, a += b convert to a = a + b
+  private var auto generate getter and setter, e.g. private var x, then x is get method, x_= is set method
+  val <variable> : <type> = _, initialize variable to zero value
+  for function, argument is contravariant, return value is covariant
+  override rule:
+  - val only override by val
+  - def override by val/def
+  initialize order: trait -> class -> field, two way change order:
+  - new {initialize sentence} extends class, or object x extends {init} superclass
+  - use lazy
+  path depencency type, e.g class A has inner class B, then different A instance's inner class B is different type, it type is A#B
+  Enumeration is implement by path dependency type, enum type is 0 based, type is <Enum>.Value
+  implicit rule:  
+  1. only define with implicit then can reference by implicit  
+  2. implicit value must in scope  
+  3. only one appropriate implicit in scope  
+  4. only one implicit can use at one convert  
+  5. for type already match, can't implicit change  
+  implicit location:  
+  1. type mismatch  
+  2. need a method not exist in current type  
+  3. need a parameter, method must be currying and need argument modified with implicit  
+  for loop will compile to hign order function, single generator = map, multiple generator = flatMap + map, single/multiple process = foreach, if = filter  
+  implement flatMap and filter then support for loop
+  equals is complicated when envolve subclass, is subclass not consider parent class, will break symmetric, because t equals st will be true, but st euqlas t always false, but if subclass consider parent class, will break transitive, st1 eq t be true, st2 eq t be ture, but st1 not eq st2  canEqual used solve this, define canEqual as a.isInstanceOf[<this type>], then call with that canEqual this  
+  array hashCode need calculate by java.util.Arrays.hashCode  
+  @annotation.tailrec let compile check is can optimize  
+  fp vs oop, fp central is verb, design bottom up, op central is nous, degisn top down
+  misfunction equals:
+  1. override euqlas, but arg type is not Any
+  2. not override hashCode
+  3. depend on mutable field
+  4. euqlas is error
+  scala identifier precedence: local declaration > explicit import > wild import > same package declaration
+  method view and force can change between lazy and strict collection
+  par and seq can change between sequential and parrallel collection
+* Api
+  scala.language.postFixOps define well Duration format, e.g. 1826 minutes
+  scala.async.Async._ define async { await {}} syntax
+  List constructor from ::(Cons) and Nil, List is covariant
+  head, get list first element
+  tail, get element except first of list
+  isEmpty, is List empty
+  :: is method of Nil and List, also is a class, so :: work in pattern match
+  indices, return list range
+  zip, concat two list to list[(A,B)]
+  zipWithIndex, change list to List[(A,Int)]
+  mkString(prefix, sep, postfix), concat iterable to prefix + [element + [seq]] + postfix
+  addString(StringBuilder, prefix, sep, postfix), like mkString, result append to StringBuilder
+  copyToArray(dest array, start), copy list ement from start to array
+  takeWhile p, return element until p not match
+  dropWhile p, drop element until p not match
+  splitAt n = (take n, drop n)
+  partition p = (filter p, filter !p)
+  span p = (takeWhile p, dropWhile p)
+  find return first match element, result is Option[T]
+  foldLeft can write as (z /: xs)(op)
+  foldRight can write as (xs :/ z)(op)
+  List.range(from, until) or List.range(from,until.step) generate range List
+  Iterable is a trait, method elements return Iterator
+  Iterator is a trait
+  Iterator can only iterate once, Iterable can iterate any times
+  ListBuffer is mutable, +: add element to prefix, += append element to end, can change to List
+  ArrayBuffer is length changeable Array
+  Queue is first-in-first-out, enqueue put element in, dequeue get element out
+  Stack is first-in-last-out
+  RichString is subtype of Seq[Char]
+  Set and Map has common mathod:
+  1. + add element
+  2. ++ add elements
+  3. - remove element
+  4. -- remove elements
+  5. ** get intersection
+  TreeSet is ordered Set, TreeMap is ordered Map
+  Array is nonvariant
+  scala.util.matching include regular expression lib, new Regex(<pattern>) or <pattern>.r create regex, methods has findFirstIn, findAllIn, findPrefixOf or use pattern matching
+  Stream is lazy List, tail is keep be a trunk, constructor way:
+  1. def x(a: A): Stream[A] = a #:: x map xx
+  2. def treans(a: A): Stream[A] = a.head #:: a.tail some f
+  3. lazy val x: Stream[A] = a #:: x map xx
+  GenSet is common super class of Set and ParSet
 * frp(function reactive programming)
   signal is use to replace event, signal can update, all depend on this signal's signal will be updated
   simple implement:  keep a stack, stack top is it's next level's observer, bottom is above's notifier, when call update, will cancel all notify this signal's notifier, because this signal watch value changed, then push this signal to stack top, evaluate new value, then cancel all this signal notifited(it will re-added on their update)
@@ -87,46 +196,244 @@
   Future {blocking {call}} {ExecutingContext} use current thread to execute
   ExecuteContext has a implicit parameter
   Future has two state, uncomplete and complete, complete has success and failure status
-  Future's value can assign once
+  Future's value can only assign once
   onComplete(Try[T] => Unit) is callback when future complete
   onSuccess(T => Unit) is only called when success
   onFailure(Throwable => Unit) is only called when failure
-  recover(Throwable => Unit) execute when failure, return a backup value
+  onXXX is degisn to return Unit, so correct concat feature is use map or flatMap
+  recover(Throwable => T) execute when failure, return a backup value
   recoverWith(Throwable => Future[T]) execute when failure, cover failure use new Future
   fallbackTo(Throwable => Future[T]), most same as recoverWith, but if failure again, recoverWith return second future error, this method return first future failure
-  andThen(T => Future[T]), execute when previous future finish, is in order execute
+  andThen(T => Future[T]), execute when previous future finish, is in order execute(same as flatMap)
   Awaitable is used to test future
   Await.result(Future, delay time) after duration time return T
-  Promise is a carrier for Future, can use success/failure/complete to assign, only assign only once
-* Library
-** quickCheck
-   let class extend Peropeties, forAll { a: Type => xx }, a is generated, last expression is bool
-** actor 
+  Promise is a carrier for Future, can use success/failure/complete to assign, only assign once, Promise.feture get Feature
+  scala.language.postFixOps defined duration syntax, e.g 128 minutes
+  scala.async.Async._ define async await syntax
+  Try -> Feature is like iterable -> observable, observable is asynchronize iterable
+  cold observable is side effect, not shared by susbcrition. Hot observable is no side effect, share by subscrition
+* Akka actor 
+   // TODO
    only interact with message
-   !(send) send message to a actor
-   self means self
+   !/send send message to a actor asyncrhonize
    actorOf create a child actor
+   reveice method of Actor is a partialfunction
+   ActorRef is action instance ref type
+   varaible sender get message sender, pass by ! method
+   become, unbecome, let actor as a state machine
    stop, stop a actor
    context.parent get creator
    context.system.scheduler.scheduleOnce(duration) {block} execute a callback after set time duration on other thread
    override supervisorStrategy change failure strategy
    extend PersistenActor and implement persist to persist event
-* Api
-  scala.language.postFixOps define well Duration format, e.g. 1826 minutes
-    scala.async.Async._ define async { await {}} syntax
+   extend ActorLogging let actor record log easy
 * Repl Scala(command)
   scala, start repl
   | is mutiple line input mode
   :cp import class file 
 **  scala unix shell script
- #+BEGIN_CENTER bash
- #!/bin/sh
- exec scala "$0" "$@"
- #+END_CENTER
+   #+BEGIN_CENTER bash
+   #!/bin/sh
+   exec scala "$0" "$@"
+   #+END_CENTER
 ** scala
-  scala <file>, execute scala file
-  -cp, set class path
-  -g:notailcalls, close tail rec optimization
+   scala <file>, execute scala file
+   -cp, set class path
+   -g:notailcalls, close tail rec optimization
+   -Xprint:typer, help debug implicit
 
 * jvm options
-JAVA_OPTS="" scala, config jvm argument
+  JAVA_OPTS="" scala, config jvm argument
+* Function vs Method
+  method is defined by def xxx, is primary unit of jvm
+  function is subclass of FunctionN trait, create from lambda literal or convert from method use _ syntax
+  function is more expensive thant method, because function call apply method to evaluate
+  method can have generic type, e.g. def method[T](arg: T)
+  function call is method call on function object apply method
+  case xx => {} is compiler to PartialFunction
+* sbt
+  sbt, into sbt shell
+  %% vs %, groupId %% artifactId % version, let artifactId change to artifactId_scalaVersion
+  sbt is base on task, every task have return value
+  setting is special task, execute on every session init
+  task is scoped
+** command
+   clean, clean compile result(target directory)
+   compile, compile project 
+   ~compile, watch source code, when change auto compile
+   run, run project Main
+   inspect <xx>, show task xx info
+   inspect tree <xx>, show task dependency tree for xx
+* scalajs
+  //TODO
+  in project/plugins.sbt add
+  #+BEGIN_SRC sbt
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % version)
+  #+END_SRC
+  in build.sbt addSbtPluginenablePlugins(ScalaJSPlugin)
+  extend JSApp, write logic in main
+  sbt run to execute
+  sbt last to get execute engine, default is org.scalajs.jsenv.rhino.RhinoJSEnv to interpreter execute, in build.sbt set scalaJSUseRhino in GLobal := false to change to node execute, need npm install source-map-support
+  sbt fastOptJS, generate a dev env html file
+  sbt fullOptJS, generate a prod env html file
+* Play framework
+  //TODO
+** project structure
+   app                      → Application sources 
+   └ assets                → Compiled asset sources 
+   └ stylesheets        → Typically LESS CSS sources 
+   └ javascripts        → Typically CoffeeScript sources 
+   └ controllers           → Application controllers 
+   └ models                → Application business layer 
+   └ views                 → Templates 
+   build.sbt                → Application build script 
+   conf                     → Configurations files and other non-compiled resources (on classpath) 
+   └ application.conf      → Main configuration file 
+   └ routes                → Routes definition 
+   public                   → Public assets 
+   └ stylesheets           → CSS files 
+   └ javascripts           → Javascript files 
+   └ images                → Image files 
+   project                  → sbt configuration files 
+   └ build.properties      → Marker for sbt project 
+   └ plugins.sbt           → sbt plugins including the declaration for Play itself 
+   lib                      → Unmanaged libraries dependencies 
+   logs                     → Standard logs folder 
+   └ application.log       → Default log file 
+   target                   → Generated stuff 
+   └ scala-2.10.0             
+   └ cache               
+   └ classes            → Compiled class files 
+   └ classes_managed    → Managed class files (templates, ...) 
+   └ resource_managed   → Managed resources (less, ...) 
+   └ src_managed        → Generated sources (templates, ...) 
+   test                     → source folder for unit or functional tests
+** other
+   sbt new playframework/play-scala-seed.g8 quick setup a play project
+   template in app/views will compolie to function, function name contract from <name>.scala.html to views.html.<name>
+   play.api.mvc.Action is type alias for play.api.mvc.Request => play.api.mvc.Result
+   play.api.mvc.SimpleResult return simple result, has method Ok, NotFound, BadRequest, InternalServerError, Status, Redirect, as(<type>) change Content-Type, withHeaders(Map) change headers
+   withCookie set cookie, discardingCookies let cookie expire
+   withSession, create/delete/modify session info, request.session get session
+   in conf/routes file, :<path> match one level path, *<path> match any nested path, $<path><reg> match by regular expression
+   play.api.mvc.Codec is global encode
+   config file is under /conf/application.conf, use paly.api.play.current.configration get content
+   public file is static resource file location, dispatch from routes
+   modules: deadbolt(UAC), pdf, redis, sass
+   routes.xx refrence url address by variable, type safe, easy refactor
+   
+* Spark
+  $SPARK_HOME/bin/spark-shell, go to scala console mode
+  RDD(Resilient Distribute Dataset)
+  <rdd>.count, count number
+  <rdd>.collect, collect result from all node
+  <rdd>.filter(A => Boolean)
+  <rdd>.reduce((acc,x) => newAcc)
+  <pair rdd>.reduceByKey, merge value with same key
+  <rdd>.cache or <rdd>.persistent, calculate rdd to memory cache, avoid lazy recalculation mutliple time, cache using default storage level, persistent accept persistent level argument
+  $SPARK_HOME/bin/spark-submit --class <name> --master <master url>, submit spark task to cluster
+  sc.textFile(<location>), generate rdd from local fs, hdfs, hbase
+  transformation(filter,map,flatMap...) is lazy, action(reduce,collect,fold) is eager
+  PairRdd[(K,V)] is special type, has xxByKey methods(from PairRDDFunction)
+  join/leftOuterJoin/rightOuterJoin, concat two rdd to new rdd, will re partition
+  groupKey, data will transfter between node
+  reduceByKey, first reduce in same node, then transfer
+  rdd is compose by partions, partion number is decide by node core number
+  partition strategy: hash partion(base key), range partition(base key), <rdd>.partitionBy set rdd partition startegy, use cache/persistent avoid re partion, transimation(map,filter,..) use different partition startegy, xxByValues will keep previous partition
+  <rdd>.toDebugString, show rdd current info 
+  partition situtation:
+  - each partition has only on echild, narrow dependencies, not re partition. e.g. map filter, partioned join
+  - each parition has more than one child, wide dependencies, will re partion. e.g. groupBy, non partition join
+  Immutable, DAG and hof ensure spark is failure tolerent, error node will recalculation, narrow dependency is faster than wide dependency
+  spark sql is base on DataFrame, need structured data, provide schema to spark, DataFrame is type alias for DataSet[Row]
+  spark session is manage for spark sql
+  Saprk sql base unit is DataFrame
+  <rdd>.toDF(<column name>) create spark sql
+  spark.createDataFram(rowRdd, schema) create spark sql
+  SparkSession.sql(<sql>) execute spark sql
+  <data frame>.show(), for debug, show 20 line result
+  <data frame>.printSchema, show schema
+  <data frame>.drop, drop column contain null or NaN
+  DataSet is more type safe than DataFrame
+  spark default serialization is java serialization, Kryo is a better serialization framework
+  Boradcast variable is send to every execution
+  Aggregator is work like reduce in DataSet
+  Accumulator is used to record metric value
+  
+* Test
+** quickCheck
+   let class extend Peropeties, forAll { a: Type => xx }, a is generated, last expression is bool
+** ScalaTest
+   has kinds of style, e.g FunSpec FlatSpec:
+   - FlatSpec, "xx" should "yy" in {}
+   - FunSpec descript("xx") ( descript("yy") {} )
+   - FunSuit test("xx") {}
+   - WordSpec xx when { yy should { zz in {}}}
+** ScalaCheck
+   forAll (Gen | Arbitrary) { <value> => Boolean }
+   Gen can implement from map other gen or from Gen methods
+* Scalaz
+  // TODO
+** typeclass
+   Equal: === =/= asset_===
+   Ord: gt lt lte ?|? max min
+   Show: show shows println
+   Enum: |-> |=> succ succX pred predX from fromStep -+- ---
+   Functor: map lift >| as fpair strengthL strengthR void
+   Applicative: point(same as haskell pure) ap produce compose
+   Apply: ap(alias <*>) *> <* ^ |@| lift2
+   Tagged: A @@ B = Tag[A,B] unwrap unsubst
+   Writer: set tell
+   State: get put
+   \/: isLeft isRight ~ swap | getOrElse orElse ||| left right
+   Validation: success successNel failure failureNel
+   Bind: join
+   ListOps: filterM
+   Foldable: foldLeftM foldRightM
+   Kleisli: <=< compose >=> andThen
+   Zipper: focus lefts rights next previous modify
+   Id: ?? |>
+   Length: legnth
+   Index: index indexOf
+   Lens: get set mod =>= %=
+   Traversable: traverse
+   Arrow: id arr first
+   Category: id
+   COmpose: compose
+** Laws
+   functor.laws[F].check
+
+* Existential type
+  [[https://www.drmaciver.com/2008/03/existential-types-in-scala/]]
+  Array[Any] is diffrent from Array[T] forSome {type T}
+  Array[T] is short hand for Array[T] forSome {type T}
+  Array[T forSome {type T}] = Array[Any]
+  Array[T] forSome {type T} = Array[_]
+  Map[Class[T], String] forSome {type T} != Map[Class[T] forSome {type T}, String]
+  most case you want is Map[Class[T] forSome {type T}, String], it means any type as key, String as value Map
+  Map[Class[_], String] = Map[Class[T], String] forSome {type T}, means super type for all Map[Class[T], String]
+* Type bound
+<: is uper bound ,means must be subclass
+:> is lower bound, means must be superclass
+<% is view bound, means can convert to(implicit)
+A :=: B, A must be type B, used contraint outside generic in this context
+A : B, means contain a implicit from A to B[A]
+T[A <: T[A]], F bounded type
+Manifest, added from scala 2.8, type will as implicit when compile time, so you can use those type at runtime
+* scala -> java
+javap decompile class file to java code
+val is compile to method <T> <name>()
+var is complie to method <T> <name>() and void name_$eq(<T>)
+@scala.beans.BeanProperty, let scala compile generate getter/setter for java
+@scala.throws, generate throw checked exception method
+scala object compile to <name>$.class format, MODULE$ is a instance of this class
+java static class convert to scala object
+
+* Parser
+central type Parser[T]
+~ ~> ~< used to concat Parser
+rep, means 0 to many
+opt, means 1 to many
+repsep(parse, spliter)
+^^, like flatMap
+scala.util.parsing.combinator provide syntatical and lexical tools
