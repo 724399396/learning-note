@@ -1,7 +1,7 @@
 * emacs
-LC_CTYPE='zh_CN.UTF-8' emacs suppor chinese
-frame is emacs outermost window, window is window for display, buffer is a file cache
-tramp open remote file, /[protocol]:[[username@]host]:<file>
+  LC_CTYPE='zh_CN.UTF-8' emacs suppor chinese
+  frame is emacs outermost window, window is window for display, buffer is a file cache
+  tramp open remote file, /[protocol]:[[username@]host]:<file>
 ** Key map
    C means ctrl, M means alt
    C-h C-h, get help
@@ -88,3 +88,42 @@ tramp open remote file, /[protocol]:[[username@]host]:<file>
   ~ toggle upper/lower
   >> indent to right, << to left
   :sp open new window, :vsp verticle open new window
+* org mode
+  =_ * means  heading, ** means sub heading, can continue add * _=
+  Shift + TAB can collapse/expanded all headling 
+  TAB collapse/expanded current headling 
+  C-c C-p can go to previous heading, C-c C-n go to next heading 
+  M-up or M-down can move heading, M-left or M-right can increase/decrease heading level 
+  Use space and - to create bullet list, M-RET can insert new item, TAB can adjust ident, M-arrow can adjust order, S-left or S-right can change bullet list style 
+  Checked list use [/] as header, - [ ] as list item, M-S-RET create new, C-c C-c check/uncheck one  
+  C-c C-t can mark/finish/cancel a TODO item 
+  M-Shift-Ret create a new TODO item 
+  [[link][description]] use to create a link 
+  C-c C-o open link 
+  C-c C-s use scheduler to finish todo 
+  Create table: first use | create header, then C-c -, then just use TAB to adjust looklike, 
+  Use M-arrow to adjust row and column location, M-S-arrow to insert/delete row/column  
+  C-c | use to Create table on already exist data 
+  Org-table-export, org-table-import can export/insert table use different format export/import 
+  C-c + use to sum a table column 
+  C-u C-c C-l insert a file link, C-c C-l insert a link, C-c C-x C-v toggle image inline display mode 
+  <s TAB can insert code, C-c ' can use programming mode edit code, then type C-c ' again exit to org mode, C-c C-o can execute code 
+  C-c C-e start export
+* tmux
+  C-b %, split to horizontal pane
+  C-b ", split to vertical pane
+  C-b <arrow> or hjkl, move between panes
+  C-d, exit pane
+  C-b c, create new window
+  C-b n/p, switch window
+  C-b <num>, switch to <num> window
+  C-b d, detach session
+  C-b D, choose session detach
+  C-b z, switch current pane to full/minimal
+  C-b ,  rename pane
+  C-b : setw synchronize-panes on, input on every pane
+  tmux ls, show datached session
+  tmux attach -l <num>, attach to sesison
+  tmux new -s <name>, create new session
+* spacemacs
+git subtree add --prefix private/vue git@github.com:724399396/spacemacs-vue-layer.git master --squash
