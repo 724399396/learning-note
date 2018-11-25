@@ -1,358 +1,716 @@
 * Language Extension
+
 ParallelListComp, allow use syntax [(x,y)| x <- xs | y <- ys], in fact it xs and ys zip
+
 ApplicativeDo, allow Functor, Applicative use do syantax
+
 * typeclass
+
 ** Show
+
   type ShowS = String -> String
+
 *** Define
+
   class Show a where
+
     showsPrec :: Int -> a -> ShowS
+
     show :: a -> String
+
 *** API
+
     showString :: String -> ShowS
+
     showChar :: Char -> ShowS
+
     shows :: (Show a) => a -> ShowS
+
 ** Functor
+
 *** Define
+
    #+BEGIN_SRC haskell
+
    class Functor f where
+
      fmap :: (a -> b) -> f a -> f b
+
    #+END_SRC
+
 *** API
+
    #+BEGIN_SRC haskell
+
    void :: (Functor f) -> f a -> f ()
+
    #+END_SRC
+
 ** Applicative
+
 *** Define
+
    #+BEGIN_SRC haskell
+
    class Pointed f where
+
      point :: a -> f a
+
    class (Pointed f, Functor f) => Applicative f where
+
      pure :: a -> f a
+
      (<*>) :: f (a -> b) -> f a -> f b
+
      pure = point
+
    #+END_SRC
+
 *** Implmenet Functor
+
    #+BEGIN_SRC haskell
+
    fmap :: (Applicative f) => (a -> b) -> f a -> f b
+
    fmap f fa = (pure f) <*> fa
+
    #+END_SRC
+
 *** API
+
     #+BEGIN_SRC haskell
+
     forever :: Applicative m => m a -> m b
+
     when :: Applicative m => Bool -> m () -> m ()
+
     unless :: Applicative m => Bool -> m () -> m ()
+
     #+END_SRC 
+
 ** Monad
+
 *** Define
+
    #+BEGIN_SRC haskell
+
    class Applicative m => Monad m where
+
      return :: a -> m a
+
      join :: m (m a) -> m a
+
      (>>=) :: m a -> (a -> m b) -> m b
+
      (>>) :: m a -> m b -> m b
+
      return = pure
+
      join mma = mma >>= id
+
      (>>=) ma m = join $ fmap m ma
+
      (>>) ma mb = ma >>= \_ -> mb
+
    #+END_SRC
+
 *** Laws
+
     join . return = id = join . fmap return
+
     join . join = join . fmap join
+
 *** API
+
    #+BEGIN_SRC haskell
+
    filterM :: Monad m => (a -> m Bool) -> [a] -> m [a]
+
    mfilter :: (MonadPlus m) => (a -> Bool) -> m a -> m a
+
    foldM :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> m a -> m b
+
    foldM_ :: (Foldable t, Monad m) => (b -> a -> m b) -> b -> m a -> m ()
+
    replicateM :: Monad m => Int -> m a -> m [a]
+
    replicateM_ :: Monad m => Int -> m a -> m ()
+
    (<=<) :: Monad m => (b -> m c) -> (a -> m b) -> a -> m c
+
    (>>=) :: Monad m => m a -> (a -> m b) -> m b
+
    (>=>) :: Monad m => (a -> m b) -> (b -> m c) -> (a -> m c)
+
    (=<<) :: Monad m => (a -> m b) -> m a -> m b
+
    #+END_SRC
+
 ** MonadPlus
+
    #+BEGIN_SRC haskell
+
    class Monad m => MonadPlus m where
+
      mzero :: m a
+
      mplus :: m a -> m a -> m a
+
    #+END_SRC
+
    it similar with Alternative, can used to implmenet Monoid
+
    match laws:
+
      - mzero `mplus` m = m
+
      - m `mplus` mzero = m
+
      - m `mplus` (n `mplus` o) = (m `mplus` n) `mplus` o
+
      - mzero >>= f = mzero
+
      - v >>= (\x -> mzero) = mzero
+
      - v >> mzero = mzero
+
      - mplus a b >>= k = mplus (a >>= k) (b >>= k)
+
 * Functor Applicative Monad
+
   some function is similar, should use more general
+
 ** fmap liftA liftM
+
    fmap :: Functor f => (a -> b) -> f a -> f b
+
    liftA :: Applicative f => (a -> b) -> f a -> f b
+
    liftM :: Monad m => (a -> r) -> m a -> m r
+
 ** forM mapM traverse
+
    forM :: (Monad m, Traversable t) => t a -> (a -> m b) -> m (t b)
+
    mapM :: (Monad m, Traversable t) => (a -> m b) -> t a -> m (t b)
+
    traverse :: (Applicative f, Traversable t) => (a -> f b) -> f b -> f (t b)
+
 ** sequence sequenceA
+
    sequence :: (Monad m, Traversable t) => t (m a) -> m (t a)
+
    sequenceA :: (Applicative f, Traversable t) => t (f a) -> f (t a)
+
 ** ap (<*>)
+
    ap :: Monad m => m (a -> b) -> m a -> m b
+
    (<*>) :: Applicative f => f (a -> b) -> f a -> f b
+
 ** liftM2 liftM3 liftA2 liftA3
+
    liftM2 :: Monad m => (a1 -> a2 -> r) -> m a1 -> m a2 -> m r
+
    liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+
    liftM3 :: Monad m => (a1 -> a2 -> a3 -> r) -> m a1 -> m a2 -> m a3 -> mr
+
    liftA3 :: Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+
 * IO
+
   IORef, used to save/get/modify memory value in IO monad
+
 * API
+
 ** System.Environment
+
   getEnv :: String -> IO String, get environment value
+
   getArgs :: IO [String], get program called arguments
+
   getProgName :: IO String, get program self name
+
 ** System.IO.Poxis / System.IO.Windows
+
    data IOMode = ReadMode | WriteMode | AppendMode | ReadWriteMode
+
      - ReadMode, only read, throw exception if not exist
+
      - WriteMode, only write, clear content if file exist, create new if not exist
+
      - AppendMode, only write, append to end if file exist , create new if not exist
+
      - ReadWriteMode, read/write
+
    hFileSize :: Handle -> IO Integer, get file size
+
    hClose :: Handle -> IO ()
+
    readFile :: FilePath -> IO String, ReadMode
+
    writeFile :: FilePath -> String -> IO (), WriteMode
+
    appendFile :: FilePath -> String -> IO (), AppendMode
+
    openFile :: FilePath -> IOMode -> IO Handle, ReadWriteMode
+
    hSeek :: Handle -> SeekMode -> Integer -> IO ()
+
    hTell :: Handle -> IO Handle, get handle current location
+
    hIsEOF :: Handle -> IO Bool
+
    hGetChar :: Handle -> IO Char, get a character, move cursor to next location
+
    hGetLine :: Handle -> IO String, get a line, move cursor to next line
+
    hLookAhead :: Handle -> IO Char, get next character, keep cursor don't move
+
    hGetContent :: Handle -> IO String, get rest of data and close handle
+
    data BufferMode = NoBuffer | LineBUffering | BlockBuffering (Maybe Int)
+
    hSetBuffering :: Handle -> BufferMode -> IO (), change handle buffer mode
+
    hFlush :: Handle -> IO (), flush buffering data, auto called when hClose
+
    hPutChar :: Handle -> Char -> IO ()
+
    hPutStr :: Handle -> String -> IO ()
+
    hPutStrLn :: Handle -> String -> IO ()
+
    hPrint :: Show a => Handle -> a -> IO ()
+
 ** Text.Printf
+
    printf :: PrintfType r => String -> r
+
 ** System.Directory
+
    createDirectory :: FilePath -> IO ()
+
    removeDirectory :: FilePath -> IO (), remove empty directory
+
    removeDirectoryRecursive :: FilePath -> IO ()
+
    renameDirectory :: FilePath -> FilePath -> IO ()
+
    setCurrentDirectory :: FilePath -> IO ()
+
    getDirectoryContents :: FilePath -> IO [FilePath]
+
    getTemporaryDirectory :: IO FilePath
+
    removeFile :: FilePath -> IO ()
+
    renameFile :: FilePath -> FilePath -> IO ()
+
    copyFile :: FilePath -> FilePath -> IO ()
+
    findFile :: [FilePath] -> String -> IO (Maybe FilePath)
+
 ** System.Process
+
    callCommand :: String -> IO ()
+
    readProcess :: FilePath -> [String] -> String -> IO String
+
    shell :: String -> CreateProcess
+
    proc :: FilePath -> [String] -> CreateProcess
+
    createProcess :: CreateProcess -> IO (Maybe Handle, Maybe Handle, Maybe Handle, ProcessHandle)
+
    waitForProcess :: ProcessHandle -> IO ExitCode, wait a process terminate and exit
+
    getProcessExitCode :: ProcessHandle -> IO (Maybe ExitCode)
+
    terminateProcess :: ProcessHandle -> IO ()
+
 ** System.IO.Unsafe
+
    unsafePerfomrIO :: IO a -> a
+
    unsafeDupablePerformIO :: IO a -> a
+
    unsafeInterleaveIO :: IO a -> IO a, try delay IO execution as much as possible
+
    unsafeFixIO :: (a -> IO a) -> IO a
+
 ** System.Time
+
    data ClockTime = TOD Integer Integer, first argument is 1970/1/1 00:00:00, second is left picosecond
+
    getClockTime :: IO ClockTime
+
 ** Data.Time
+
 *** Data.Time.Calendar
+
     ModifiedJulianDay :: Integer -> Day, Julian Day set 1858/11/17 is first day
+
     toGregorian :: Day -> (Integer, Int, Int)
+
     isLeapYear :: Integer -> Bool
+
 *** Data.Time.Clock Data.Time.Format
+
     getCurrentTime :: IO UTCTime
+
     formatTime :: FormatTime t => TimeLocale -> String -> t -> String
+
 ** System.Random
+
    better to use mwc-random package, it run faster
+
    mkStdGen :: Int -> StdGen
+
    newStdGen :: IO StdGen
+
    random :: (RandomGen g, Random a) => g -> (a, g)
+
    randomR :: RandomGen g => (a,a) -> g -> (a, g)
+
    randomRs :: RandomGen g => (a,a) -> g -> [a]
+
    getStdRandom :: (StdGen -> (a, StdGen)) -> IO a
+
 * GHCi
+
   :set args <first> <second> <third> ..., can set arg to main function
+
   :main [<first>,<second>,<third>...], call main with argument
+
 * Monad instance
+
 ** Writer
+
    #+BEGIN_SRC haskell
+
    newtype Writer w a = Writer { runWriter :: (a, w) }
+
    
+
    instance (Monoid w) => Monad (Writer w) where
+
      return x = Writer (x, mempty)
+
      (Writer (x, v)) >>= f =
+
        let (Writer (y, v')) = f x
+
        in Writer (y, v `mappend` v')
 
+
+
    class (Monoid w, Monad m) => MonadWriter w m | m -> w where
+
      tell :: w -> m ()
+
      listen :: m a -> m (a, w)
+
      pass :: m (a, w -> w) -> m a
 
+
+
   listens :: (MonadWriter w m) => (w -> w) -> m a -> m (a, w)
+
   listens f m = do
+
     (a,w) <- listen m
+
     return (a, f w)
 
+
+
   censor :: (MonadWriter w m) => (w -> w) -> m a -> m a
+
   censor f m = pass $ do
+
     a <- m
+
     return (a, f)
+
    #+END_SRC
+
 ** Reader
+
    #+BEGIN_SRC haskell
+
    newtype Reader r a = Reader { runReader :: r -> a }
+
    
+
    instance Monad (Reader r) where
+
      return a = Reader $ \_ -> a
+
      m >>= k Reader $ \r -> runReader (k (runReader m r)) r
 
+
+
    class (Monad m) => MonadReader r m | m -> r where
+
      ask :: m r
+
      local :: (r -> r) -> m a -> m a
+
      
+
    instance MonadReader r (Reader r) where
+
      ask = Reader id
+
      local f m = Reader $ runReader m . f
 
+
+
    withReader :: (r' -> r) -> Reader r a -> Reader r' a
+
    withReader f m = Reader $ runReader m . f
 
+
+
    mapReader :: (a -> b) -> Reader r a -> Reader r b
+
    mapReader f m = Reader $ f . runReader m
+
    #+END_SRC
+
 ** State
+
    #+BEGIN_SRC haskell
+
      newtype State s a = State { runState :: s -> (a,s) }
+
      
+
      instance Monad (State s) where
+
        return x = State $ \s -> (x, s)
+
        State h >>= f = State $ \s ->
+
          let (a, newState) = h s
+
              (State g) = f a
+
          in g newState
 
+
+
      class (Monad m) => MonadState s m | m -> s where
+
        get :: m s
+
        put :: s -> m ()
 
+
+
      instance MonadState s (State s) where
+
        get = State $ \s -> (s, s)
+
        put s = State $ \_ -> ((), s)
+
    #+END_SRC
+
 ** Stream
+
    Control.Monad.Stream, can used for get value from multiple stream
+
 ** Free
+
    Free monad is wrap a functor become a monad, monad core is join :: m m a -> m a different than functor
+
    need define a seperate monadic explain to let a free monad go 'execute'
+
    #+BEGIN_SRC haskell
+
    data Free f a = Pure a | Free (f (Free f a))
 
+
+
    instance Functor f => Monad (Free f) where
+
      return = Pure
+
      Pure x >>= f = f x
+
      Free c >>= f = Free (fmap (>>= f) c)
+
    #+END_SRC
+
 ** Continuation
+
   #+BEGIN_SRC haskell
+
     newtype Cont r a = Cont { runCont :: (a -> r) -> r }
 
+
+
     instance Applicative (Cont r) where
+
       pure a = Cont \k -> k a
+
       -- cab :: Cont r (a->b) = ((a->b)->r)->r
+
       -- ca :: Cont r a = (a->r)->r
+
       -- cab <*> ca :: Cont r b = (b->r)->r
+
       cab <*> ca = Cont $ \br -> runCont cab (\ab -> runCont ca (\a -> br (ab a)))
 
+
+
     instance Monad (Cont r) where
+
       return = pure
+
       -- ca :: Cont r a = (a->r)->r
+
       -- acb :: a -> Cont r b = a -> (b->r)->r
+
       -- ca >>= acb :: Cont r b = (b->r)->r
+
       ca >>= acb = Cont $ \br -> runCont ca (\a -> runCont (acb a) (\b -> br b))
+
   #+END_SRC
+
 * Monad Transfer
+
 IdentityT m ≃ mT Identity ≃ m
+
 m1Tm2T..mn, m1T will affect innerst, mn will in outst
+
 ** MonadT class
+
 *** IdentityT
+
    no any affect, isomorphism with inner monad
+
    #+BEGIN_SRC haskell
+
    newtype Identity a = Identity { runIdentity :: a }
+
    newtype IdentityT m a = IdentityT { runIdentityT :: m a}
+
    
+
    instance (Monad m) => Monad (IdentityT m) where
+
      return = IdentityT . return
+
      m >>= k = IdentityT $ do
+
       a <- runIdentityT m
+
       runIdentityT (k a)
+
    #+END_SRC
+
 *** MaybeT
+
    #+BEGIN_SRC haskell
+
    data Maybe a = Just a | Nothing
+
    data MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
+
    
+
    instance Monad m => Monad (MaybeT m) where
+
      return = return . Just
+
      MaybeT a >>= f = 
+
        MaybeT $ do
+
          result <- a
+
          case result of 
+
            Nothing -> return Nothing
+
            Just x -> runMaybeT (f x)
+
    #+END_SRC
+
 *** StateT
+
    #+BEGIN_SRC haskell
+
      newtype State s a = State { runState :: s -> (a,s) }
+
      newtype StateT s m a = StateT { runStateT :: s -> m (a,s) }
 
+
+
      instance (Monad m) => (StateT s m) where
+
        return a = StateT $ \s -> return (a, s)
+
        m >>= k = StateT $ \s -> do
+
          (a, s') <- (runStateT m) s
+
          runStateT (k a) s'
+
    #+END_SRC
+
 *** WriterT
+
    #+BEGIN_SRC haskell
+
      newtype WriterT w m a = WriterT { runWriterT :: m (a, w) }
+
      instance (Monoid w, Monad m) => Monad (WriterT w m) where
+
        return a = WriterT $ return (a, mempty)
+
        m >>= k = WriterT $ do
+
          (a,w) <- runWriterT m
+
          (b, w') <- runWriterT (k a)
+
          return (b, w `mappend` w')
+
    #+END_SRC
+
 ** MonadTrans
+
    #+BEGIN_SRC haskell
+
    class MonadTrans t where
+
      lift :: Monad m => m a -> t m a
 
+
+
    class (Monad m) => MonadIO m where
+
      liftIO :: IO a -> m a
+
      
+
    class (Monad b, Monad m) => MonadBase b m | m -> b where
+
      liftBase :: b a -> m a
+
    #+END_SRC
+
    liftIO is because IO no correspond Monad Transfer, any monad can use liftIO once to get top define
+
    lift only determine once level, so if a high monad stack, need lift multiple times, liftBase provider a recursive definition, lift once get top definition
+
 *** Laws
+
     lift . return = return
+
     lift (m >>= f) = lift m >>= lift f
+

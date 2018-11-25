@@ -1,449 +1,898 @@
 * C 
+
   #define <name> <value>, if value has multiple line, need end with \, define scope is on same file, define name can contain argument, then use same variable in value body
+
   #undef cancel define
+
   #if <expression>, if expression evaluate as non 0, will evaluate until #else/#elif/#endif
+
   #ifndef and #ifdef use to check is define something, end with #endif
+
   >> logical shift
+
   >>> airthmetical
+
   & | ^ ~ is bit operation
+
   && || is boolean opeartion, early termination
+
   & get address
+
   sizeof get variable size(in byte), for structure will get sturture real size in momery(include placehodler)
+
   malloc alloc byte number memory, the memory must be align, so structure align is depend on internal field, sort field from big to small can decrease memory usage
+
   realloc re-alloc a pointer to new size
+
   void * is machine special pointer
+
   %u unsigned, %d signed, %x decimal, %p pointer
+
   struct <option name> { ... } define struct, *s.x equal s->x, struct inner field is under other namespace, struct <type> <variable> = {<initial>} to initial, structure can include self pointer
+
   bit-field, follow on struct field type declaration, expression how many space this field need use
+
   union syntax like struct, different is union use same address to keep different type value
+
   #include <> standard library, #include "" is currency directory header file
+
   typedef <name> <value>
+
   external variable is reference from other file, if in same file, delcare external then can reference this field without external keyword, will init to 0 if not provide init value
+
   enum <enum name>{<name 1>=<value 1>, <name2>=<value 2>..} declare enum, if not set value will start from 0
+
   const means variable can't be change, can use at parameter to avoid method change argument
+
   static, two usage, first is let those definition not public to outside, second is keep field not re-initialize, static filed will allocate at .data or .bss, will init to 0 if not provide value
+
   register, suggest compiler assign auto variable(parameter, local variable) to register
+
   #undef cancel #define
+
   #if <condition> #endif
+
   #ifndef or #ifdef check define
+
   (* name) is pointer to function
+
   ...is means any number, any type parameter, only possible on last argument, on <stdarg.h> define some help macro: va_list is type, va_start(pointer, size) intialize, va_arg(pointer, type) get one and step one, var_end(pointer) clear
+
   int (* f)(int * ) is a pointer to function which parameter is pointer to int return int
+
   int * f(int * ) is a function definition which parameter is int pointer return int pointer
+
   function pointer can be called with <pointer variable>(args) format
+
   0 is false, otherwise is true
+
   read binary file should use int to receive response, if use char, 0xff will convert to -1, then -1 will be tread as EOF
+
   EOF is value define in <stdio.h>
+
   <limits.h> define kinds of number type bound
+
   if signed and unsigned operation mix, will implicit convert to unsigned, e.g. -1 < 0 will evaluate to false
+
   if opeartion need extend bit, will first extends bit with 0/1 then convert
+
   pointer arithmetic is base on sizeof pointer type
+
   void* is machine related pointer type(64 bit machine means void* point to structure is 8 byte)
+
   \0 is string end
+
   NULL is adrees 0
+
   p && *p++ avoid access null
+
   printf and putchar can use cross, result is call order
+
   c parameter pass is by value on stack
+
   % used on negative value maybe underflow/overflow, depend on compile and platform
+
   operator precedence: arithmetic > relation > logic > assignment
+
   when compare two number, left type will convert to right type, if convert is bettwen signed and unsigned, convert not change bit
+
   signed num add, use bit add then calculate this bits value
+
   when assign with convert, field value not change(but bit maybe)
+
   comma operator, is in order on for init, but not ensure outside for
+
   x & (x-1) can clear right most bit
+
   except && and ||, other c expression evaluation is not defined, decide by compiler and platform
+
   declaration is only delcare type, not malloc space. definiton is malloc space
+
   .h file can used share type declaration
-  || and && precedence is not sure, use prancese to ensure
+
+  =_ || and && precedence is not sure, use prancese to ensure _=
+
   inner variable will hidden outside same name variable
+
   declare int a, then &a get address of this variable, a is value store on this address, *a also is value store on this address
+
   unary operation is right to left, e.g. *ip++ euqals *(ip++)
+
   char [] = "" is different from char * = "", first will allocate on stack, modify will affect this memory, second is point to const "", modify is undefined
+
   two-dim array, the second dim size must be set
+
   [] precedence is high than *, *++argv[0] is point to argv[0][1], (*++argv)[0] is point to argv[1][0]
+
   same bit convert, like unsigned -> signed will keep bit same, extend bit, 0 for unsigned, sign bit for signed, if both signed and bit length change, first extend bit then convert
+
   x/y round up == (x + y -1) / y round down
+
   * precedence is lower than .
+
   struct may assign in stack or heap, if method return struct will assign on stack, then return pointer to caller, if struct as paramter, will pass whole struct from stack
+
   struct decalre from less use memory field to most use can save memory(because memory align requirment) 
+
   asm("xx") or __asm__("xx") inline assmebly in c
+
 * gcc
+
   -O set optimize level
+
   -S generate assembly code
+
   -m32 32 bit 
+
   -c generate object code
+
   -o execute file name
+
   -masm=intel, default is att
+
   -static set use static library, only copy used reference
+
   -shared -fPIC -o xx.so create a share library
+
   if link 32 bit object error, install gcc-multilib to fix
+
   gcc -shared -fPIC -o <xx.so> <input>, create a share library
+
 * gdb
+
   gdb xx start gdb
+
   run <args> start program
+
   gdb x/17xb sum get assembly 16 encode presentation
+
   print <format> <variable> show variable value with format
+
   x /<num> <size> <format> <location> show register value with format
+
   strings -t x <file> show all strings
+
   backtrack(bt) show call stack, command `up` let frame go up
+
   step(s) <num> execute num line code, if no num execut one line
+
   stepi(si) execute one line assembly
+
   nexti similar as stepi, but don't go into method
+
   break(b) set break point, can break on function, file_name:line
+
   continue skip breakpoint, resume execute
+
   finish run to current method finish
+
   delete/disable/enable can opeart break point
+
   watch <expression>, can stop when expression is true
+
   watch -l <address>, stop when address content change
+
   info register show register info
+
   info frame
+
   disas show current frame assembly
+
   list show source code
+
   :quit, exit gdb
+
   kill, stop program
+
 * Objdump
+
   objdump -d <objectFile> can deassembly output assembly file
+
   -h show every seg info, include .data, .bss, .text
+
   -x show program header, section, symbol table
+
   -f show entry_point, assembly start address
+
 * Assembly
+
   //TODO wait finish
+
   two format: Intel, AT&T
+
   | kinds       | Intel                                              | AT&T                                        |
+
   |-------------+----------------------------------------------------+---------------------------------------------|
+
   | register    | eax                                                | %eax                                        |
+
   | instruction | <dst> <source>                                     | <source> <dst>                              |
+
   | const       |                                                    | $                                           |
+
   | address     | [basepointer + indexpointer *indexscale + immed32] | immed32(basepinter,indexpointer,indexscale) |
+
   
+
   16 asm is work on real mode, cpu like 8086 is this mode, 32 asm is work on protect mode, cpu after 80386 is this mode
+
   8086 address range is 2^20, reigster is 16 bit
+
   difference between real mode and protect mode:
+
   - protect mode memory is virtual momery, via descriptor table, table contain r/w bit, real location, current status
+
   w means word, 16 bit
+
   dw means double word, 32 bit
+
   lw means long word, 64 bit
+
   q means quad word, 64 bit
+
   mov source, dest
+
   stack descrese from high to low
+
   %eax is get register store value, (%eax) is use %eax store value as address to get value from memory
+
   prefix with r register is 64 bit
+
   64 bit don't use frame pointer(%rbp is a normal register), use %rsp to access
+
   lea (load effective address), only get address, not address point to value
+
   mul source, %edx:%eax <- source * %eax
+
   div source, %edx:%eax / source, quotient -> %eax, remainder -> %edx
+
   cmp a,b use b -a result update flag register
+
   test a,b use a&b result update flag register
+
   setXX, use to set flag register
+
   data select performance is better than condition jump on modern processor, data select is used on both branch no side effect
+
   some register value is keep by caller, some by callee
+
   when start method call, first push esp, then push return address, this location is new ebp, then push parameter, when return, use ebp to re-set esp, ebp, then return
+
   when call method, will setup new stack env, esp close to stack top, ebp is close to stack bottom, ebp use to store previous value, esp pass argument
+
   x86_64 will allocate enough space, then use %rsp to access stack, %rbp is a general register
+
   CISC(complete-instruction-structure-computer) is IA32 sequence processor instructor set
+
   RISC(reduce-instruction-structure-computer) is ARM sequence processor
+
   CISC cons is instruction is too much, some of them execute time is long, pipeline can't optimize, RISC cons is instruction is too little, then learn from each other, main reason is business not technical
+
   push %esp, in intel specification, push current esp value to esp+1 location, pop esp, pop current esp value to esp-1
+
   x87 float arithmetic is base on stack, sse is base on register, sse performance is better
+
 ** register  
+
    %esp, stack point
+
    %ebp, frame point
+
    %eax, general register, %ax 16 bit, %ah 8 bit, %al 8 bit
+
 *** x86_64
+
     6 register can used pass argument: %rdi %rsi %rdx %rcx %r8 %r9
+
     callee-save: %rbx, %rbp, %r12-%r15
+
 * Makefile
+
   CC set compiler
+
   CFLAGS set compiler options
+
   EXE set executable file name
+
   HDRS set header file
+
   LIB set library file
+
   SRCS source file
+
   OBJS=$(SRCS.c=.o) auto generate target file 
+
   rule:
+
     rule_name: depedency file
+
     (tab) command line
+
 * API
+
   strlen is size of character, not include \0
+
   fopen open new file, get a file descriptor
+
   fprintf(fd, character) output to fd
+
   flose(fd) close a file descriptor
+
   sscanf(char *, char *, pointer1, pointer2, ...), on order get value from 1st parameter use 2nd parameter provide format to pointer1, pointer2 ..
+
   scanf(char *, pointer1, pointer2, ...), get input from keyboard with arg provided format to pointer1, pointer2, ..
+
   xrand48 use to generate random value, srand48 set seed
+
   fgets(fd) get character from fd one by one
+
   getchar() get character from stdin
+
   putchar() put character to stdout
+
   strcat(char *[], char* []) concat str
+
   squeeze(char *[], char) delete special char
+
   strpbrk(char *[], char *[]) location sub-str
+
   strstr(char *[], char *[]) location sub-str
+
   strchr(s,c) location sub-str
+
   getbits(x,p,n) return n bit start from p location of x
+
   isspace, from ctype.h
+
   isdigit, from ctype.h
+
   strtol convert string to long
+
   double strtod(char *src, char *left), convert string to double, left character is put in left
+
   system("xx") call command xx
+
   waitpid will wait child process finish, argument control single/group/all, sync/async
+
   sleep(unsigned int secs) let process sleep, return 0 when already sleep enough, bigger than 0 when be interrupted, return value is left time to slept
+
   when fork a child process, with same stack, register, file description and so on. return twice
+
   execve use current process run argument special program. never return
+
   exit will exit a process
+
   wait, wait a process terminate
+
   kill, send signal to process
+
   signal, register a asynchronies signal handler for current process, SIGKILL and SIGSTOP can't be change
+
   sigprocmask, used to block/unblock/mask signal, use with sigemptyset/sigaddset/sigdeleteset together
+
   setjmp, longjmp, first call setjmp(buf), will return 0, the buf record pc, stack and register, then continue execute, longjmp(buf, code) can go to buf record location, code is setjmp return value, so setjmp call once return multiple times, first is set, then is setjmp goto with code, longjmp never return
+
   sigsetjmp and siglongjmp is used for signal handler, sigsetjmp like catch, siglongjmp like throw
+
   mmap, create a virtual memory map to a file
+
   munmap destroy a virtual memory
+
   malloc create virtual memory on heap, not initialize, when not use, use free to free
+
   calloc create virtual memory and initialize to 0
+
   realloc, realloc a memory base on allocated memory
+
   sbrk grow/shrink heap size
+
   dup2(fd1, fd2), close fd2, then set fd1 to fd2
+
   select(int numfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout), is synchronous IO multiplexing, fd_set is a file description set, some MACRO is operation for this, FD_ISSET,FD_SET,FD_CLR, any socket match condition will return, timeval set to 0 means return immediate, NULL never timeout
+
   getc(*fp) get character from file handler
+
   putc(*fp) put character to file handler
+
 * Tools
+
   echo $? get previous command exit code
+
   xxd -c <line_byte_number> -g <group_number> -s <offset> <input file> explore file by hex value
+
   valgrind is a memory check util, usage: valgrind -v --leak-check=full <execute file>
+
   gprof use to analyze c program performance, should use with gcc -pg parameter
+
   ar rcs <outputfile> <input files> use input file(object file) output a static library, when reference by gcc, only copy reference part to executable file
+
 * Compile work flow
+
   [[./compile-work-flow.png]]
+
 ** Preprocessor
+
    read all sentence start with #, replace include content, generate .i file
+
 ** Compiler
+
    generate assembly, generate .s file
+
 ** Assembler
+
    assembly -> binary, generate .o file
+
 ** Linker
+
    combine binary files(.o), generate a execute file
+
    Linker need perform two task: 
+
    - symbol resolution, link find printf or your self defined function
+
    - relocation, all x.o file address start from 0, need relocate a new address and modify correspond location
+
    Symbol resolution rule:
+
    - not allow multiple storng symbol(initialed symbol)
+
    - one strong symbol choose this strong symbol
+
    - no strong symbol, choose any from week symbol
+
   library file (extension is .a) is only need when previous object file miss some definition, put end of gcc library depend list
+
   share library (extension is .so on unix, .dll on windows), load on run time, multiple program share library on memory, reduce memory usage.
+
 * Operation system
+
   [[./stack.png]]
+
   any computer file is binary, what it is depende on context
+
   word size is machine related, equal to cpu address width
+
   stack grow from high address to low, low address end is stack top
+
   little endian(Intel) num is store from low bit to high bit(byte is unit) with low address to high address, big endian(Sum) is opposite
+
   endian is important on those scenario:
+
   - network data transfer
+
   - assembly
+
   - data on memory
+
   w bit, unsigned bound is from 0 to 2^w-1, signed bound is from -2^(w-1) to 2^(w-1)-1
+
   2's complete add, >= 2^(w-1) will overflow, result subtract 2^w, <2^(w-1) will under flow, result add 2^w, overflow/underflow is presentation, real bit not lost
+
   x[a][c] is continue in memory, *x[a] is not continue in memory(java)
+
   object file format:
+
   - linux: at first is COFF(common object file format), then change to ELF(executable and linkable file format)
+
   - windows: PE(portable executable)
+
   when exception, use exception table indirect jump to exception handler, exception handler is diff with producer call:
+
     - return address is decide by exception type
+
     - flags will be maintain
+
     - will run at kernel level
+
   when child process terminate, os will keep it state until parent process repeat it. If parent forget reaped child process, those process named zombie process.
+
   Init process will handle all process reaped, long time run process need carefully handle child process terminate, because it is hierarchy, init only reaped it direct process
+
   split instruction to multiple stage can improve throughput, but will increase latency, too large stage will waste clock, too small stage will increase latency
+
   for loop analyze, data dependency can get a critical path, then get CPE low bound
+
   memory access is slow than register, so for loop try use more register than memory
+
   memory depedency will derese cpe, stor buffer can solve a part of memory dependency
+
   cpu cache is SRAM, one SRAM contain 6 transistor, better performance and anti-interference but expensive
+
   main memory is DRAM, one DRAM contain 1 transistor, cheap
+
   Program is a set of instruction, processor is hardware, process provide vritural memoty and controflow, like every program has e full control to processor
+
   system use loader load execute file to memory
+
   signal handle one by one and each type most pending one, some command wait finish and can be interrupted, like read, write, sleep
+
 ** Process/Thread
+
    process provide a abstract, every process look like use whole system resource
+
    different process switch by context-switch
+
    Thread is base on process, one process can have multiple thread, different thread on same process can share data
+
    multi-core and hyperthreaded provide a parrallel runtime environment
+
    every process has pending and block signal bit vector, each type signal only can pending one, exceed will be discard
+
    when child process terminate, SIGCHLD will be send to parent process
+
 ** Buffer overflow
+
    3 way to avoid:
+
    - stack randomization, when program start, use a random stack base address, cons is if random size is small, can predicate, too large, waste memory space
+
    - stack protection, set a canary value(random), before return check this value not be modified
+
    - limit code execution region, split memory to read/write and execute, x86 use NX(no-execute) to distinguish
+
 ** Memory hierarchy
+
    system provider three abstraction:
+
    - file is io device abstraction
+
    - virtual memory is file and main memory abstraction
+
    - process is processor, main memory and io device abstraction
+
    memory structure is like pyramid, high level is better performance and expensive, and high level is low level cache, block size increase from high level to low
+
    more high level, more expensive, more faster
+
    more low level, more cheap, more slower
+
    97% hit rate performance is 1/2 of 99% hit rate
+
    static field is different with local field, static field will allocate space on .data or .bss, local field is hold on stack
+
 ** Virtual memory
+
    Virtual memory to every 
+
    Virtual memory let different process can share and isolate memory, let link and load program easy. process is from 0 to max space address, virtual memory maybe store on disk, maybe cached by memory. PTE(Page table entries) is a table store every 
+
    Virtual memory can use as memory access protection, use access bit in pte.
+
    VPO(virtual page offset) = PPO(physical page offset)
+
    VPN(virtual page number) = virtual address number / page size
+
    VPN = TLBT(TLB tag) + TLBI(TLB index)
+
    TLB(translation lookaside buffer) is cache for pte
+
    Because virtual memory, fork just copy kinds of field, then a new process work, execve just load kinds of file to virtual memory point.
+
 ** IO
+
    when call read/write, maybe encounter short counts, this maybe cause by eof, or occur on network data transfer, so you need repeate call read/write until get you wanted byte transferred
+
    file descriptor table is bold by each process
+
    file table is shared by all process
+
    record position, vnode, vnode table is shared by all process
+
    open, close, write, read, lseek, is provider by unix system, execute on kernel
+
    fopen, fclose is provider by library, use buffer to improve performance
+
    process file use io lib
+
    process network use rio lib
+
 * IEEE float point number
+
   [[./ieee754.png]]
+
   float: s=1, k=8, n=23, s is sign, k is exponent, n is fraction
+
   double: s=1, k=11, n=52
+
   V = (-1)^s * M * 2^E
+
   M is (k expression value) - bias, 
+
   bias is 2^(k-1) - 1, so float bias is 127, double bias is 1023
+
   bit order is sign-exponent-fraction, this structure is good for comprasion
+
   when all bit is 0, value is 0
+
   when k is all 1, n is all 0, value is infinity
+
   when k is not all 1 or not all 0, is normal, E is (k expression value) - (2^(k-1)-1), M is calculate with 1 + (n present binary decimal)
+
   when k is all 0, but n is not all0, is nor regular, E is 1 - bias, M is (n present binary decimal)
+
   regular and non regular is smooth
+
   when k is all 1, but n is not all 0, if NaN
+
   round way:
+
   - round to even, first at close to round, if is 0.5 round to even
+
   - round to zero
+
   - round up(x cross)
+
   - round down(x cross)
+
 * Concurrency
+
   S = 1 /((1-a) + (a/k)), a is parallel percent, k is parallel number
+
   3-way:
+
   - process base
+
   - IO multiplexing
+
   - thread base
+
   suffix with _r function is reentrant version for thread-unsafe function
+
 ** API
+
   pthread_create(pthread_t *, pthread_attr_t *attr, func *f, void *arg);  create thread 
+
   pthread_join(pthread_t, NULL);  wait thread return, reap this thread resources 
+
   pthread_t pthread_self(void); get current thread id 
+
   pthread_exit(void *thread_return); stop thread, if main thread call this, will terminate all peer thread, peer thread call exit() will also cause all thread under same process stop 
+
   int pthread_cancel(pthread_t tid); stop tid thread 
+
   pthread_detach(pthread_t tid); thread has two state, one is joinable, on this state, can be kill or repaed by other thread, resource like stack will release until reaped. Other is detatched, on this state, can't kill or reaped by other thread, resource is auto release by system when it teriminate, default thread state is joinable, this call change to detatched 
+
   pthread_once(pthread_once_t *, void (*init_routine)(void)), call once before thread start 
+
   semaphore:
+
   - int sem_init(sem_t *sem, 0, unsigned int value) 
+
   - int sem_wait(sem_t *sem) 
+
   - int sem_post(sem_t *sem) 
+
 * Socket
+
   network is file on unix, can use read/write to operate, but send/recv will be better
+
   Internet Socket:
+
   - STREAM_SOCKET, TCP(Transmission Control Protocol), bidirectional, error-free
+
   - DATAGRAM_SOCKET, UDP(User Datagram Protocol), connectionless, not ensure arrive and not ensure arrive order
+
   Ipv4, 32bit, format is byte.byte.byte.byte
+
   Ipv6, 128bit, format is 2byte:...:2byte, full 0 can use :: presentation, ::1 is local address, ffff:ipv4 is compatible with ipv4
+
   mask use to determine this ip on this network address, ip/mask
+
   port is 16-bit number, unix file /etc/services contain all program port
+
   network byte is big-endian order
+
   htons, htonl convert host byte order to network byte order, include in <netinet/in.h>
+
   ntohs, ntohl convert network byte order to host order, include in <netinet/in.h>
+
   inet_aton, convert a dotted-decimal string to ip address, only work on ipv4
+
   inet_ntoa, convert ip address to dotted-decimal string, only work on ipv4
+
   inet_pton, convert string ip to ip address, both on ipv4 and ipv6
+
   inet_ntop, convert ip address to string, both on ipv4 and ipv6
+
   gethostbyname, gethostbyaddr query address info from dns server
+
   #+BEGIN_SRC c
+
   struct addrinfo {
+
     int ai_flags;
+
     int ai_family;
+
     int ai_socktype;
+
     int ai_protocol;
+
     size_t ai_addrlen;
+
     struct sockaddr *ai_addr;
+
     char *ai_canonname;
+
     struct addrinfo *ai_next;
+
   }
+
   struct sockaddr {
+
     unsigned short sa_family;
+
     char sa_data[14];
+
   }
+
   struct sockaddr_in {
+
     short int sin_family;
+
     unsigned short int sin_port;
+
     struct in_addr sin_addr;
+
     unsigned char sin_zero [8];
+
   }
+
   struct in_addr {
+
     unit32_t s_addr;
+
   }
+
   struct sockaddr_n6 {
+
     u_int16_t sin6_family;
+
     u_int16_t sin6_port;
+
     u_int32_t sin6_floinfo;
+
     struct in6_addr sin6_addr;
+
     u_int32_t sin6_scope_id;
+
   }
+
   struct in6_addr {
+
     unsigned char s6_addr[16];
+
   }
+
   #+END_SRC
+
   ai_family is set ipv4 or ipv6
+
   sockaddr_in is ipv4, sockaddr can convert with sockaddr_in each other
+
   sockaddr_storage use to save ipv4/ipv6 address, ss_family present type is ipv4 or ipv6
+
   firewall, isolation acess, and use as NAT(network address translation)
+
   api:
+
   - getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res), from ip/address get connection info
+
   - socket(int domain, int type, int protocol) get file descriptor
+
   - connect(int sockfd, struct sockaddr *serv_addr, int addrlen) connect to remote
+
   - bind(int sockfd, struct sockaddr *my_addr, int addrlen)
+
   - listen(int sockfd, int backlog), wait connect, backlog is blocking size, any connect before accept will store on here
+
   - accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen), return a new connect fd
+
   - send(int sockfd, const void *msg, int len, int flags) return value is actually send byte number, (work on tcp and connected udp)
+
   - sendTo(int sockfd, const void *msg, int len, unsigned int flags, const struct sockaddr *to, socklen_t tolen) (work on udp)
+
   - recvfrom(int sockfd, void *buf, int len, unsgined int flags, struct sockaddr *from, int *fromlen) (work on udp)
+
   - close(sock) close socket
+
   - shutdown(sock) let socket not avaliable of this end, also need close
+
   - getpeername(int sockfd, struct sockaddr *addr, int *addrlen) from socket get antoher end info
+
   - gethostname(char *hostname, size_t size) return local host name
+
   - setsockopt(int sockfd, SOL_SOCKET, filedtoSet, value, sizeof value) set socket property
+
   - getnameinfo get service name from ip address
+
   client-server mode:
+
   tcp:
+
   server: getaddrinfo -> socket -> bind -> listen -> accept -> recv/send -> close
+
   client: getaddrinfo -> socket -> connect -> send/recv -> close
+
   udp:
+
   server: getaddrinfo -> socket -> bind -> recvfrom -> close
+
   client: getaddrinfo -> socket -> sendto -> close
+
   accept and recv will lock, if don't want lock, use fcntl
+
   send, recv is work for text, if want send binary data, there are 3 way:
+
   - convert binary to text, then convert back on reciver end
+
   - send original binary data
+
   - convert to portable format
+
   udp send to broadcast address means send broadcast package
+
   netstat get open socket, route info, -r means route table info
+
   MTU is package size of each transfer
+
   fcntl is for file description
+
   perror(const char *s) and strerro(int errnum) translate error to better readable format
+
   shutdown only close socket one end, clsoe() close socket both end and relase socket
+
   
+
 * Threads
+
   - pthread_create(pthread_t *, pthread_attr_t *attr, func *f, void *arg), create thread, thread id will assign to first arg, argument f is thread execute body, arg is argument to argument f
+
   - pthread_join(pthread_t, NULL), wait thread return ,reap this thread resource
+
   - pthread_t pthread_self(void), get current thread id
+
   - pthread_exit(void *thread_return), stop thread, if main thread call this, will terminate all peer thread, peer thread call exit() will cause all thread under same process terminate
+
   - int pthread_cancel(pthread_t tid), stop tid thread
+
   - pthread_detach(pthread_t tid), thread has two state, this call change thread to detached state
+
     1. joinable(default), can be killed or reaped by other thread, resource like stack will keep until other thread reap
+
     2. detached, can't be killed or reaped, resource will auto release by system when it terminate
+
   - pthread_once(pthread_once_t *, void (*int_routine)(void)), call once before thread start
+
   different thread has own stack, stack pointer, program count, condition code, then  share heap, file descriptor and so on, but other threads can access other thread stack 
+
   define outside function variable is global variable, is share with all threads, only one location 
+
   variable in function without static is local variable, keep on every thread stack 
+
   Static variable in function is only one instance, share with all thread 
 
+
+
  
+

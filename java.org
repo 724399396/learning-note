@@ -1,249 +1,498 @@
 * Mybatis
+
 general usage:
+
  - Blog blog = (Blog) session.SelectOne(<mapper name>, args)
+
  - BlogMapper mapper = session.getMapper(<mapper class>)
+
    Blog blog = mapper.selectBlog(arg)
 
+
+
 namespace is used to distinct mapper file, good practice is keep same with java class full path
+
 SqlSession is not thread safe
+
 SqlSessionFactory is best only create single instance
+
 ** basic query
+
     - (ExpectType) session.selectOne("<mapper file full name>", id)
+
     - session.getMapper(class).selectXX(id)
+
 ** page limit
+
    use RowBounds class
+
 ** mapper file 
+
   - id
+
     set this column is id, useGeneratedKeys set this id is from database generated
+
   - resultType
+
     this column return type
+
   - resultMap
+
     custom type for this column return
+
   - constructor
+
     set return type constructor, maybe argument <idArg> <arg>
+
   - association
+
     complicate object
+
   - cache
+
     define cache on/off, choose cache implementation
+
 ** Dynamic sql
+
    #{x} in dynamic sql is from two source, one is get("x") method, another is getX(), get("x") is high priority.
+
    <if test="<condition>"> <sentence></if>, add sentence when test condition return true
+
    <choose>
+
    <where test="<condition"></where> can handle where and and nicely
+
    <set> can handle set and , nicely
+
    <foreach>, iterate over collection
+
 ** setting
+
    - <properties> set property key value
+
    - <typeAliases> set type aliases
+
    - <typeHandler> is used to convert between sql data and java object, there are some general typeHandler, 
+
      EnumTypeHandler is used for convert bettwen enum and int
+
    - <objectFactory> used to from sql data to build java object, can extend from DefaultObjectFactory
+
    - <setting name="logIml" value="STDOUT_LOGGING"/> let logback print out sql
+
 * Elastic Search
+
   bin/elasticsearch start es, default listen port is 9200
+
   bin/plugin -i, install plugin
+
   document is index/search base unit
+
   structure: indices(database) -> types(table) -> document(row) -> field(column)
+
   filter like where, aggregation like group
+
   shard is basic data unit, one index include multiple shard, only exist one primary shard, exist zero to many replica shard
+
   primary shard is decide when start up, can't changed, replica shard can change, search will get data from primary and replica together
+
   unassigned_shard is shart that not assigned to node
+
 ** http api
+
   - Get to query data
+
   - Put to insert data
+
   - url patten is <index>/<type>/<id>
+
   - <location>/_search?q=<condition> or POST <location>/_search pass query condition to query data
+
   - q=<value> means equal, q=-<value> means not equal 
+
   - _shutdown, shutdown es
+
   - _plugin/<plugin name> access plugin
+
   - _cluster/health get cluster health info
+
   - put /index 
+
     {
+
       "settings": {
+
         "number_of_shards": <num>,
+
         "number_of_replicas":  <num>
+
       }
+
     }
+
     change index shard setting
+
 * Concurrency
+
   mutable is program misfunction root cause on concurrency program
+
   count++ is race condition, also is data race
+
   race condition general case is check-then-act or read-modify-write, when you get some value then do something, maybe system state already changed
+
   static method use class object as lock object
+
   if need protect a class multiple mutable field, should use same lock to protect together, let them as a atomic operation
+
   concurrency should solve two sub-problem, one is atomic, another is visibility
+
   64 bit operate is not atomic, use volatile can ensure atomic
+
   lock ensure atomic and visibility
+
   volatile let variable can't be re-order, can't be cache, visibility to all thread
+
   volatile only suit those scenarios
+
     1. write a variable not depend on current value
+
     2. only one thread to write this variable, this variable is not a part of ensure object is same
+
   walk on a object can reach field means is public, pass a object to a method also means public this object, public a internal object means public it outside object
+
   don't public `this` on constructor, general case is create thread on constructor
+
   Thread Confinement, keep a object only exist on one thread, it ensure thread safe.
+
   Thread local object, when thread first call get method, initialValue will be called
+
   Immutable object always thread safe.
+
   safe publish object way:
+
     1) static field initial a object
+
     2) use volatile or AtomicReference
+
     3) final field save initialed object
+
     4) use lock to publish object
+
     5) thread safe collection to publish
+
   static field publish object is easiest, jvm mechanism ensure this
+
   use private object to as lock avoid activity problem
+
   an object has multiple field, use separate thread safe collection to ensure every field can make object safe if every field is independent
+
   add new opeartor on already thread safe object, best way is use composition and antoher lock to ensure thread safe
+
   if document not declare it is thread safe, means it is not thread safe
+
   when use iterator on thread safe collection, will record a count, if count change, any then getNext and hasNext will throw ConcurrentMOdificationException
+
   collection toString, xxAll, hasCode maybe use iterator
+
   Queue is add after 5.0, purpose is improve performance when random access, BlockingQueue is good choice to implement producer/consumer strategy
+
   Executor object has kinds of method to create ExecutorSerivce, ExecutorService is kinds of strategy to re-use threads
+
 * Spring
+
 spring core is IoC and AOP
+
 IoC is let container maintain object lifecycle
+
 ** IOC
+
    two initial way:
+
      1. BeanFactory only IoC, initialize lazy
+
      2. ApplicationContext, extend from BeanFactory, support AOP, egar initialize
+
    bean initialize way:
+
      1. default constructor
+
      2. factory-method set initialize method of this class static method
+
      3. set factory-bean and factory-method
+
      4. <constructor-arg>, can set by type, by index or by name
+
    cycle depedency will throw BeanCurrentlyInCreationException
+
    constructor:
+
       <null/> use to set null
+
       depende-on set the class will initialize after depende-on class
+
    @autowire inject by name or by type, if same type has multiple instance, throw exception
+
    lifecycle:
+
       - singleton
+
       - prototype, multiple instance
+
       - request, one request one instance
+
       - session
+
       - application
+
 ** AOP
+
    <aop: scoped-proxy proxy-target-class="false"> set base on interface proxy
+
    @Around to implement aop
+
 ** Spring mvc
+
    two container:
+
      - tomcat ContextLoaderListener, this class will initialize WebAppicationContext,
+
        keep DAO and service, then register a DispatcherServlet, this class will read
+
        <servlet-name>-servlet.xml then construct the second container
+
      - the second container's parent is above container, so can read service and dao
+
        instance, incluse HanlderMapping(for http), HandlerAdapter, ModelAndView is
+
        use to response, ViewResolver is to find view.
+
    three implement method:
+
      - implement HttpRequestHandler then override handleRequest, then register on
+
        second on container
+
      - extend AbstractController, implement RequestInternal method, return ModelAndView
+
      - use @Controller on class, @RequestMapping on Method then return ModelAndView, @RequestParam bind
+
        parameter from request, @RequestHeader get Header value, @CookieValue get coockie, @RequestBody
+
        @PathVariable get url path, @ResponseBody custom response format
+
    extend HandlerExceptionResolver then implement resolveExcpeiton then register in container to handle global exception
+
    @ExceptionHandler set non global exception handler
+
    HandlerInterceptor intercept request before handle, after handle then after view resolve
+
    <welcome-file-list> set 404 error page
+
    
+
 ** configuration
+
    legacy way is xml config file
+
 * Servlet
+
 ** Lifecycle
+
    The servlet is initialized by calling the init() method. only called once
+
    The servlet calls service() method to process a client request, every request will call this method
+
    The servlet is terminated by calling the destroy() method. only called once
+
    Finally, servlet is collected by the garbage collector of the JVM.
+
 ** how run
+
    put compiled servlet class file on webapps/ROOT/WEB-INF/classed directory with same class package name,
+
    then modify web.xml, <servlet> mapping to class name, <servlet-mapping> mapping to url address
+
 ** parameter
+
    use getParameter of class HttpServletRequest to get parameter(Get, Post),
+
    getParamterNames get all name, getParamterValues get all value
+
    HttpServletResponse to response to client
+
    getCookies() get cookie
+
    getSession() get or create session
+
 ** url match pattern
+
    - full path
+
    - partial path
+
    - extension
+
    - default
+
 ** filter
+
    filter will execute before servlet, filter order is declare order in xml config
+
 ** listener
+
    listener will execute when some event is trigger
+
 * Guava
+
 ** MultiSet and MultiMap
+
    used count, find duplicate
+
 ** Iterators
+
    support pipe operator, sort, inverse, find, statistics
+
 ** ForwardingList
+
    implement delegate method, then every method will execute on delegate return object
+
 ** PeekingIterator
+
    can access next element after current, will cause iterator go to next, next access direct use previous cache field 
+
 ** AbstractIterator
+
    need implement computerNext(), return what your want return, can used as filter function
+
 ** AbstractSequential
+
    like functional stream
+
 ** LaodingCache
+
    get() used to access no exception value, getUnchecked() access maybe throw exception, loadAll load multiple value
+
 ** Cache
+
    base on time or capacity or reference type eviction
+
 * Maven
+
   finalName is used to set build out jar fileName, default format is <artifactId>-<version>
+
   exclusion set some package dont import
+
   dependenciesManager set this and child pom dependency version, but not import, then import those dependency can omit version
+
 ** depedency scope
+
    - compile: compile and runtime
+
    - test: test
+
    - provided: compile and test
+
    - runtime: test and runtime
+
    - system: compile and test(use systemPath to locate)
+
    - import
+
 ** lifecycle
+
 *** clean
+
     - preclean
+
     - clean
+
     - post clean
+
 *** default
+
     - process-sources
+
     - compile
+
     - process-test-sources
+
     - test-compile
+
     - test
+
     - package
+
     - install
+
     - deploy
+
 *** site
+
     - pre-site
+
     - post-site
+
     - site-deploy
+
 ** parent and child
+
    relativePath set parent pom location
+
    parent pom use dependenciesManager set global depedency version, not import any package
+
 ** command argument
+
    -pl: xx only build this module
+
    -am also build depedency module
+
    -amd build dependency module child module
+
    -rf set some module dont build
+
    -DskipTests skip test
+
    -Dtest=xx 
+
 * substring
+
 ** 1.6
+
    base is a array, substring return new object but point to same array with different offset
+
    but maybe cause memory leak, like substring from multiple big string only use a little part
+
 ** 1.7
+
    copy array
+
 * Basic
+
   object head is 16 bytes
+
   array head is 24 bytes
+
   one char is 2 byte
+
   Serilizable only implement this class can serilize, don't need implement any thing. The real
+
   implement method is defaultReadObject/readObject of class ObjectOutputStream/ObjectInputStream,
+
   if class implement writeObject/readObject, then use those implements. SerilizalVersionUID use to demonstrate
+
   the class is same class, static field can't be serilize, @Transient will not be write out, set to default value when deserilize
+
   try catch finally, if finally contain return, will use finally return as final value
+
 * debug
+
   JAVA_OPTS or CATALINA_OPTS add -agentlib:jdwp=transport=db_socket,server=y,suspend=n,address=<port> to enable remote debug
+
   javap, is decompile tool, -c decompile to bytecode
+
 * jvm  
+
   java 9, java.lang.ref.Reference.reachabilityFence(Object ref), assure ref is reachable on this location
+
   
+

@@ -1,129 +1,258 @@
 * emacs
+
   LC_CTYPE='zh_CN.UTF-8' emacs suppor chinese
+
   frame is emacs outermost window, window is window for display, buffer is a file cache
+
   tramp open remote file, /[protocol]:[[username@]host]:<file>
+
 ** Key map
+
    C means ctrl, M means alt
+
    C-h C-h, get help
+
    C-h a use key word find command, C-h k get description by short key
+
    C-g, quit
+
    C-x b, switch buffer
+
    C-x k, close buffer
+
    C-x 0, close current buffer
+
    C-x 1, close all window except current
+
    C-x 2, split window to horizontal
+
    C-x 3, split window to vertical
+
    C-x o, change active buffer
+
    C-x C-f, open file
+
    C-x C-s, save file
+
    C-x C-w, save to another file
+
    C-space, set mark
+
    C-w, cut
+
    C-y, paste, M-y show more cut history
+
    C-s, search forward, C-s search next
+
    C-r, search backward
+
    C-M-s, regular expression search
+
    M-%, replace
+
    M-x re-builder, open a buffer input regex match current buffer
+
    M-x occurs, find match regex display in line order
+
    F3, start record macro, F4 end record macro or execute macro
+
    M-b move left by word, M-f move right by word
+
    M-d delete after word
+
    C-d delete after character
+
    M-u upper after word, M-l lower after word, M-c capitalization after word
+
    M-t switch word around cursor
+
    M-g g, go to line number
+
    M-<, go to buffer start, M->, go to buffer end
+
    C-a, line start, C-e line end
+
    C-n, next line, C-p, previous line
+
    C-k, delete to line ending
+
    C-/, undo
+
    C-v, current window end, M-v current window start, C-l current window center
+
    M-x dired, open file manager
+
    M-x query-replace, batch modify file name
+
    C-u <num> <command>, repeat command num times, C-u is 4, C-u C-u is 16
+
    C-x C-x, jump between mark
+
    M-x shell, open shell
+
    C-u M-x, open shell other with name
+
    M-!, execute a command and output
+
    M-|, execute current buffer as command and output
+
    C-x v is version control prefix
+
    C-q, C-j is newline
+
 * vim
+
   Esc or Ctrl + [ return normal mode
+
   i insert at cursor location
+
   I insert at line start
+
   a append after cursor location
+
   A append at line end
+
   o append in next line
+
   O append in previous line
+
   h j l k, left down up right
+
   x, delete character
+
   d$, delete to end of line
+
   db, delete previous word start
+
   dw, delete to next word start
+
   de, this word end
+
   dd, delete whole line
+
   u, undo
+
   Ctrl + R, redo
+
   Ctrl + g, show current cursor location
+
   <num> g, go to line number
+
   G go to file end
+
   gg go to file start
+
   y, copy
+
   p, paste
+
   r, replace character
+
   /, search forward, n, next, N, previous
+
   ?, search backward
+
   C+o, back to location before search
+
   C+i, continue search
+
   %, search correspond { [ (
+
   :/s/<old>/<new>/g replace old with new
+
   :<start>:<end>s/<old>/<new>/g only replace between start to end
+
   :! <cmd>, execute cmd
+
   0 go to line start, $ to line end
+
   :e <filename> open file
+
   :b <filename> switch to file
+
   v go to visual mode, shift +v visual line mode, Ctrl +v visual rectangle mode
+
   ~ toggle upper/lower
+
   >> indent to right, << to left
+
   :sp open new window, :vsp verticle open new window
+
 * org mode
+
   =_ * means  heading, ** means sub heading, can continue add * _=
+
   Shift + TAB can collapse/expanded all headling 
+
   TAB collapse/expanded current headling 
+
   C-c C-p can go to previous heading, C-c C-n go to next heading 
+
   M-up or M-down can move heading, M-left or M-right can increase/decrease heading level 
+
   Use space and - to create bullet list, M-RET can insert new item, TAB can adjust ident, M-arrow can adjust order, S-left or S-right can change bullet list style 
+
   Checked list use [/] as header, - [ ] as list item, M-S-RET create new, C-c C-c check/uncheck one  
+
   C-c C-t can mark/finish/cancel a TODO item 
+
   M-Shift-Ret create a new TODO item 
+
   [[link][description]] use to create a link 
+
   C-c C-o open link 
+
   C-c C-s use scheduler to finish todo 
+
   Create table: first use | create header, then C-c -, then just use TAB to adjust looklike, 
+
   Use M-arrow to adjust row and column location, M-S-arrow to insert/delete row/column  
+
   C-c | use to Create table on already exist data 
+
   Org-table-export, org-table-import can export/insert table use different format export/import 
+
   C-c + use to sum a table column 
+
   C-u C-c C-l insert a file link, C-c C-l insert a link, C-c C-x C-v toggle image inline display mode 
+
   <s TAB can insert code, C-c ' can use programming mode edit code, then type C-c ' again exit to org mode, C-c C-o can execute code 
+
   C-c C-e start export
+
 * tmux
+
   C-b %, split to horizontal pane
+
   C-b ", split to vertical pane
+
   C-b <arrow> or hjkl, move between panes
+
   C-d, exit pane
+
   C-b c, create new window
+
   C-b n/p, switch window
+
   C-b <num>, switch to <num> window
+
   C-b d, detach session
+
   C-b D, choose session detach
+
   C-b z, switch current pane to full/minimal
+
   C-b ,  rename pane
+
   C-b : setw synchronize-panes on, input on every pane
+
   tmux ls, show datached session
+
   tmux attach -l <num>, attach to sesison
+
   tmux new -s <name>, create new session
+
 * spacemacs
+
 git subtree add --prefix private/vue git@github.com:724399396/spacemacs-vue-layer.git master --squash
+

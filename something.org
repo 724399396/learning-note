@@ -1,12 +1,24 @@
 0xEF,0XBB,0xBF is bom version utf header, place on utf8 file start, compatible with bom/non bom version utf8
+
 chrome://net-internal/#proxy get proxy info
+
 * Self sign ssl key
+
 #+BEGIN_SRC bash
+
 openssl req \ 
+
   -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key \ 
+
   -x509 -days 365 -out certs/domain.crt
+
 #+END_SRC
+
 on CN(common name) input your address(not include port part)
+
 .key is private key
+
 .crt is certifacate and public key
+
 if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v3_ca] section
+

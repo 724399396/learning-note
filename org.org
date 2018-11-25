@@ -1,45 +1,74 @@
 * Heading
-# * means heading
-# ** means subheading, can continue add *
-# Shift + Tab can collapse/expanded all heading
-# Tab collapse/expanded current heading
-# C-c C-p go to previous heading, C-c C-n go to next heading
-# M-up M-down move heading up/down
-# M-left M-right lift/downgrade heading
-* Heading
-# * means heading, ** means sub heading, can continue add *
-# Shift + TAB can collapse/expanded all heading
-# TAB collapse/expanded current heading
-# C-c C-p go to previous heading, C-c C-n go to next heding
-# M-up M-down, move heading up or down
-# M-right M-left, lift/downgrade heading level
+
+ =_ * means heading, ** means sub heading, can continue add * =_
+
+ Shift + TAB can collapse/expanded all heading
+
+ TAB collapse/expanded current heading
+
+ C-c C-p go to previous heading, C-c C-n go to next heding
+
+ M-up M-down, move heading up or down
+
+ M-right M-left, lift/downgrade heading level
+
 * List
-# more than one space and - to create bullet list
-# M-RET insert new item
-# Tab adjust ident
-# M-arrow adjust order
-# S-left S-right adjust list style
-# checked list use [/] start header, - [] start item, C-c C-c check/uncheck one
+
+ more than one space and - to create bullet list
+
+ M-RET insert new item
+
+ Tab adjust ident
+
+ M-arrow adjust order
+
+ S-left S-right adjust list style
+
+ checked list use [/] start header, - [] start item, C-c C-c check/uncheck one
+
 * Todo
-# M-S-RET create a new TODO item
-# C-c C-t can mark/finish/cancel a TODO item
-# C-c C-s use scheduler to finish todo
+
+ M-S-RET create a new TODO item
+
+ C-c C-t can mark/finish/cancel a TODO item
+
+ C-c C-s use scheduler to finish todo
+
 * Link
-# [ [link] [description]] create a link(remove inner space)
-# C-c C-o open link
-# C-c C-l insert a link
-# C-u C-c C-l insert a file link
+
+ [ [link] [description]] create a link(remove inner space)
+
+ C-c C-o open link
+
+ C-c C-l insert a link
+
+ C-u C-c C-l insert a file link
+
 * Image
-# C-c C-x C-v toggle image inline display mode
+
+ C-c C-x C-v toggle image inline display mode
+
 * Table
-# use | create header, like | col1 | col2 | , then C-c - create
-# use TAB adjust looklike
-# M-arrow adjust row/column location
-# M-S-arrow insert/delete row/column
-# C-c | create table on existed string
-# org-table-export org-table-import
-# C-c +, sum of table column
+
+ use | create header, like | col1 | col2 | , then C-c - create
+
+ use TAB adjust looklike
+
+ M-arrow adjust row/column location
+
+ M-S-arrow insert/delete row/column
+
+ C-c | create table on existed string
+
+ org-table-export org-table-import
+
+ C-c +, sum of table column
+
 * Code
-# <s TAB insert code
-# C-c' use program mode edit code
-# C-c C-o execute code
+
+ <s TAB insert code
+
+ C-c' use program mode edit code
+
+ C-c C-o execute code
+

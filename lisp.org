@@ -1,11 +1,22 @@
 * Syntax
+
   (define a b) let a as b alias
+
   (operator operands)
+
   (cond (p1 e1) (p2 e2) ...) is match condition, evaluate p1,p2.. in order, if any is ture, return correspond e
+
   (if p consequent alternative), consequent and alternative is lazy
+
   (and e1 e2 ...) from left to right evaluate e, any false expression will stop then return #f
+
   (or e1 e2 ...) from left to right evaluate e, any true expression will stop then return #t
+
   (not e) get e logic reverse
+
   if no side effect, applicative-order(evaluate -> pass) equal to normal-order(replace -> evalute)
+
   lisp evaluate is base on environment, procedure and variable lookup is base on env
+
   
+

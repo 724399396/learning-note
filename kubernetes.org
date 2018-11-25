@@ -1,460 +1,920 @@
 * base
+
   scale up(Vertical), means same machine, ass hardware resource 
+
   scale out(Horizontal), means multiple machine, run same application 
+
   vm is on host os, virutal cpu, hypervisor, container is direct on cpu 
+
   namepsace is used to protect each container run individual, cgroups(Control group) is used to limit resource usage 
+
   namespace: mount, process id, network, inter-process communication, uts, user id 
+
   k8s cluster has two node type: master node, work nodes 
+
   pods is base unit, container in same pod means this container must run a same node, and share common resource(by same linux namespace) 
+
   pod only alaviable in kubernetes,  export to outside need create a service 
+
   env kUBE_EDITOR="path" can set editor for config file, if not set will use default EDITOR 
+
   $(<key>), reference env key 
+
   image with latest tag default imagePullPolicy is Always, not latest tag default is IfNotPresent 
+
 * cli
+
   #+begIN_SRC bash
+
 kubectl run <name> --image=<image> run pod on deployments mode 
+
 kubectl get deployments|pods|events 
+
 kubectl expose deployment <pod> --type 
+
 minikube service <pod-name> open browser 
+
 minikube addons list, show aviable addons  
+
 kubectl delete service <name> 
+
 kubectl delete deployment <name> 
+
 kubectl proxy, start a proxy, let outside can access pods 
+
 kubectl logs <pod> 
+
 kubectl exec <pod> <command>, execut command in pod, if command contain dash start option, whole command need leading with -- 
+
 kubectl label pod <pod> <k>=<v>, given pod a new label 
+
 kubectl descirbe, used to describe kinds of info 
+
 kubectl rollout status <deployment>, confirm updates 
+
 kubectl rollout undo <deployment>, rollback update 
+
 kubectl config set-cluster/set-credentials/set-context/get-clusters/get-contexts 
+
 kubectl explain <type>|<type.<field>>, describe config file format 
+
 kubectl create –f <config file>, create pod/deployment/service by config file 
+
 kubectl port-forward <pod> <out port>:<pod port> 
+
 kubectl run --generator=run-pod/v1, run a pod(no rc created) 
+
 kubectl scale <type> <name> --replicas=<num>, scale pod number 
+
   #+end_SRC
+
 * minikube
+
   minikube is local kubernetes environment 
+
   start minikube:
+
   #+begIN_SRC bash
+
 http_proxy=http://192.168.1.3:8118/ https_proxy=http://192.168.1.3:8118/ no_proxy=localhost,127.0.0.0/8,192.168.0.0/16 
+
 minikube start --docker-env=HTTP_PROXY=http://192.168.1.3:8118/ --docker-env=HTTPS_PROXY=http://192.168.1.3:8118/ --docker-env=NO_PROXY=localhost,127.0.0.0/8,192.168.0.0/16 
+
 switch to minikube: kubectl config use-context minikube 
+
   #+end_SRC
+
   let docker client connect minikube: eval $(minikube docker-env) 
+
   solve dns problem: VBoxManage modifyvm "VM name" --natdnshostresolver1 on 
+
   addons: ingress can use ingress network in minikube 
+
   sudo ip link set docker0 promisc on, let pod can ping service to it self 
+
   enable rbac and PodSecurityPolicy, --extra-config apiserver.Authentication.PasswordFile.BasicAuthFile=/etc/kubernetes/passwd --extra-config=apiserver.Authorization.Mode=RBAC --extra-config=apiserver.Admission.PluginNames=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,DefaultStorageClass,PodSecurityPolicy,ResourceQuota,DefaultTolerationSeconds 
+
   minikube service monitoring-grafana show grafana dashboard 
+
   autocompletion: 
+
   #+begIN_SRC bash
+
 source <(minikube completion <shell type>), need install bash-completion 
+
   #+end_SRC
+
 * tip
+
   #+begIN_CENTER bash
+
   source <(kubectl completion bash|zsh) can add auto complection to bash or zsh, if need use k alias kubenetes, change to source <(kubectl completion bash | sed s/kubectl/k/g) 
+
   alias k=kubectl 
+
   alias kcd='kubectl config set-context $(kubectl config current-context) --namespace '
+
   #+end_CENTER
+
 * config
+
   default config file is ~/.kube/config 
+
   config include clusters, users and contexts, context=cluster+user
+
 * pod
+
   one pod can contain multiple container, but only it should need then put multiple container in same pod, e.g log collector 
+
   container in same pod must be run on same node, it nerver across different nodes 
+
   pod log is collect by k8s, default keep daily or 100M, if one pod has multiple container, use kubectl log <pod> -c <container> to show different container log 
+
   kubectl get pods, --show-labels show label, -L show label in result by input label name 
+
   pod can probe container healthy by liveness or readiness, 1) http get, 2xx means sucess 2) tcp socket, connection establish means sucess 3), exec, exeucte shell in container, exit 0 means sucess.  
+
   probe can set a initialDelaySeconds to avoid app not ready to response but be restarted 
+
   probe should light, and maybe a /health is better, pod only can handle self failure, if node failure, kubelet can do nothing 
+
   command is same as docker ENTRYPOINT, args is same as docker CMD 
+
   pod will create a pause container, this container is another user cntainer in this pod infrastructure, other container share namespace and network 
+
   init Container run before Controller, only it finish, then main container start 
+
   init Container can be multiple 
+
   lifecycle.postStart, can execut command/http after pod created, if it faile will cause pod failed 
+
   lifecycle.preStop, execute when container is terminated 
+
   delete pod is by set deletionTimestamp, then kubele notice that and stop container, then use (grace period time) to wait container stop, terminate event order; (1) preStop hook (2) send SIGTERM to main process (3) wait container stop (4) use SIGKILL force stop container 
+
   spec.terminatonGracePeriod, set wait container stop time 
+
   pod delete handle by kubectl(delete pod), endpoint controller(change iptable rule, delete endpoint) 
+
   kubectl cp <pod>:<path> <localpath>, can copy file from pod container 
+
   kubectl get pod –o wide, show pod ip and scheduled node 
+
   container in same pod share some same linux namespace, only for network, ipc. Filesytem is isolate, but can share by volume 
+
   all pod reside in a single flat, shared, network-address space, no ANT need, so every package source/destination is real pod ip 
+
   pod spec port just for information, omit not affect anything 
+
   process log is wite to stdout, stderr, then container(docker) collect this, so you can use docker logs <container id> to see log, k8s collect docker logs so can use kubectl logs <pod name> -c <cotnainer> to see, k8s rotated daily and size on log, keep one day or 10M 
+
   kubectl port-forward <pod> <host port>:<pod port>, can forward host port request to pod 
+
   kubectl delete pod <comma sperate name>, delete pod, k8s sends SIGTERM signal to the process and wait 30s for it shut down gracefully, if not shut down in 30s, k8s kill process by SIGKILL signal 
+
   kubectl delete pod –l <label selector>, delete by label selector 
+
   pod will restart inner container if container exit with error 
+
   kubectl logs <pod> --previous, get previous crashed container logs 
+
 * label
+
   kubectl label <type> <name> <label-key>=<label-value>, add or update label, update need –overwrite 
+
   kubectl get <type> -l <label key>=<label value>, get resource filter by label key and value 
+
   kubectl get <type> -l <label key>, get resource by container label key,  
+
   kubectl get <type> -l  '!<label key>' Means not contain key,  
+
   kubectl get <type> -l <label key>!=<label value> means contian key but value not eqaul, kubectl get <type> -l <label key> in [values] 
+
   kubectl get –l <label key> notin [values] 
+
   use '' to enclose contition avoid bash/zsh to evalation exclamation(!) and parenthesis 
+
   conttion can use comma(,) to sperate, means interstion of conditions 
+
   k get <resource> --show-labels, show label on resource, -L <comma sperate label name>, show label name as column 
+
   label can attach when create resource, but can remove/modify/add after resource is created 
+
   node attach label can used with pod node selector to scheduler pod to wanted node, nodeSelector: <label key> = <label value> 
+
 * annotation 
+
   annotation is like label, but there no "annotation selector", annotation is for add information for user and api, annoation can contain big data than label, current limit is 256kb 
+
   kubectl annotate <type> <name> <key>=<value>, add annoation to resource 
+
 * namespace
+
   namespace can split resource to different group 
+
   default, kubectl is operation on "default" namespace 
+
   some resource is cluster level, not split by namespace, e.g. node 
+
   kubectl get ns, get namespaces 
+
   namespace can create by post yaml/json file, kubectl create namespace <name> also create a namespace 
+
   set metadata: namespace on resource can let resource create in set namespace, or set –n paramter when apply/create from yaml/json file 
+
   different namespace not isolate running time objects 
+
   delete namespace will delete all resource under it 
+
 * ReplicationController/ReplicationSet 
+
 ** ReplicationController
+
    construct up to pod, manage pod, if pod disappear, it will recreate pod 
+
    replicationController = label selector + expect replica + pod template 
+
    replicationController monitor pod by label selector to select label 
+
    if change ReplicationController template, not affect old pod, new create pod will use new template 
+
    pod metadata.ownerReferences contain it replication controller 
+
    kubectl scale rc <name> --replicas=<num>, horizontally scalling pods 
+
    delete replication controller will not affect pods which monitor by it if you set option –cascade=false 
+
 ** ReplicaSet
+
    replicaSet is used to replace ReplicationController, rs enhance label selector, support kinds of select 
+
    replication controller only support one key=value label selector 
+
    matchLables is same as rc, matchExpressions is new and powerful 
+
    matchExpressions: key, operator, values 
+
    opeartor has follow value: In, NotIn, Exists(for label match, value not considerj), DoesNotExists(for label) 
+
    if set multiple matchExpression, expression relation is intersection 
+
    replicaSet is under apiVersion apps/v1 , apps is group, v1 is version 
+
 * Liveness Readness
+
   liveness probes check is container sill alive, is can set on every container 
+
   three mechanisms to probe: 
+
   1. Http get, set a port and path to request, if return not 2xx or 3xx, probe is considered failed 
+
   2. Tcp socket, try open tcp connection to host:port, probe is considered success when establishe success  
+
   3. Exec, execute command inside container then check command exit status code, 0 means successj 
+
   liveness failed will restart container 
+
   probe can set delay, timeout, period, success, failure.  success means waht times success probe means success, failure is same. 
+
   if container restart because liveness probe, the exit code will be 128 + SIGNAL Code, e.g 137 means 128 + 9(SIGKILL) 
+
   readness probe check is pod ready to response request from service, probe methos is same as liveness probe 
+
   if readness return failure, endpoint to this pod will be removed, if become ready again, it's re-added 
+
   kubectl get pod has a column READY show container ready status 
+
 * DaemonSet
+
   daemonSet make sure exactly one pod run every node with label selector 
+
   daemonSet is directy to node, not control by scheduler 
+
   daemonset can set spec.teamplte.spec.nodeSelector, control which node run pod 
+
   tainted not affect daemonset, because daemonset is something like system process, is direct assign by controller selft, not schedule by scheduler 
+
   daemonSet under apiVersion apps/v1 
+
 * Jobs/CronJobs 
+
   job is one time schedule, it will create a once job, exit(0) will terminate, if  node fail, will reschedule, and can controll when non 0 exit code how to do 
+
   spec.template.spec.restartPolicy controll behavior when pod failure/success/crash 
+
   when task completion, pod status is Completed, not be delete is because can let you shot it logs 
+
   job can run mutliple pod sequence/parallelism by setting spec.complections and spec.parallelism 
+
   k scala job <name> --replicas <number>, change job parallelism runtime 
+
   job can set max wait time by spec.activeDeadlinesSeconds, if excedd will kill pod and mark as failed, spec.backOffLimit set how many times can retry before task mark as failed 
+
   job is under apiVersion batch/v1 
 
+
+
   cronJob, use spec.schedule to set crontab expression 
+
   cron expression use: Minute, Hour, Day of month, Month, Day of week 
+
   spec.startingDeadlineSeconds set how many time pod should start after pod is schedule, if after this time set but pod not run, it will mark as failed 
+
   cronJob is under apiVersion batch/v1beta1 
+
 * Service
+
   kubectl expose, use same lable with rc/rs to expose a service 
+
   spec.ports declare how expose service, port is outside access port, targetPort is pod expose pod 
+
   spec.selector is used to define which pod is under this service 
+
   defaul expose only avialiable in cluster inner 
+
   service is default random pass request to pods, if need session affinity, can set clientId, same clientid will redirect to same pod 
+
   one service can expose multiple port, on this case, every export pord must specify a name 
+
   service spec.ports.targetPort can use name define in pod spec.containers.ports.name to reference port, befinite is when you want change pod port, only location need modify is pod spec, keep same port name will no need to change svc spec 
+
   service discover:  
+
   - Environment variable(only port create after svc has svc env variable) 
+
   - dns 
+
   service env contract: (1) dash convert to underscoe (2) all letter become upper case (3) ip address is <service name>_SERVICE_HOST (4) port is <service_name>_SERVICE_PORT 
+
   service selector is use to create endpoints 
+
   endpoints is normal resource in k8s 
+
   endpoints is used to send request when service receive request 
+
   munual create no selector service and endpoints, need has same name, then is service used for pod to access external resource 
+
   service spec.externalName can set a service for access external fqdn resource, this is back with CNAME record 
+
   set clusterIP to none can let dns return pod ip insted of  cluster ip, these service called headless service, dns query on this service name can return all pod A record 
+
   annotations: service.alpha.kubernetes.io/tolerate-unready-endpoints: "true" let headless can found not ready pod 
+
   service is under apiVersion v1 
+
   tutum/dnsutils this image contain general utils to check dns, like nslookup/dig 
+
   service metadata.annotations: service.alpha.kubernetes.io/tolerate-unready-endpoints: "true", let dns lookup for headless service return all pod inlcude not ready pod 
+
   trouble shooting: 
+
   1. cluster ip can caees in cluster, not outside 
+
   2. don't use ping to test service is ready 
+
   3. check readiness ok, then this pod can be a service endpoints 
+
   4. check service endpoints 
+
   5. dns not work, try directy use ip 
+
   6. check is connect to service expose port 
+
   7. try directy access pod 
+
   8. make sure app isn't only binding to localhost 
+
 * External access service
+
 ** NodePort: 
+
    port is for innner access, targetPort is pod port, nodePort is can access outside from all k8s node, every node on cluster will open port on <nodePort>, on this port traffict will redirect to undelying service 
+
    spec.ports.nodePort is optional, if omit will decide by k8s 
+
    spec.externalTrafficPolicy: local, means if this node receive request, will only redirect this request to pod that run on same node, if no pod the connection will hang 
+
    client inside cluster connect to service, pod will get client real ip, but if outside connection throught node port(non local mode), package will be SNAT(source network address translation), the backing pod will always get service ip but not client ip, but local mode will see real client ip
+
 ** LoadBalancer: 
+
    extend frmo nodeport, will expose a node port,  then if infrastructure support, will add a public ip address to access those node port with load balance 
+
    externalTrafficPolicy: local can let service access pod in same node only 
+
    client ip myabe hidden because network hop, in local mode you can get client ip, but other mode can't 
+
 ** Ingress network: 
+
    a loadbalance only reserve a serive and need a puiblic ip, so ingress is sometime rescue to use one public ip to hold multiple service 
+
    ingress is operate ad application layer of the network stack(HTTP) and provide cookie based session affinity 
+
    ingress is support by ingress controller, has kinds of ingress controller implement, need run one of them on cluster to support ingress 
+
    a public ip, can determine service by url 
+
    support tls, create resouce secret, then use secret as tls key and cert, sepc.tls.secretName referent secret, kubectl create secret tls tls-secret –cert= --key quickly create tls secret 
+
    ingress not send request to service, just use service to find pod 
+
    sepc.rules is array, so one ingress can contain multiple hosts 
+
    sepc.rules.httppaths is array, so under same host can match path to different service 
+
    ingress is under apiVersion extensions/v1beat1 
+
 * dns
+
   Kube-system run a service/deployment named kube-dns, this is a dns server 
+
   K8s will modify every pod /etc/resolv.conf file change nameserver to kube-dns service 
+
   Pod dns can change by pod spec.dnsPolicy 
+
   Service FQDN(fully qualified domain name) is <serviceName>.<namespace>.svc.cluster.local 
+
   Because /etc/resolv.conf set search, you can use <serviceName>  <serviceName>.<nameSpace> or fqdn to find service 
+
   Service ip can't ping, service ip is virtual ip, only has meaning when add port(ip-tables rule work here) 
+
 * Volume/ Persistent Volume 
+
   containers in same pod share cpu, ram, network interface but not share disk 
+
   volume is not top resource, it is part of pod, share same lifecycle with pod, containers in this pod can see this volume, container restart not lose data 
+
   container want access volume, need declare volumeMount in container spec
+
   Pod.spec.containers.volumeMounts.name to ref Pod.spec.volumes.name
+
   Pod.spec.containers.volumeMounts.mountPath set mount path
+
   volume types:  
+
   - emptyDir, empty directory used for storing transient data 
+
   - hostPath, used for mounting directories from the worker node's filesystem 
+
   - gitRepo, initialized by checking out the contents of a git repo 
+
   - nfs 
+
   - gcePersistentDisk, awsElasticBlockStore, azureDisk 
+
   - cinder, cephfs, iscsi, flocker, glusterfs, quobyte, rbd, flexVolume, vsphereVolume, photonPersistentDisk, scaleIO – used mounting other network storage 
+
   - configMap, secret, downwardAPI—special type used to expose certain k8s resource to pod 
+
   - PersistentVolumeClaim – a way use pre- or dynamic provisoned persistent storage 
+
   emptyDir data will lost when pod be deleted 
+
   Pod.spec.volumes.empotyDir.medium: Memory, create a in memory tmpfs
+
   gitRepo is base on emptyDir, then gets populated by clone a git repository, those step before container are created
+
   gitRepo content only fetch when created, new commit not affect, but recreate pod will fetch new content
+
   persistenVolume is not belog to any namespace, is share by whole k8s 
+
   persistenVolumeClaim is belong to namespace, only can used by same namespace pod 
+
   rWO(read write once), RWX(read write many), ROX(read only many),  time ones same time how many ndoe can access(not pod) 
+
   when pvc delete, pv status is RELEASED, can't be new pvc mount agian, need munual process, recliamReplicy: Retain must delete then create, other type has recycle and delete 
+
   storageClass, is not namespaced, work with provisoner togerther, storageclass dynamic create PersistenVolume by provisoner, set pvc storageClassName to use storageClass, if not set storageClassName will use default storageClassName, storageClassName set to "" will use pre-provisoner pv 
+
 * ConfigMap/ Secret 
+
   configMap is used to instead of command line argument, container env or config volume 
+
   configMap found is base on name, so can used same name but different config in different env 
+
   kubectl create configmap, create a config map, --from-literal=<key>=<value>, --from-file=<filename> filename will be key, and file content will be value, can set other key by –from-file=<key>=<filename>, also support –from-file=<directory> will add will file under directory 
+
   yaml file env, valueFrom can get configmap key value, 
+
   envFrom can expose a configmap all values to environment 
+
   pass large config, use configMap volume, items can expose a part of config to volume and rename 
+
   kubectl edit configmap <name>, use editor change configmap 
+
   secret is like configmap, but used for save sensitive config data, but secret is show on BASE64 
+
   kubectl create secret generic <name>, --from-literal –from-file, generic is normal, docker-registry is used from docker hub private repostiry certifacate then use imagePullSecrets to use this secrets 
+
 * Deployment
+
   implmenet rolling update for pod(from server level, kubectl rolling-update is client level) 
+
   kubectl rollout status deployment <name>, check deployment status 
+
   strategy: rolling-update, create one -> shutdown one -> …, recreate: delete all then create 
+
   kubectl path deployemnt <name> -p <value>, update definition 
+
   kubectl set image deployment <name> <container name>=<image> 
+
   rollout is implmenet by keep different replicaset 
+
   kubectl rollout undo deployemtn <name>, roll back a image upate 
+
   kubectl rollout history, show all revision history, (need –record when create deployemnt, otherwise CHANGE-CAUSE will be empty) 
+
   kubectl rollout undo deployemnt <name> --to-revison=<num> 
+
   rolloingUpdate is controller by maxSurge maxUnavailable, maxSurge is how many pod can above desirde pod num, maxUnavaliable is how many pod current is not abaliable(match with desirde number) 
+
   kubectl rollout pause deployment <name>, pause a rollout 
+
   kubectl rollout resume deployment <name>, continue rollout 
+
   minReadySeconds is time when pod all container is readiness ready then how time this pod can use to replace old one 
+
 * StatefulSet 
+
   statefulSet is similar as Deploment, but used for stateful service, like database, pod can use different volume, keep different state 
+
   statefulSet pod name is named with <stateful set name>-<index> 
+
   scaling down a statefulset first remove highest index pod 
+
   statefulSet us volume cliam template create pvc for each pod, index is same as pod 
+
   <apiServerHost>:<port>/api/v1/namespaces/<namespace>/pods/<pod name>/proxy/<path> can access pod by kube api 
+
   scaling down a statefulset will keep pvc and pv 
+
   start statefulset is one-by-one(this is avoid race condition) 
+
   statefulset can find peer pod  by srv dns lookup 
+
   staetfulset if node disconnect, node will be NotReady, pod will be Unknown, if you delete pod manual, status will be terminating, if you need delete, need –force –grace-period=0 
+
   node affinity is used to instead of node selector 
+
 * Downward API/ Kubenetes API 
+
   pod can get metadata like pod ip, name, service account, resource limit... from downward api by environment or volume 
+
   valueFrom.fieldRef.fieldPath 
+
   valueFrom.fieldRef.resourceFieldPath 
+
   labels and annotation can only get from volume, because those can update at run time 
+
   resource limit need set container name 
+
   volume use downwardAPI to reference 
+
   kubectl proxy, let api expose at 8001 without authentication 
+
   pod can access kube api by kubernetes service 
+
   kubernetes cert is from secrets default-token-xx, mount on /var/run/secrets/kubernetes.io/serviceaccount/ 
+
   cURL_CA_BUNDLE=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt 
+
   tOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) 
+
   curl -H "Authorization: Bearer $TOKEN" https://kubernetes 
+
   ambassador mode, let pod can use http to access kube api 
+
   --enable-swagger-ui=true, enable kube api swagger ui 
+
   --extra-config=apiserver.Features.Enable-SwaggerUI=true, enable minibube swagger ui 
+
 * kube-proxy
+
   on iptables mode, if pod need connect itself service, need enable hairpin mode, hairpin mode need network interface permission 
+
   for intf in /sys/devices/virtual/net/docker0/brif/*; do cat $intf/hairpin_mode; done.  show permission 
+
   for intf in /sys/devices/virtual/net/docker0/brif/*; do echo 1 > $intf/hairpin_mode; done. Change permission 
+
 * component 
+
 ** Master node: 
+
 *** Base components: 
+
     - Kubernetes Api Server: every component and other    node commonication with 
+
     - Scheduler: schedule app to work nodes 
+
     - Controller manager: cluster level function, track work nodes, handle node failure 
+
     - Etcd: reliable distributed cluster configuration store 
+
 *** Addons components: 
+
     - Kubernetes DNS server 
+
     - Dashboard 
+
     - Ingress Controller 
+
     - Heapster 
+
     - Container Network plugin 
+
 ** Work node: 
+
    - Docker, rkt, or other container runner, run app 
+
    - Kubelet, talks to server api and manager app 
+
    - Kubernetes Service Proxy(kube-proxy), load-balance network traffic between app
+
 ** rule 
+
    kubectl get componentstatus 
+
    kubelet must run as system component, other compoent can run as sysetem component or run as pod 
+
    kubelet also need run on master node, it need run kube-system namespace pod 
+
    only kubernetes api direct talk to etcd 
+
    etcd is only place k8s store data 
+
    aPIserver: authentication plugins -> authrization plugins -> admission plugins -> etcd 
+
    aPIServer only update and get data from etcd, other is done by other compoent call api server watch api, response to resource change 
+
    scheduler update pod definition by api server, then kubelet watch this change, create pod 
+
    controller Manager, watch or query change self, calculate then put metadata to etcd by kube api 
+
    kubelet watch kube api metadata, create/update/delete pod, or create system component from local manifest 
+
    kube-proxy, let client access service forward to pod, it name proxy because first use server process and iptable to proxy, now just iptables used 
+
    kubectl get event, get event group by event type, -- watch can see on time order 
+
    high avaliable k8s: multiple etcd(odd number), multiple api server(every connect to one etcd, has loadbalancer), multiple controller manager and scheduler(on active, other stand by), active is dicide by leader election(finish by api server endpoints(now is configmap)) 
+
 * Kube api security 
+
   pod authentication use service account 
+
   user authentication not manager by kube api 
+
   serviceAccount, pod use to authentication to api server, default every namespace has a serviceaccount 
+
   rBAC(Role Base Access Control) is resource work with plugin for auhtorization 
+
   kubeclt create serviceaaount <name> 
+
   pod use spec.serviceAccountName to reference serviceaaount 
+
   role/ClusterRole, define which action allow/deny 
+
   roleBindings/ClusterRoleBindings, associate Role and usre/serviceaccount/group 
+
   role is namespace level, ClusterRole is cluster level 
+
   roleBinding match one role to multiple sa/user/group 
+
   clusterRole system:discovery is used to non resource api 
+
   clusterRole view is used to show kind of resource, bind to ClusterRoleBinding will let it can access all namespace, bind to RoleBinding let it can access this namespace resource 
+
   view allow access most of resources(except role rolebinding secret), edit allow edit most of resource(exclude secret), admin allow modify any resource of it namespace(exclude ResourceQuotas, namespace), cluster admin allow modify any resource 
+
 * Network security
+
   networkPolicy, work with network plugin to control network access, use label selector to controll ingress and egress rule 
+
   CIDR(Classless Inter-Domain Routing) 
+
   spec.podSelector is use to define which pod be control, ingress controll other pod access this pod 
+
   namespaceSelector use to set namespace level network policy 
+
   ipblock.cidr, set which ip range can acess 
+
 * Network
+
   container in same pod share network, k8s create a container from pause image, this image will create a eth, other container in this pod will use same network namespace so they can see this eth, and a veth will create, it is a two end pipe network, one end connection to pod eth, another end connect to docker bridge network(docker0), pod network on node split by CIDR to avoid conflitct 
+
   service network is handle by kube-proxy, first pod send request, eth0 in pod not recgonize, so it send to docker0 through pipe, docker0 forward to node eth, then kube-proxy will change iptables, this package will sent to correct node by iptables rule 
+
   nodePort also support by kube-proxy, it listen on nodePort port, if traffict in, it redirect it to cluster ip: port, then iptable handle this 
+
   pod int-network, pod ip must same by it self and by others see 
+
   pod has eth0 network adapter, then has a vethxxx pair network, one end is eth0 in pod, another end in node bridge 
+
   every node need set a subnet, each node has a unique subnet 
+
   cross node pod commication need set route on every node forward pacakge to corresponde node 
+
   container Network Interface(CNI) is a project to allow k8s controll network, has kinds of plugins, calico, flannel 
+
   service is use iptable to implement, this ip is virtual, record by api server and modify iptable on node, when package receive, change the dst ip
+
 * Pod security
+
   set pod hostNetwork to true, pod can access host network 
+
   HostPort, let container use host port, different with service nodePort type 
+
   HostPort only open when pod is schedule on this node, if multiple pod use same hostPort on same node, only one can success, other will pending 
+
   HostPID, hostIPC, set to true to use host pid namespace and ipc 
+
   Security-context can set user id, permission, SELinux 
+
   SecurityContext.runAsUser, change pod runner user in pod  
+
   SecurityContext.runAsNonRoot: true, let container can't run as root 
+
   SecurityContext.privileged: true, let pod hs privaleged permission on node 
+
   SecurityContext.capabilities, can add/drop linux capabilities, like time, CHOWN 
+
   SecurityContext.readOnlyRootFilesystem: true, let container can write/read to mount filesystem, but can't write to other fs(exclude mount fs) 
+
   SecurityContext, fsGroup and supplementalGroups is use to share file with different user, when set this, user create file on volume will use fsGroup group, create file on other location will use user group 
+
   PodSecurityPolicy, this is a resource type in k8s, it will used in admission plugin, when pod create, will check is pod definition valid 
+
   PodSecurityPolicy is cluster level 
+
   PodSecurityPolicy, can set hostIPC, hostPID, hostNetwork, hostPorts, privileged, readOnlyRootFilesystem, runAsUser, fsGroup, supplementalGroups, seLinux, volumes 
+
   can create multiple psp, and use clusterrole to bind to psp, then use clusterrolebinding to bind to user/group/serviceaaount 
+
 * etcd
+
   k8s supoort etc 2 and etc 3, but version 3 is recommended 
+
   etc 2 store key like directory, etc3 not but support key has slash(/), etc3 performance is better 
+
   K8s store metadata under /registry 
+
   ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 --cert=/etc/kuberne 
+
   tes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key --cacert=/etc/ 
+
   kubernetes/pki/etcd/ca.crt get /registry --prefix=true --keys-only 
+
   etcd store value as protobuf format, use protoc –decode_raw to decode 
+
   etcd always deployment as odd node number, state change need half of them agree(majority) 
+
 * Proxy deployment k8s 
+
   #+BEGIN_SRC bash
+
   http_proxy=http://192.168.1.154:8118 https_proxy=http://192.168.1.154:8118 no_proxy=localhost,127.0.0.1,localaddress,.localdomain.com,.localdomain.local,192.168.0.0/16,10.96.0.0/12,172.25.50.21,172.25.50.22,172.25.50.23,172.25.50.24,xxxx kubeadm init --pod-network-cidr=xxxx 
+
   #+END_SRC
+
   Calico:  
+
   --pod-network-cidr=192.168.0.0/16 
+
   kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml 
+
   kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml 
+
 * Resources limit
+
   1 cpu core = 1000 m(millicores) 
+
   requests is for pod needed 
+
   limits is max usage 
+
   requests will affect pod scheduler, current usage will sum by all scheduler pod on this node, even thought it consule less than it required, if unused(calculate) less than require, this pod can't be scheduler on this node 
+
   scheduler will filter pod wihout limit not required, there a two prioritization function, one is LeastRequestPriority, which first match fewer requested resource(greater amont of unallocated resource), another one is MostRequestPriority, with lower left resource 
+
   cpu=1m, means us 1 milicores, 1 cpu = 1000 milicores Cpu=1, means use 1 core Unsed cpu will assign to pod use request ratio Can set custom resource on node, and use same name on pod resource to refine use resource If resource request is overcommite node (capacity – allocated) resource , it will be pending Resource limit is not same as request, it can more than 100%, k8s decide which container to be kill 
+
   cpu exceeding will do nothing, memory exceeding will kill this pod then if this pod restart always, then it restart, if failed very frequence will be CrashLoopBackOff 
+
   pod always see node memory/cpu resource 
+
   some app decide how much memory and thread start by query system resource, there be problem when you setting resource limit, so need get this resource info 
+
   from /sys/fs/cgroup/cpu/cpu.cfs_quota_us 
+
   qoS(Quality of Service), decide which pod killed when resource not enough, there are 3 class: (1) BestEffort(request and limit both not set, both cpu and memory), allow no cpu and first one killed when no resource and it will no meory limit, (2) Guarenteed(request below on limit), request/limit must be set for cpu and memory, and it must equal, need for each container (3) Burstable (request and limist is equal, both cpu and memroy) 
+
   if container is different QoS, then pod is Burstable 
+
   when node overcommited, kill order is BestEffort -> Burstable -> Guarenteed, in same class, memory usage percent(align request) is used, more usage will be kill first 
+
   limitRange is a resouce type, it set pod min and max resource usage will commit pod to api server, and also define a default value, it for every pod and container 
+
   resourceQuota, is for contraint whole namespace resource usage, it also apply on admission plugin 
+
   if y ou define ResourceQuota, new commit pod need define request/limit 
+
   resourceQuota can set scope, it only effect on set scope, 4 scope(can use together, pod all match will be constraint by resoucequota): BestEffort, NonBestEffort, Terminating, NontTerminating 
+
   heapster, collection all pod memory/cpu info by cAdvisor, use kubectl top to get resource usage 
+
   influxDB and Grafana, used to store and analyzing resouce usage, deploy by https://github.com/kubernetes/heapster/tree/master/deploy/kube-config/influxdb 
+
 * Automatic Scaling 
+
   HorizontalPodAutoscaler(HPA) is a resource type, this controller period check pod metric and diff with target mertic then auto scaling 
+
   HPA via cAdvisor to get pod metric 
+
   cpu mertic, base on you set request cpu resource, 
+
   kubectl autoscale deployment <name> --cpu-percent=30 –min=1 –max=5, create a HPA 
+
   autoscaler every scale can max incress/decress this number pod, is double or 4 
+
   scale-up min period is 3min, scala-down min period is 5 min 
+
   change hpa at runtime is acceptable 
+
   kubectl cordon <node>, let node unscheduler 
+
   kubectl drain <node> let node unscheduler and evicts all pod 
+
   podDistributionBudget,  is a resource type, it work with autoscaler cluster, ensure this pod will not less than minAvailable 
+
 * Advanced Scheduler  
+
   Tainted and Toleration: node can set tainted, only pod can toleration node tainted then it can schedule to this node, e.g. api-server to master node 
+
   Tained format is <key>=<value>:<effect> 
+
   if toleration match all tained, it can be scheduler to this node 
+
   effect: (1) NoScheduler, if pod not toleration node tainted, will not schdule to this node (2) PreferNoSchuler, will try avoid to schuler this node if not toleration the node tainted, but finally if no where match will scheduler to this node (3) NotExecute, pod can't schuler to this node if not tolerate, then if pod already run this node, if not match will be evicted to other  
+
   kubectl taint node <node name> <key>=<value>:<effect>, create a taint on node 
+
   tolerationSeconds, can used to adjust pod reschdule to other node wait time 
+
   node affinity is used to instead of node selector, node affinity can set pod scheduler to node priority 
+
   pod affinity, used let pod scheduler to same node, use different topologyKey to implement different pod affinity 
+
   podAntAffinity is opposite with podAfiinity 
+
 * Extension Kubernetes 
+
   CustomerResourceDefinition object(CRD), is a custom resource type in k8s, you first create CRD, then you can post this kind resource to k8s, it define how control like pod, deployment, configmap 
+
   spec.group is correspond to apiVersion 
+
   spec.names.kind use correspond to kind 
+
   just CRD do nothing, it store data to api server, need work with correspond controller 
+
   from kubernetes 1.8, api server can back end with batch of api server aggerage, you can define you custom api server 
+
   service Catalog, CusterServiceBroker, describe system can provision services, ClusterServiceClass, ServiceInstance, system instance has provisioned, ServiceBinding, Service Instance bind with client 
+
   serviceBroker need implment OpenServiceBroker api 
+
   OpenShift 3 is base on k8s, support: 
+
   - user&group manager 
+
   - Application Template, set a template, then suppor parameter to replcae template to create resource 
+
   - BuildConfig, build image and deploy from git source 
+
   - DeploymentConfig, auto deployment when source change, work with image stream 
+
   Deis workflow, can deploy into k8s, workflow also provide a source to deployment solution, need helm CLI to work on deis workflow 
+
   Helm can work without workflow, Tiller server is a pod run on k8s, Helm application package named as charts 
+
   Charts + config = Release 
+
 * helm 
+
   Helm and tiller is pre config package manager 
+
   Helm is client cli 
+
   Tiller run in kubernetes as a pod 
+
   Chars is package 
+
   Install: helm init, this will install tiller to kubectl current context 
+
   Helm repo update 
+
   Helm install <package> to install a pacakge, every install will generate a new release 
+
   Helm ls, show deployed release 
+
   Helm delete <release>, delete release 
+
