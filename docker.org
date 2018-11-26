@@ -5,4 +5,129 @@
   - rm <container id>, delete container 
   - rmi <image>, delete image 
   - images, list local images 
-  - exec –it <container id> <command>, execute command in container 
+  - exec –it <container id> <command>, execute command in container
+* command
+  docker –version, show short version info, 
+
+  docker version/info, show docker detail info 
+
+  docker run <image>, run image as a container, image can from local or remote name, -d run image process as domain, -p set port mapping <outsize port>:<container port>, -v mount volumne <outsize path>:<container path> 
+
+  docker stop/ docker container stop <container id>, stop container 
+
+  docker start <container id>, start container 
+
+  docker rm <container id>, delete container 
+
+  docker rmi <image>, delete image 
+
+  docker images/ docker image ls, list local images 
+
+  docker exec –it <container id> <command>, execute command in container 
+
+  docker container ls –all, show all containers 
+
+  docker build, build a image from local file, -t given image a name 
+
+  docker login, login public repository 
+
+  docker tag <image name> <username>/<repository>:[tagname], given local repo a tag name, set local image track remote 
+
+  docker push <username>/<repository>:[tagname], push local image to remote 
+
+  docker swarm init, let current node join swarm and manage other node 
+
+  docker stack deploy <serviceName>, use compose file deploy, can create/update service, -c set compose file 
+
+  docker service ls, list running service(configure by compose file) 
+
+  docker service ps <serviceName>, show node(container) running under service 
+
+  docker stack rm <serviceName>, stop service 
+
+  docker swarm leave, let current node leave swarm, --force 
+
+  docker swarm join, let current node join swarm as a worker 
+
+  docker node ls, list swarm nodes 
+
+  docker-machine create –driver virutalbox <vmname>, create vm 
+
+  docker-machine ls, list created vm 
+
+  docker-machine ssh <vmname> "<command>", send command to vm execute 
+
+  eval $(docker-machine env <vmname>), change current docker client send command to set vm 
+
+  eval $(docker-machine env –u), unset 
+* docker compose
+  docker compose is a tool to run/configure multiple container same time, use YAML file to control 
+
+  defualt name is docker-compose.yml 
+
+  a couple of containers named as service 
+
+  a couple of service named as stack 
+* Dockerfile
+  FROM <imageName>,  define this image parent image 
+
+  WORKDIR <path>,  working directory 
+
+  COPY <from> <to>, copy file from <from> to container <to> 
+
+  RUN <command>, execute command when initialize 
+
+  EXPOSE <port num>, let <port num> can access from outside 
+
+  ENV <variable> <value>, set environment value 
+
+  CMD ["<cmd>", "<arg1>"], execute when image lanuched 
+
+  VOLUME <path>, mount host file to contianer <path>, file change about volume path will not build in image, so if you want change volume, add command before volume, any change after VOLUME definition will los 
+
+  ENTRYPOINT is command, CMD is argument, if you not set any argument, command + argument will be run 
+
+  ENTRYPOINT node xx is shell mode, ENTRYPOINT ["node", "xx"] is exec mode 
+* others
+  repository format: 
+
+  <username>/<repository>:[tag] 
+
+  dockerfile very line is a command, will build a container from previous line result image, then execute command, commit a new image, every command will generate a new file level, will share file as much as possible 
+* base
+  Container -> Service                       -> Stack 
+
+  Dockerfile -> Docker-compose.yml ->  compose + swarm 
+
+  Docker is construct by file layer, each layer is readonly, when you write to, create a new file layer 
+
+  Docker build is upload file by docker client to docker daemon, client and daemon can run diffrent machine 
+
+  Linux Namespaces, make process see its own personal view of system(files, processes, network interfaces, hostname, and so on) 
+
+  Linux Control Groups(cgroupus), limit amount of resource the process can consume(CPU, memory, network bandwidth, and so on) 
+
+  Linux Namespec kinds: Mount(mnt), Process ID(pid), Network(net), Inter-process communitation(ipc), UTS, User ID(user) 
+* ADD vs COPY
+  ADD can add file from url, file location, and when file can extract, it will extract, it too magic under hood, so now use COPY to instead 
+* proxy 
+  edit file /etc/system.d/system/docker.service.d/http-proxy.conf  add
+  #+BEGIN_SRC 
+[Service] 
+Environment="HTTP_PROXY=https://127.0.0.1:8118/" 
+Environment="HTTPS_PROXY=https://127.0.0.1:8118/" 
+Environment="NO_PROXY=localhost,127.0.0.1" 
+  #+END_SRC
+
+  #+BEGIN_SRC bash
+systemctl daemon-realod 
+systemctl restart docker 
+  #+END_SRC 
+* network 
+  On host create a bridge network named docker0, every container link this bridge will get a ip, so on same host container can reach each other 
+* ENTRYPOINT vs CMD 
+  docker run will execute <ENTRYPOINT> <CMD> 
+
+  default <ENETRYPOINT> is /bin/bash -c, can override by ENTRYPOINT instruction, or by set –entrypoint arg 
+
+  default <CMD> is not set, can override by CMD instruction, or by docker run <OPTIONS> <IMG> <CMD> 

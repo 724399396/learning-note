@@ -476,17 +476,38 @@ source <(minikube completion <shell type>), need install bash-completion
 
   gitRepo content only fetch when created, new commit not affect, but recreate pod will fetch new content
 
-  persistenVolume is not belog to any namespace, is share by whole k8s 
+  gitRepo only support public http git clone
 
-  persistenVolumeClaim is belong to namespace, only can used by same namespace pod 
+  use hostPath to read/write system file on node, nerver use them to persist data across pods.
 
-  rWO(read write once), RWX(read write many), ROX(read only many),  time ones same time how many ndoe can access(not pod) 
+  persistentVolume/persistentVolumeClaim is a better way delcare volume, it decouple pod with underlying storage technology, PV is setup by cluster admin to some sotrage technology, user use pvc reference pv
 
-  when pvc delete, pv status is RELEASED, can't be new pvc mount agian, need munual process, recliamReplicy: Retain must delete then create, other type has recycle and delete 
+  persistentVolume is not belog to any namespace, is share by whole k8s 
+
+  persistentVolumeClaim is belong to namespace, only can used by same namespace pod 
+
+  persistentVolume and persistentVolumeClaim is under api version v1
+
+  RWO(read write once), RWX(read write many), ROX(read only many), number of worker nodes can use volume at same time(not number of pods) 
+  
+  when persistentVolumeClaim created, it will use persistentVolumeClaim.spec.resources.request.storage and persistentVolumeClaim.spec.aceessModes use find appropriate pv to bind
+
+  persistentVolume.spec.persistentVolumeReclaimPolicy, can change after pv is created:
+  - RETAIN:  when pvc delete, pv status is RELEASED, can't bind with new pvc agian, need munual process, must delete then create
+  - recycle: when pvc delete, delete volume content let pv available again
+  - delete: when pvc delete, delete underlying storage
 
   storageClass, is not namespaced, work with provisoner togerther, storageclass dynamic create PersistenVolume by provisoner, set pvc storageClassName to use storageClass, if not set storageClassName will use default storageClassName, storageClassName set to "" will use pre-provisoner pv 
 
+  storageClass is under api version storage.k8s.io/v1
+
+  storageClass is used even an match required pv exist
+
 * ConfigMap/ Secret 
+  configure apps ways:
+  - passing command-line arguments to container
+  - setting custom environment varaible
+  - mounting configuration file into container
 
   configMap is used to instead of command line argument, container env or config volume 
 
@@ -505,7 +526,6 @@ source <(minikube completion <shell type>), need install bash-completion
   secret is like configmap, but used for save sensitive config data, but secret is show on BASE64 
 
   kubectl create secret generic <name>, --from-literal –from-file, generic is normal, docker-registry is used from docker hub private repostiry certifacate then use imagePullSecrets to use this secrets 
-
 * Deployment
 
   implmenet rolling update for pod(from server level, kubectl rolling-update is client level) 
