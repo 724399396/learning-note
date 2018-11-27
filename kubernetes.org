@@ -1,5 +1,4 @@
 * base
-
   scale up(Vertical), means same machine, ass hardware resource 
 
   scale out(Horizontal), means multiple machine, run same application 
@@ -13,15 +12,16 @@
   k8s cluster has two node type: master node, work nodes 
 
   pods is base unit, container in same pod means this container must run a same node, and share common resource(by same linux namespace) 
-
+  
   pod only alaviable in kubernetes,  export to outside need create a service 
 
   env kUBE_EDITOR="path" can set editor for config file, if not set will use default EDITOR 
 
-  $(<key>), reference env key 
+  $(<key>), reference env key, this syntax can used in env.value, args, command
 
   image with latest tag default imagePullPolicy is Always, not latest tag default is IfNotPresent 
 
+  in yaml file, for number value must enclose with quotations mark("), for string is optional
 * cli
 
   #+begIN_SRC bash
@@ -123,7 +123,6 @@ source <(minikube completion <shell type>), need install bash-completion
   config include clusters, users and contexts, context=cluster+user
 
 * pod
-
   one pod can contain multiple container, but only it should need then put multiple container in same pod, e.g log collector 
 
   container in same pod must be run on same node, it nerver across different nodes 
@@ -178,6 +177,15 @@ source <(minikube completion <shell type>), need install bash-completion
 
   kubectl logs <pod> --previous, get previous crashed container logs 
 
+  Pod.spec.containers.command, override Dockerfile ENTRYPOINT, can't change after pod created
+
+  Pod.spec.containers.args, pass CMD to image, can't change after pod created
+  
+  Pod.spec.env, set container environment value, name is environment name, then has 2 way get value:
+  - value, hardcode value here
+  - valueFrom, get value from ConfigMapKeyRef/fieldRef/resourceFieldRef/SecretKeyRef
+  
+  Pod.spec.automountServiceAccountToken, set to false disable default-token secret auto mount
 * label
 
   kubectl label <type> <name> <label-key>=<label-value>, add or update label, update need –overwrite 
@@ -450,6 +458,8 @@ source <(minikube completion <shell type>), need install bash-completion
 
   Pod.spec.containers.volumeMounts.mountPath set mount path
 
+  Pod.spec.containers.volumeMOunts.subPath, define subpath of volume to mount
+
   volume types:  
 
   - emptyDir, empty directory used for storing transient data 
@@ -509,23 +519,49 @@ source <(minikube completion <shell type>), need install bash-completion
   - setting custom environment varaible
   - mounting configuration file into container
 
-  configMap is used to instead of command line argument, container env or config volume 
+  configMap is used to instead of command line argument, used as container env or config volume 
 
-  configMap found is base on name, so can used same name but different config in different env 
+  configMap found is base on name, so can used same name but different config in different env:
+  - Pod.spec.containers.env.valueFrom.configMapKeyRef can get configmap value by key, if value not exist, container failed start, then create config let container start successful, set configMapKeyRef.optional: true let container normal start even configmap not exist
+  - Pod.spec.containers.envFrom, export configmap valid name key-value to container env, e.g. FOO-BAR is not a valid env name, set envFrom.prefix let all import key name has a prefix
+  - Pod.spec.volumes.configMap, reference configmap as volume, configMap.items populated a part of configmap to volume
+  
+  create configmap from command:
+  - kubectl create configmap <name> --from-literal=<key>=<value>, create configmap with <name>, content is <key>=<value
+  - kubectl create configmap <name> --from-file=<filename>, filename will be key, and file content will be value
+  - kubectl create configmap <name> --from-file=<key>=<filename>, key is <key>, value is file content
+  - kubectl create configmap <name> –-from-file=<directory>, add all name is valid key files under directory
 
-  kubectl create configmap, create a config map, --from-literal=<key>=<value>, --from-file=<filename> filename will be key, and file content will be value, can set other key by –from-file=<key>=<filename>, also support –from-file=<directory> will add will file under directory 
+  configMap volume default permission is 644(-rw-r-r--), can change by Pod.spec.volumes.configMap.defaultMode
 
-  yaml file env, valueFrom can get configmap key value, 
-
-  envFrom can expose a configmap all values to environment 
-
-  pass large config, use configMap volume, items can expose a part of config to volume and rename 
+  command line/env, can't change after pod created, but mount configMap can change it content without recreate pod
+  
+  configMap volume file content actually is symbol link, <file> -> ..data/<file>, then ..data -> ..2018_11_27_02_47_03.193193034, when configMap change, k8s create a new dir, then change link to new dir, but if you mounte a single file into container(use subPath) will not be updated
 
   kubectl edit configmap <name>, use editor change configmap 
 
-  secret is like configmap, but used for save sensitive config data, but secret is show on BASE64 
+  secret is like configmap, but used for save sensitive config data, secret is show on BASE64, Secret.stringData is write only, value will show under data
 
-  kubectl create secret generic <name>, --from-literal –from-file, generic is normal, docker-registry is used from docker hub private repostiry certifacate then use imagePullSecrets to use this secrets 
+  create secret from command:
+  - kubectl create secret <type> <name> --from-literal 
+  - kubectl create secret <type> <name> –from-file
+  
+  secrets type:
+  - generic, is normal
+  - docker-registry, is used from docker hub private repostiry certifacate then use imagePullSecrets to use this secrets
+  - tls
+  
+  secret value size is limit to 1MB
+
+  configMap is added after secret
+
+  when secret is used by pod, envoriment/volume both get it origin format(not BASE64 encode)
+
+  Pod.spec.volumes.secret, populated secret to volume, this volume is tmpfs(in-memory filesystem)
+
+  Pod.spec.containers.env.valueFrom.secretKeyRef, populated secret to env
+
+  environment maybe be output on log and can be inherit by child process, so secret is better use volume to expose to container
 * Deployment
 
   implmenet rolling update for pod(from server level, kubectl rolling-update is client level) 
@@ -580,10 +616,6 @@ source <(minikube completion <shell type>), need install bash-completion
 
   pod can get metadata like pod ip, name, service account, resource limit... from downward api by environment or volume 
 
-  valueFrom.fieldRef.fieldPath 
-
-  valueFrom.fieldRef.resourceFieldPath 
-
   labels and annotation can only get from volume, because those can update at run time 
 
   resource limit need set container name 
@@ -596,9 +628,9 @@ source <(minikube completion <shell type>), need install bash-completion
 
   kubernetes cert is from secrets default-token-xx, mount on /var/run/secrets/kubernetes.io/serviceaccount/ 
 
-  cURL_CA_BUNDLE=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt 
+  CURL_CA_BUNDLE=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt 
 
-  tOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) 
+  TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) 
 
   curl -H "Authorization: Bearer $TOKEN" https://kubernetes 
 
@@ -937,4 +969,3 @@ source <(minikube completion <shell type>), need install bash-completion
   Helm ls, show deployed release 
 
   Helm delete <release>, delete release 
-

@@ -391,6 +391,9 @@
    data Maybe a = Nothing | Just a
 ** Data.Either
    data Either a b = Left a | Right b 
+** Data.Map
+   fromList :: Ord k => [(k,a)] -> Map k a
+   toList :: Map k a -> [(k,a)]
 ** Data.Function
    on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
 ** Data.Char

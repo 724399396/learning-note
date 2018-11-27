@@ -131,3 +131,8 @@ systemctl restart docker
   default <ENETRYPOINT> is /bin/bash -c, can override by ENTRYPOINT instruction, or by set –entrypoint arg 
 
   default <CMD> is not set, can override by CMD instruction, or by docker run <OPTIONS> <IMG> <CMD> 
+
+  both <ENTRYPOINT> and <CMD> support two different forms, exec is better:
+  - shell, e.g. ENTRYPOINT node app.js, in this mode, pid 1 is /bin/sh -c <APP>, then <APP> run as another process
+  - exec, e.g ENTRYPOINT ["node", "app.js"], in this mode, pid 1 is <APP>
+ 
