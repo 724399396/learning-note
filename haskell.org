@@ -7,6 +7,10 @@
 
   Integer length only limit by memory, more expensive than Int
 
+  fixed size int type: Int8 Int16 Int32 Int64
+  
+  fixed unsigned int type: Word8 Word16
+
   numberic literal:
   - 0b, binary
   - 0o, octal
@@ -94,19 +98,43 @@
   undefined is a placehodler, can be any type, evaluate will throw exception
 
   newtype is similar as data, but newtype can only have one constructor and constructor only has one parameter, it only exist in compile time, no any impact on runtime
+
+  keyword | read as function dependency, declare type relation
+
+  Zipper Monad is a generic monad for navigating around arbitraty data struture
+
+  quot with rem, div with mod, diff is quot close to 0, div close to negative
+
+  =_ type include _|_ (bottom type) is lifted type, not include is unlifited type _=
+
+  alpha conversion, means replace argument without conflict with other
+  
+  beta reduction, use real parameter replace argument in body without conflit
+
+  Eta conversion, if variable only appear both in parameter and body once, omit it
 * Lazy
+  NF(normal form), HNF(head normal form), WHNF(weeak head normal form)
+
+  seq, evaluate first value to week head normal form
+
+  $!, type same as $, f $! x = seq x (f x)
+
+  deepseq , $!! and force, let value evalute to normal form
+
   error seq usage:
   - someFunc (x `seq` y), x evaluate until someFunc evaluate
   - let a = x `seq` y in someFunc a is same
   - (1+2):(3+4):[], only (1+2) will be evaluate
   - ((1+2), (3+4)), only evaluate to pair, inner evaluate not execute
+
   seq is evalute on runtime, maybe cause performance issue
    
 * Language Extension
-
-  ParallelListComp, allow use syntax [(x,y)| x <- xs | y <- ys], in fact it xs and ys zip
-
-  ApplicativeDo, allow Functor, Applicative use do syantax
+  on source file top, use {-# LANGUAGE xx #-} enable language extension
+  available extensions:
+  - OverloadedStrings, treat string literal as different type. e.g ByteString
+  - ParallelListComp, allow use syntax [(x,y)| x <- xs | y <- ys], in fact it xs and ys zip
+  - ApplicativeDo, allow Functor, Applicative use do syantax
 
 * typeclass
   typeclass similar to interface
@@ -122,9 +150,10 @@
     <implmenets>
   #+END_SRC
 ** Show
-   type ShowS = String -> String
 *** Definition
     #+BEGIN_SRC haskell
+    type ShowS = String -> String
+
     class Show a where
       showsPrec :: Int -> a -> ShowS
       show :: a -> String
@@ -134,6 +163,15 @@
     showString :: String -> ShowS
     showChar :: Char -> ShowS
     shows :: (Show a) => a -> ShowS
+    #+END_SRC
+** Read
+*** Definition
+    #+BEGIN_SRC haskell
+    class Read a where
+      readsPrec :: Int -> ReadS a
+      readList :: ReadS [a]
+      GHC.Read.readPrec :: Text.ParserCombinators.ReadPrec.ReadPrec a
+      GHC.Read.readListPrec :: Text.ParserCombinators.ReadPrec.ReadPrec
     #+END_SRC
 ** Eq
 *** Definition
@@ -175,6 +213,34 @@
       minBound :: a
       maxBound :: a
     #+END_SRC
+** Ix
+*** Definition
+    #+BEGIN_SRC haskell
+    class Ord a => Ix a where
+      range :: (a, a) -> [a]
+      index :: (a, a) -> a -> Int
+      unsafeIndex :: (a, a) -> a -> Int
+      inRange :: (a, a) -> a -> Bool
+      rangeSize :: (a, a) -> Int
+      unsafeRangeSize :: (a, a) -> Int
+    #+END_SRC
+** IsString
+   support OverloadedStrings
+*** Definition
+    #+BEGIN_SRC haskell
+    class IsString a where
+      fromString :: String -> a
+    #+END_SRC
+** IsList
+   support OverloadedLists
+*** Definition
+    #+BEGIN_SRC haskell
+    class IsList l where
+      type family Item l :: *
+      fromList :: [Item l] -> l
+      fromListN :: Int -> [Item l] -> l
+      toList :: l -> [Item l]
+    #+END_SRC
 ** Num
    all number base
 *** Definition
@@ -200,6 +266,27 @@
       quotRem :: a -> a -> (a, a)
       divMod :: a -> a -> (a, a)
       toInteger :: a -> Integer
+    #+END_SRC
+** Foldable
+*** Definition
+    #+BEGIN_SRC haskell
+    class Foldable (t :: * -> *) where
+      Data.Foldable.fold :: Monoid m => t m -> m
+      foldMap :: Monoid m => (a -> m) -> t a -> m
+      foldr :: (a -> b -> b) -> b -> t a -> b
+      Data.Foldable.foldr' :: (a -> b -> b) -> b -> t a -> b
+      foldl :: (b -> a -> b) -> b -> t a -> b
+      Data.Foldable.foldl' :: (b -> a -> b) -> b -> t a -> b
+      foldr1 :: (a -> a -> a) -> t a -> a
+      foldl1 :: (a -> a -> a) -> t a -> a
+      Data.Foldable.toList :: t a -> [a]
+      null :: t a -> Bool
+      length :: t a -> Int
+      elem :: Eq a => a -> t a -> Bool
+      maximum :: Ord a => t a -> a
+      minimum :: Ord a => t a -> a
+      sum :: Num a => t a -> a
+      product :: Num a => t a -> a
     #+END_SRC
 ** Floating
 *** Definition
@@ -233,6 +320,7 @@
     #+BEGIN_SRC haskell
    class Functor f where
      fmap :: (a -> b) -> f a -> f b
+     (<$>) :: (a -> b) -> f a -> f b
     #+END_SRC
 *** API
     #+BEGIN_SRC haskell
@@ -260,6 +348,26 @@
     when :: Applicative m => Bool -> m () -> m () -- when condition is true, execute second arg else return ()
     unless :: Applicative m => Bool -> m () -> m ()
     #+END_SRC 
+*** Laws
+    pure f <*> x = fmap f x 
+    pure id <*> v = v
+    pure . <*> u <*> v <*> w = u <*> (v <*> w)
+    pure f <*> pure x = pure (f x)
+    u <*> pure y = pure($ y) <*> u
+** Monoid
+*** Definition
+    #+BEGIN_SRC haskell
+    class Semigroup a => Monoid a where
+      mempty :: a
+      mappend :: a -> a -> a
+      mconcat :: [a] -> a
+    #+END_SRC
+*** Laws
+    #+BEGIN_SRC haskell
+    x mappend mempty = x
+    mempty mappend x = x
+    (x mappend y) mappend z = x mappend (y mappend z)
+    #+END_SRC
 ** Monad
 *** Definition
     #+BEGIN_SRC haskell
@@ -274,9 +382,13 @@
      (>>) ma mb = ma >>= \_ -> mb
     #+END_SRC
 *** Laws
+    #+BEGIN_SRC haskell
+    return x >>= f = f x -- left identity
+    f >> return = f -- right identity
+    m >>= f >>= g = m >>= (\x -> f x >>= g) -- associative
     join . return = id = join . fmap return
-
     join . join = join . fmap join
+    #+END_SRC
 *** API
     #+BEGIN_SRC haskell
    filterM :: Monad m => (a -> m Bool) -> [a] -> m [a]
@@ -307,19 +419,85 @@
    - v >>= (\x -> mzero) = mzero
    - v >> mzero = mzero
    - mplus a b >>= k = mplus (a >>= k) (b >>= k)
-* Functor Applicative Monad some function is similar, should use more general ** fmap liftA liftM #+BEGIN_SRC haskell fmap :: Functor f => (a -> b) -> f a -> f b liftA :: Applicative f => (a -> b) -> f a -> f b liftM :: Monad m => (a -> r) -> m a -> m r #+END_SRC ** forM mapM traverse #+BEGIN_SRC haskell forM :: (Monad m, Traversable t) => t a -> (a -> m b) -> m (t b) mapM :: (Monad m, Traversable t) => (a -> m b) -> t a -> m (t b) mapM_ :: (Foldable t, Monad m) => (a -> m b) -> t a -> m () traverse :: (Applicative f, Traversable t) => (a -> f b) -> f b -> f (t b) #+END_SRC ** sequence sequenceA #+BEGIN_SRC haskell sequence :: (Monad m, Traversable t) => t (m a) -> m (t a) sequenceA :: (Applicative f, Traversable t) => t (f a) -> f (t a) #+END_SRC ** ap (<*>) #+BEGIN_SRC haskell ap :: Monad m => m (a -> b) -> m a -> m b (<*>) :: Applicative f => f (a -> b) -> f a -> f b #+END_SRC ** liftM2 liftM3 liftA2 liftA3 #+BEGIN_SRC haskell liftM2 :: Monad m => (a1 -> a2 -> r) -> m a1 -> m a2 -> m r liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c liftM3 :: Monad m => (a1 -> a2 -> a3 -> r) -> m a1 -> m a2 -> m a3 -> mr liftA3 :: Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d #+END_SRC
+** MonadIO
+*** Definition
+    #+BEGIN_SRC haskell
+    class Monad m => MonadIO (m :: * -> *) where
+      liftIO :: IO a -> m a
+    #+END_SRC
+* Functor Applicative Monad 
+  some function is similar, should use more general 
+  
+  Functor apply function to a wrapperd value
+
+  Applicative apply a wrapperd function to a wrapper value
+
+  Monad apply a function that return a wrapped value to a wrapperd value
+** fmap liftA liftM 
+   #+BEGIN_SRC haskell 
+fmap :: Functor f => (a -> b) -> f a -> f b 
+liftA :: Applicative f => (a -> b) -> f a -> f b 
+liftM :: Monad m => (a -> r) -> m a -> m r 
+   #+END_SRC 
+** forM mapM traverse 
+   #+BEGIN_SRC haskell 
+forM :: (Monad m, Traversable t) => t a -> (a -> m b) -> m (t b) 
+mapM :: (Monad m, Traversable t) => (a -> m b) -> t a -> m (t b) 
+mapM_ :: (Foldable t, Monad m) => (a -> m b) -> t a -> m () 
+traverse :: (Applicative f, Traversable t) => (a -> f b) -> f b -> f (t b) 
+   #+END_SRC 
+** sequence sequenceA 
+   #+BEGIN_SRC haskell 
+sequence :: (Monad m, Traversable t) => t (m a) -> m (t a)
+sequenceA :: (Applicative f, Traversable t) => t (f a) -> f (t a)
+   #+END_SRC
+** ap (<*>)
+   #+BEGIN_SRC haskell
+   ap :: Monad m => m (a -> b) -> m a -> m b
+   (<*>) :: Applicative f => f (a -> b) -> f a -> f b
+   #+END_SRC
+** liftM2 liftM3 liftA2 liftA3
+   #+BEGIN_SRC haskell
+   liftM2 :: Monad m => (a1 -> a2 -> r) -> m a1 -> m a2 -> m r
+   liftA2 :: Applicative f => (a -> b -> c) -> f a -> f b -> f c
+   liftM3 :: Monad m => (a1 -> a2 -> a3 -> r) -> m a1 -> m a2 -> m a3 -> mr
+   liftA3 :: Applicative f => (a -> b -> c -> d) -> f a -> f b -> f c -> f d
+   #+END_SRC
 * IO
   IORef, used to save/get/modify memory value in IO monad
+
+  IO implement is similar IO $ \s -> case f s of (newState, r), so io opeartion is sequence
+
+  unsafePerformIO, state direct from real world, so if this mixed with normal IO, order is not ensure
+
 * API
 ** Prelude
+   #+BEGIN_SRC haskell
    flip :: (a -> b -> c) -> b -> a -> c
-   ($) :: (a -> b) -> a -> b, right associate, lowest precedence
-   (.) :: (b -> c) -> (a -> b) -> a -> c, compose function, right associate
-   lines :: String -> [String], split content by new line
+   ($) :: (a -> b) -> a -> b -- right associate, lowest precedence
+   (.) :: (b -> c) -> (a -> b) -> a -> c -- compose function, right associate
+   lines :: String -> [String] -- split content by new line
    unline :: [String] -> String
-   words :: String -> [String], split content by white space
+   words :: String -> [String] -- split content by white space
    unwords :: [String] -> String
-   seq :: a -> b -> b, force evaluate first argument then return second argument
+   seq :: a -> b -> b -- force evaluate first argument then return second argument
+   curry :: ((a,b) -> b) -> a -> b -> c
+   uncurry :: (a -> b -> c) -> (a, b) -> c
+   #+END_SRC
+   
+*** number type conversion
+    #+BEGIN_SRC haskell
+    fromInteger :: Num a => Integer -> a
+    toInteger :: Num a => a -> Integer
+    fromRational :: Fractional a => Rational -> a
+    toRational :: Real a => a -> Rational a
+    fromIntegral :: (Integral a, Num b) => a -> b
+    truncate :: (Integral b, RealFrac b) => a -> b
+    properFraction :: (Integral b, RealFrac a) => a -> (b, a) -- get real and fraction part
+    floor :: (RealFrac a, Integral b) => a -> b
+    ceiling :: (RealFrac a, Integral b) => a -> b
+    round :: (RealFrac a, Integral b) => a -> b
+    #+END_SRC
    
 ** Data.List
    (++) :: [a] -> [a] -> [a], concat list
@@ -386,18 +564,25 @@
    or :: Foldable t => t Bool -> Bool
    any :: Folable t => (a -> Bool) -> t a -> Bool
    all :: Folable t => (a -> Bool) -> t a -> Bool
+** Data.Set
+   implement by balance tree
    
 ** Data.Maybe
    data Maybe a = Nothing | Just a
 ** Data.Either
    data Either a b = Left a | Right b 
 ** Data.Map
+   key is always evalute, value is lazy
+   #+BEGIN_SRC haskell
    fromList :: Ord k => [(k,a)] -> Map k a
    toList :: Map k a -> [(k,a)]
+   empty :: Map k a
+   singleton :: k -> a -> Map k a
    insert :: Ord k => k -> a -> Map k a -> Map k a
    null :: Map k a -> Bool
    size :: Map k a -> Int
    lookup :: Ord k => k -> Map k a -> Maybe a
+   findWithDefault :: Ord k => a -> k -> Map k a -> a
    member :: Ord k => k -> Map k a -> Bool
    map :: (a -> b) -> Map k a -> Map k b
    filter :: (a -> Bool) -> Map k a -> Map k a
@@ -405,6 +590,21 @@
    elems :: Map k a -> [a]
    fromListWith :: Ord k => (a -> a -> a) -> [(k,a)] -> Map k a
    insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a
+   #+END_SRC
+** Data.Array
+   #+BEGIN_SRC haskell
+   data Array i e
+   listArray :: Ix i => (i, i) => [e] -> Array i e -- if index to long than element, throw exception, if element long than index, cut off
+   (!) :: Ix i => Array i e -> i -> e
+   bounds :: Array i e -> (i, i)
+   indices :: Ix i => Array i e -> [i]
+   #+END_SRC
+** Data.Sequence
+   #+BEGIN_SRC haskell
+   (<|) :: a -> Seq a -> Seq a
+   (|>) :: Seq a -> a -> Seq a
+   (><) :: Seq a -> Seq a -> Seq a
+   #+END_SRC
 ** Data.Function
    on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
 ** Data.Char
@@ -438,11 +638,68 @@
 ** Data.Ratio
    (%) :: Integral a => a -> a -> Ratio a, constructor a ratio number
 
+** Data.ByteString
+   ByteString is used solve [Char] is not efficient problem
+
+   OverloadedStrings to ByteString is latian1 format, other encode literal(e.g. chinese) need convert use Data.Encoding encodeUtf8
+
+   Data.ByteString.Lazy, keep data in 64kb trunk
+
+   ByteString is contructor from Word8
+
+   Data.ByteString and Data.ByteString has some function with same name unser System.IO, is ByteString replace String version
+   #+BEGIN_SRC haskell
+   pack :: [GHC.Word.Word8] -> ByteString
+   unpack :: ByteString -> [GHC.Word.Word8]
+   fromChunks -- lazy to strict
+   toChunks -- strict to lazy
+   cons :: GHC.Word.Word8 -> ByteString -> ByteString
+   #+END_SRC
+** Data.Fixed
+   provide fixed percison calculate
+** Data.Numbers.Primes
+   primes releated
+** Data.Bit
 ** Text.Printf
 
    printf :: PrintfType r => String -> r
 ** Text.Regex
    regular expression matching, Text.Regex.Posix include posix format
+** Text.Parsec
+   provide parser combinator implmenet
+
+   Text.Parsec.Token, normally language  token parser
+
+   Text.Parsec.Language, implement haskell and java parser
+   #+BEGIN_SRC haskell
+   data ParsecT s u m a 
+   type Parsec s u a = ParsecT s u Identity a
+   type GenParser tok st = Parsec [tok] st
+   type Parser a = GenParser char () a
+
+   satisfy :: Stream s m Char => (Char -> Bool) -> ParsecT s u m Char
+   oneOf :: Stream s m Char => [Char] -> ParsecT s u m Char
+   noneOf:: Stream s m Char => [Char] -> ParsecT s u m Char
+   sepBy :: Stream s m t => ParsecT s u m a -> ParsecT s u m sep -> ParsecT s u m [a]
+   sepBy1 :: Stream s m t => ParsecT s u m a -> ParsecT s u m sep -> ParsecT s u m [a]
+   endBy :: Stream s m t => ParsecT s u m a -> ParsecT s u m sep -> ParsecT s u m [a]
+   endBy1 :: Stream s m t => ParsecT s u m a -> ParsecT s u m sep -> ParsecT s u m [a]
+   (<|>) :: ParsecT s u m a -> ParsecT s u m a -> ParsecT s u m a -- if first arg consume input, then will not try second
+   try :: ParsecT s u m a -> ParsecT s u m a -- if fail, don't consume input
+   many :: ParsecT s u ma -> ParsecT s u m [a]
+   many1 :: ParsecT s u ma -> ParsecT s u m [a]
+   skipMany :: ParsecT s u m a -> ParsecT s u m ()
+   skipMany1 :: ParsecT s u m a -> ParsecT s u m ()
+
+   updateStae :: (Monad m) => (u -> u) -> ParsecT s u m ()
+   getState :: (Monad m) => ParsecT s u m u
+   parseTest :: (Show a, Stream s Identity t) => Parsec s () a -> s -> IO () 
+   runP :: Stream s Identity t => Parsec s u a -> u -> SourceName -> Either ParseError a 
+
+   Text.Parsec.Token.lexeme :: T.GenTokenParser s1 u1 m1 -> ParsecT s2 u2 m2 a -> Parsec s2 u2 m2 a -- can handle space with set language 
+   Text.Parsec.Token.makeTokenParser :: Stream s m Char => T.GenLanguageDef s u m -> T.GenTokenParser s u m
+   #+END_SRC
+** Text.PrettyPrint
 ** System.Environment
 
    getEnv :: String -> IO String, get environment value
@@ -466,11 +723,15 @@
 
    readFile :: FilePath -> IO String, ReadMode
 
+   withFile :: FilePath -> IOMode -> (Handle -> IO r) -> IO r, auto open and close file before/after handle action
+
    writeFile :: FilePath -> String -> IO (), WriteMode
 
    appendFile :: FilePath -> String -> IO (), AppendMode
 
    openFile :: FilePath -> IOMode -> IO Handle, ReadWriteMode
+
+   openTempFile :: FilePath -> String -> IO (FilePath, Handle)
 
    hSeek :: Handle -> SeekMode -> Integer -> IO (), move handle location
 
@@ -507,16 +768,20 @@
    hPrint :: Show a => Handle -> a -> IO ()
 
    print :: Show a => a -> IO (), print = putStrLn . show
-
+   
    BufferMode:
    - NoBuffering, cache single char
    - LineBuffering, cache line
    - BlockBuffering, cache a block, block size is define by Maybe arg
-   
+     
    hGetBuffering :: Handle -> IO BufferMode
    
    hSetBuffering :: Handle -> BufferMode -> IO ()
 
+** System.IO.Error
+   #+BEGIN_SRC haskell
+   catchIOError :: IO a -> (IOError -> IO a) -> IO a
+   #+END_SRC
 ** System.Directory
    #+BEGIN_SRC haskell
    createDirectory :: FilePath -> IO ()
@@ -577,27 +842,59 @@
    getClockTime :: IO ClockTime
 
 ** System.Random
-
    better to use mwc-random package, it run faster
 
+   #+BEGIN_SRC haskell
    mkStdGen :: Int -> StdGen
-
    newStdGen :: IO StdGen
-
+   getStdGen :: IO StdGen
    random :: (RandomGen g, Random a) => g -> (a, g)
-
+   rnaomds :: (Random a, RandomGen g) => g -> [a]
    randomR :: RandomGen g => (a,a) -> g -> (a, g)
-
    randomRs :: RandomGen g => (a,a) -> g -> [a]
-
    getStdRandom :: (StdGen -> (a, StdGen)) -> IO a
+   #+END_SRC
 
 ** Control.Exception
    #+BEGIN_SRC haskell
    bracket :: IO a -> (a -> IO b) -> (a -> IO c) -> IO c -- execute order: first arg -> third -> second
    #+END_SRC
+** Control.Arrow
+   #+BEGIN_SRC haskell
+   first :: Arrow a => a b c -> a (b, d) (c, d)
+   second :: Arrow a => a b c -> a (d, b) (d, c)
+   #+END_SRC
+** Control.Monad.State
+** Control.Monad.Reader
+** Control.Monad.STM
+   SMT(Software Transactional Memory), in memory transactional, implement by log
+   #+BEGIN_SRC haskell
+   atomically :: STM a -> IO a
+   retry :: STM a
+   orElse :: STM a -> STM a -> STM a
+   #+END_SRC
+** Control.Monad.Trans
+** Control.Applicative
+** Control.Concurrent
+   #+BEGIN_SRC haskell
+   forkIO :: IO () -> IO ThreadId
+   #+END_SRC
+** Control.Concurrent.MVar
+   MVar is size 1 container
+   #+BEGIN_SRC haskell
+   takeMVar :: MVar a -> IO a -- get and delete content, if empty then block wait
+   putMVar :: MVar a -> a -> IO () -- if not empty then block wait
+   modifyMVar :: MVar a -> (a -> IO (a, b)) -> IO b -- take modify and put back
+   newMVar :: a -> IO (MVar a)
+   newEmptyMVar :: IO (MVar a)
+   #+END_SRC
+** Control.Concurrent.Chan
+   Chan is a concurrent size unlimited chanel
+   #+BEGIN_SRC haskell
+   readChan :: Chan a -> IO a -- block when chan is empty
+   writeChan :: Chan a -> a -> IO () -- never block
+   #+END_SRC
 * Monad instance
-
 ** Writer
    #+BEGIN_SRC haskell
    newtype Writer w a = Writer { runWriter :: (a, w) }
@@ -807,25 +1104,15 @@
     #+END_SRC
 
 ** MonadTrans
-
    #+BEGIN_SRC haskell
-
    class MonadTrans t where
-
      lift :: Monad m => m a -> t m a
 
-
-
    class (Monad m) => MonadIO m where
-
      liftIO :: IO a -> m a
 
-     
-
    class (Monad b, Monad m) => MonadBase b m | m -> b where
-
      liftBase :: b a -> m a
-
    #+END_SRC
 
    liftIO is because IO no correspond Monad Transfer, any monad can use liftIO once to get top define
@@ -839,8 +1126,13 @@
     lift (m >>= f) = lift m >>= lift f
 
 * GHCi
+  ghci, go into repl
+
+  ghc.conf is ghci config file, find from ./ or $HOME/.ghc/
+
   - :?, show help
   - :t, get type info, for infix opeartion, need enclose by ()
+  - :k, kinds inspection
   - :i, get info, include type, for function include priority and associate
   - :set args <first> <second> <third> ..., can set arg to main function
   - :main [<first>,<second>,<third>...], call main with argument
@@ -848,9 +1140,27 @@
   - :m +<module>, import module
   - :m -<module>, remove moudle
   - :m, remove all import module
+  - :browse, show imported module info
+  - :{ :}, enclose multiple line code
+  - :set prompt <prompt>
+  - :p, print expresion
+  - :l <filename>, load file into ghci
+  - :e, open system editor edit current load file
+  - :show bindings
+  - :show import
+  - :set +t, show time
+  - :r, reload current loaded code
+  - :set +fbreak-on-exception
+  - :trace <function>, start execute and trace
+  - :hist, show call stack
+  - :back, move up on stack
+  - :cd <dir>, change working directory
+  - :!, execute shell command
 * Cabal
-  cabal file name need same as package name
-  #+BEGIN_SRC cabal
+  cabal is package manage and compile tool suite
+** Cabal file
+   cabal file name need same as package name
+   #+BEGIN_SRC cabal
 name:           ninety-nine-problem-haskell
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/724399396/ninety-nine-problem-haskell#readme>
@@ -899,4 +1209,92 @@ test-suite ninety-nine-problem-haskell-test
     , ninety-nine-problem-haskell
   default-language: Haskell2010
 
-  #+END_SRC
+   #+END_SRC
+
+** command
+   - cabal update, update package info from remote
+   - cabal install <pkg>, install package under user space
+   - cabal install <pkg>=<version>, install special package under user space
+   - cabal install <pkg> --global, install package under global space
+   - cabal get <pkg>, download package source code
+   - cabal sandbox init, create sandbox under directory, then package will install in this sandbox
+   - cabal repl, start ghci from current dir
+   - cabal sandbox hc-pkg, provide similar function with ghc-pkg
+   - cabal sandbox delete
+   - cabal init, create a cabal project
+   - cabal build, build lib and execute into current directory ./dist/build folder
+   - cabal install, install currency project to user space
+   - cabal run, run Main
+   - cabal exec <app>, execute a program unser current sandbox setting
+   - cabal haddock, generet doc to ./dist folder
+   - cabal sdist, generate dock and tarbal file
+   - cabal sandbox add-source <path>, add local package to sandbox
+   - cabal freeze, freeze local package setting
+   - ghc-pkg list, show installed packages
+   - ghc-pkg unregister, remove package from db, file is left
+   - ghc-pkg check, check package is fine
+
+** run test
+   #+BEGIN_SRC bash
+   cabal install -oonly-dependencies -enable-test
+   cabal configure -enable-tests
+   cabal test
+   #+END_SRC
+ 
+* Stack
+  Setup.hs file is for compatible with cabal
+  
+  stack.yaml is configure stack special behavior
+
+  not in stackage package need add in stack.yaml extra-deps section
+
+  .stack-work dir contain current project lib and bin file
+
+** Command
+   - stack init, initalize a stack project
+   - stack install, install package to currency/global project
+   - stack list-dependencies, show current project dependencies
+   - stack build, build project, support args:
+     + --fast, do not optimizer
+     + -j <num>, concurrent package thread number
+     + --file-watch, execute when file change
+     + --haddock-dep, generate document for dependency
+   - stack repl/ghci, start ghci for current project
+   - stack ghc, invoke ghc for current project environment
+   - stack exec, execute program under current project envorionment
+   - stack new <project name> <template>, create project from template
+   - stack test, run test, same as stack build --test
+   - stack haddock --open <package>, open local package document
+   - stack hoogle --generate --local, generate local package hoogle
+   - stack hoogle --server --local-port=<port num>, start hoogle web server
+
+* GHC 
+** options:
+   + -Wall, open most compler warning
+   + -Wcompat, compatible warning
+   + -Wincomplete-record-update
+   + -Wincomplete-uni-pattners
+   + -Wincomplete-contraints
+   + -fwarn-name-shadowing, warning name-shadow
+   + -Werror, let warning as error
+   + -rtsopts, generate for debug info, then use +RTS and other args to run program
+   + -prof -fprof-auto -rtsopts, generate for analyzing program time consume
+   + threaded, enable mutliple thread, then use +RTS -N<num> to run program
+   + -ddump-simpl, get compiled Core code
+   + -ddump-splices, show Template generate code
+   + -rtsopts -threaded -eventlog, then run with +RTS -N<num> -ls generate ThreadScope file
+   + -e <expression>, evaluate expression return value to stdout
+
+** rtsopts run option
+   + +RTS -xc, show exception trace
+   + +RTS -p, generate prof file
+   + +RTS -h, generate hp file, then use hp2ps convert hp file to ps file, show memory info
+
+   hpc is used for genrate code converage report
+* Test
+  HSpec, [[https://hspec.github.io/]], intergration with QuickCheck, SmallCheck and Hunit
+  HUnit, like JUnit
+  QuickCheck, property check
+* Category theory
+  One set, has objects, object has kinds of morphological, morphological has transitive
+  
