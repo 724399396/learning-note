@@ -394,6 +394,17 @@
 ** Data.Map
    fromList :: Ord k => [(k,a)] -> Map k a
    toList :: Map k a -> [(k,a)]
+   insert :: Ord k => k -> a -> Map k a -> Map k a
+   null :: Map k a -> Bool
+   size :: Map k a -> Int
+   lookup :: Ord k => k -> Map k a -> Maybe a
+   member :: Ord k => k -> Map k a -> Bool
+   map :: (a -> b) -> Map k a -> Map k b
+   filter :: (a -> Bool) -> Map k a -> Map k a
+   keys :: Map k a -> [k]
+   elems :: Map k a -> [a]
+   fromListWith :: Ord k => (a -> a -> a) -> [(k,a)] -> Map k a
+   insertWith :: Ord k => (a -> a -> a) -> k -> a -> Map k a -> Map k a
 ** Data.Function
    on :: (b -> b -> c) -> (a -> b) -> a -> a -> c
 ** Data.Char
@@ -430,6 +441,8 @@
 ** Text.Printf
 
    printf :: PrintfType r => String -> r
+** Text.Regex
+   regular expression matching, Text.Regex.Posix include posix format
 ** System.Environment
 
    getEnv :: String -> IO String, get environment value
@@ -517,8 +530,16 @@
    renameFile :: FilePath -> FilePath -> IO ()
    copyFile :: FilePath -> FilePath -> IO ()
    findFile :: [FilePath] -> String -> IO (Maybe FilePath)
+   doesFileExist :: FilePath -> IO Bool
+   doesDirectoryExist :: FilePath -> IO Bool
+   getPermissions :: FilePath -> IO Permissions
+   getModificationTime :: FilePath -> IO time:Data.Time.Clock.Internal.UTCTime.UTCTime
    #+END_SRC
 
+** System.FilePath.Posix / System.FilePath.Windows
+   #+BEGIN_SRC haskell
+   (</>) :: FilePath -> FilePath -> FilePath -- concat file path, drop trailing path separator
+   #+END_SRC
 ** System.Process
 
    callCommand :: String -> IO ()
@@ -571,6 +592,10 @@
 
    getStdRandom :: (StdGen -> (a, StdGen)) -> IO a
 
+** Control.Exception
+   #+BEGIN_SRC haskell
+   bracket :: IO a -> (a -> IO b) -> (a -> IO c) -> IO c -- execute order: first arg -> third -> second
+   #+END_SRC
 * Monad instance
 
 ** Writer

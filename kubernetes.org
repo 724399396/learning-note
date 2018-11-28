@@ -108,11 +108,11 @@ source <(minikube completion <shell type>), need install bash-completion
 
   #+begIN_CENTER bash
 
-  source <(kubectl completion bash|zsh) can add auto complection to bash or zsh, if need use k alias kubenetes, change to source <(kubectl completion bash | sed s/kubectl/k/g) 
+source <(kubectl completion bash|zsh) can add auto complection to bash or zsh, if need use k alias kubenetes, change to source <(kubectl completion bash | sed s/kubectl/k/g) 
 
-  alias k=kubectl 
+alias k=kubectl 
 
-  alias kcd='kubectl config set-context $(kubectl config current-context) --namespace '
+alias kcd='kubectl config set-context $(kubectl config current-context) --namespace '
 
   #+end_CENTER
 
@@ -562,6 +562,63 @@ source <(minikube completion <shell type>), need install bash-completion
   Pod.spec.containers.env.valueFrom.secretKeyRef, populated secret to env
 
   environment maybe be output on log and can be inherit by child process, so secret is better use volume to expose to container
+
+* Downward API/ Kubenetes API 
+** Downward API
+   available info:
+   - pod name
+   - pod ip
+   - namespace pod belongs to
+   - name of node the pod is running
+   - name of service account the pod is running under
+   - cpu and memory request for each container
+   - cpu and memory limit for each container
+   - pod labels (only pass by downwardAPI volume, because it can mutate at runtime)
+   - pod annotations (same as labels)
+
+   two expose way:
+   - environment, from Pod.spec.containers.env.valueFrom.fieldRef/resourceFieldRef
+   - downwardAPI volume, from Pod.spec.volumes.downwardAPI.items
+
+   resource limit resource need set container name, use volume way, you can pass container resource limit info to different container in same pod, but use environment, only get self container info
+
+** Kubernetes API 
+   kubectl proxy, let api expose at 8001 without authentication and ssl
+
+   most resource is under /api/v1, this group be treat as Core api group, others is under apis/<API group>
+
+   /<api>/<version>/<kind> get all resources, /<api>/<version>/namespaces/<namespace>/<kind>/<name> get resource by namespace and name
+
+   pod talk to api server, ensure 3 things:
+   - find location of api server, access by kubernetes service(the service auto create by k8s), by env/dns
+   - make sure taking to real server(not somthing impersonating it), use secrets mount ca.cert file
+   - authenticate with server, use secrets mount token
+
+   dont use -k in curl on production, it will expose authentication token to an attacker
+
+   kubernetes cert is from secrets default-token-xx, mount on /var/run/secrets/kubernetes.io/serviceaccount/ 
+   
+   if RBAC(role-based access control) is enable, default serviceaccount can't access api, solve by create a cluster role bingind: 
+   #+BEGIN_SRC bash
+   kubectl create clusterrolebinding permissive-binding --clusterrole=cluster-admin --group=system:serviceaccounts
+   #+END_SRC
+   this is only for test purpose, don't do in production
+
+   #+BEGIN_SRC bash
+   export CURL_CA_BUNDLE=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt 
+   TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) 
+   curl -H "Authorization: Bearer $TOKEN" https://kubernetes 
+   #+END_SRC
+
+   ambassador mode, let pod can use http to access kube api 
+
+   kubernetes api expose some client library, support kinds of language
+
+   kubernetes api expose Swagger and OpenAPI
+
+   --enable-swagger-ui=true, enable kube api swagger ui 
+
+   --extra-config=apiserver.Features.Enable-SwaggerUI=true, enable minibube swagger ui 
 * Deployment
 
   implmenet rolling update for pod(from server level, kubectl rolling-update is client level) 
@@ -611,34 +668,6 @@ source <(minikube completion <shell type>), need install bash-completion
   staetfulset if node disconnect, node will be NotReady, pod will be Unknown, if you delete pod manual, status will be terminating, if you need delete, need –force –grace-period=0 
 
   node affinity is used to instead of node selector 
-
-* Downward API/ Kubenetes API 
-
-  pod can get metadata like pod ip, name, service account, resource limit... from downward api by environment or volume 
-
-  labels and annotation can only get from volume, because those can update at run time 
-
-  resource limit need set container name 
-
-  volume use downwardAPI to reference 
-
-  kubectl proxy, let api expose at 8001 without authentication 
-
-  pod can access kube api by kubernetes service 
-
-  kubernetes cert is from secrets default-token-xx, mount on /var/run/secrets/kubernetes.io/serviceaccount/ 
-
-  CURL_CA_BUNDLE=/var/run/secrets/kubernetes.io/serviceaccount/ca.crt 
-
-  TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token) 
-
-  curl -H "Authorization: Bearer $TOKEN" https://kubernetes 
-
-  ambassador mode, let pod can use http to access kube api 
-
-  --enable-swagger-ui=true, enable kube api swagger ui 
-
-  --extra-config=apiserver.Features.Enable-SwaggerUI=true, enable minibube swagger ui 
 
 * kube-proxy
 
