@@ -1,0 +1,22 @@
+* basic
+  same machine multiple emulator can use port to dial each other
+
+  
+* 4 fundamental components:
+  - Activity, for UI
+  - Service, run on background
+  - BroadcastReceiver, publish/subscriber pattern
+  - ContentProvider, store share data across application
+* command tool
+  #+BEGIN_SRC bash
+  telnet <host> <port>, connect to emulator, available command:
+  - power
+  - sms
+  - network
+  #+END_SRC
+** DDM(Dalvik Device monitor)
+   DDM contain kinds of debug tool
+   - logcat, show log info
+   - hirechay view, include ui component
+   - method call, method call time and stack
+ 

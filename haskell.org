@@ -105,21 +105,27 @@
 
   quot with rem, div with mod, diff is quot close to 0, div close to negative
 
-  =_ type include _|_ (bottom type) is lifted type, not include is unlifited type _=
-
   alpha conversion, means replace argument without conflict with other
   
   beta reduction, use real parameter replace argument in body without conflit
 
   Eta conversion, if variable only appear both in parameter and body once, omit it
 * Lazy
-  NF(normal form), HNF(head normal form), WHNF(weeak head normal form)
+  - NF(normal form), e.g Char Int
+  - HNF(head normal form)
+  - WHNF(weeak head normal form), evaluate until basic value or value constroctor
 
-  seq, evaluate first value to week head normal form
+  seq, evaluate first value to WHNF
 
   $!, type same as $, f $! x = seq x (f x)
 
-  deepseq , $!! and force, let value evalute to normal form
+  deepseq , $!! and force, let value evalute to NF
+
+  Data <name> = <constroctor> !<field>, ! means field is strict, need evalute to NF
+
+  =_ type include _|_ (bottom type) is lifted(boxed) type, not include is unlifited(unboxed) type _=
+
+  Data <name> = <constructor {-# UNPACK #-}<field>, let field as unboxed type, if you pass field to other(e.g. argument) will rebox
 
   error seq usage:
   - someFunc (x `seq` y), x evaluate until someFunc evaluate
@@ -130,11 +136,34 @@
   seq is evalute on runtime, maybe cause performance issue
    
 * Language Extension
+  [[https://downloads.haskell.org/~ghc/master/users-guide/glasgow_exts.htm]]
+
   on source file top, use {-# LANGUAGE xx #-} enable language extension
+
   available extensions:
-  - OverloadedStrings, treat string literal as different type. e.g ByteString
+  - OverloadedStrings, treat string literal as different type. e.g ByteString, implmenet by IsString class
   - ParallelListComp, allow use syntax [(x,y)| x <- xs | y <- ys], in fact it xs and ys zip
-  - ApplicativeDo, allow Functor, Applicative use do syantax
+  - ApplicativeDo, allow instance of Functor and Applicative use do syantax
+  - TypeSynonymInstances, allow definition of type class instance for type synonoyms
+  - NoMonomorphismRestriction, beyond standard Hindley-Milner restriction, further reduce polymorphism in particular cases
+  - GeneralizedNewtypeDeriving, let newtype can inherit instance from it representation(default without extensions support is Eq,Ord,Enum,Bounded)
+  - DeriveDataTypeable, enable automatic deriving Data typeclass instance
+  - MultiParamTypeClasses, allow define typeclass with more than one parameter, e.g. class Collection c a where ..., also support no argument
+  - FlexibleInstances, Implies TypeSynonymInstances, allow definition of type class instance with arbitrary nested type in the instance head
+  - OverlappingInstances, Deprecated extension to weaken check intended to ensure instance resolution termination
+  - OVERLAPPING/OVERLAPPABLE/OVERLAPS/INCOHERENT, used specify overlap behavior for individual instance
+  - FunctionalDepedencies, Implies MultiParamTypeClasses, allow use of functional dependencies in class declaration [[https://wiki.haskell.org/Functional_dependencies]]
+  - UndecidableInstances, Permit definition of instances which may lead to type-checker non-termination
+  - ExistentialQuantification, allow existentially quantified type variable in types
+  - TupleSections, allow use tuple section syntax, e.g (, True)
+  - MultiWayIf, allow use of multi-way-if syntax
+  - PatternSynonyms, allow the definition of pattern synonyms [[https://ghc.haskell.org/trac/ghc/wiki/PatternSynonyms]]
+  - GADTs, allow use Generalised Algebaic Data Type, support data Term a where Lit :: Int -> Term Int Succ :: Term Int -> Term Int ... syntax
+  - DataKinds, allow promotion of data types to kind level
+  - InstanceSigs, allow type signatures for memebers in instance definitions(add type signure when instance)
+  - StandaloneDeriving, allow use of stand-alone deriving declarations(sperate class declaration and deriving declaration)
+  - TypeFamilies, implies MonoLocalBinds KindSIgnatures ExplicitNamespaces, allow use and definition of indexed type and data families [[https://wiki.haskell.org/GHC/Indexed_types]]
+  - BinaryLiterals, allow use binary notation in interer literals, e.g 0x 
 
 * typeclass
   typeclass similar to interface

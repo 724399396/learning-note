@@ -22,51 +22,41 @@
   image with latest tag default imagePullPolicy is Always, not latest tag default is IfNotPresent 
 
   in yaml file, for number value must enclose with quotations mark("), for string is optional
+
+  one yaml file can contain multiple resource declaration, use --- to split
+
+  when you need tag same tag multiple time(e.g development), only reasonable tag is latest(latest tag imagePullPolicy is Always), if use other tag, node which already pull previous image will not pull newest image, or you can change imagePullPolicy to Always
+
+  edit k8s resource methods:
+  - kubectl edit, open editor to edit
+  - kubectl patch, modifie individual peropreties
+  - kubectl apply, modifi object by applying full yaml or json file
+  - kubectl replace, replace the object with new yaml/json file, in contrast to the apply command, this command require object exist
+  - kubectl set image, change container image define
 * cli
-
-  #+begIN_SRC bash
-
-kubectl run <name> --image=<image> run pod on deployments mode 
-
-kubectl get deployments|pods|events 
-
-kubectl expose deployment <pod> --type 
-
-minikube service <pod-name> open browser 
-
-minikube addons list, show aviable addons  
-
-kubectl delete service <name> 
-
-kubectl delete deployment <name> 
-
-kubectl proxy, start a proxy, let outside can access pods 
-
-kubectl logs <pod> 
-
-kubectl exec <pod> <command>, execut command in pod, if command contain dash start option, whole command need leading with -- 
-
-kubectl label pod <pod> <k>=<v>, given pod a new label 
-
-kubectl descirbe, used to describe kinds of info 
-
-kubectl rollout status <deployment>, confirm updates 
-
-kubectl rollout undo <deployment>, rollback update 
-
-kubectl config set-cluster/set-credentials/set-context/get-clusters/get-contexts 
-
-kubectl explain <type>|<type.<field>>, describe config file format 
-
-kubectl create –f <config file>, create pod/deployment/service by config file 
-
-kubectl port-forward <pod> <out port>:<pod port> 
-
-kubectl run --generator=run-pod/v1, run a pod(no rc created) 
-
-kubectl scale <type> <name> --replicas=<num>, scale pod number 
-
-  #+end_SRC
+  --v 6, show kubectl communication with api server
+  #+BEGIN_SRC bash
+  kubectl run <name> --image=<image> run pod on deployments mode 
+  kubectl get deployments|pods|events 
+  kubectl expose deployment <pod> --type 
+  minikube service <pod-name> open browser 
+  minikube addons list, show aviable addons  
+  kubectl delete service <name> 
+  kubectl delete deployment <name> 
+  kubectl proxy, start a proxy # let outside can access pods 
+  kubectl logs <pod> 
+  kubectl exec <pod> <command> # execut command in pod, if command contain dash start option, whole command need leading with -- 
+  kubectl label pod <pod> <k>=<v> # given pod a new label 
+  kubectl descirbe, used to describe kinds of info 
+  kubectl rollout status <deployment> # show updates status
+  kubectl rollout undo <deployment> # rollback update 
+  kubectl config set-cluster/set-credentials/set-context/get-clusters/get-contexts 
+  kubectl explain <type>|<type.<field>> # describe config file format 
+  kubectl create –f <config file> # create pod/deployment/service by config file 
+  kubectl port-forward <pod> <out port>:<pod port> 
+  kubectl run --generator=run-pod/v1 # run a pod(no rc created) 
+  kubectl scale <type> <name> --replicas=<num> # scale pod number 
+  #+END_SRC
 
 * minikube
 
@@ -620,33 +610,71 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
    --extra-config=apiserver.Features.Enable-SwaggerUI=true, enable minibube swagger ui 
 * Deployment
+  update pod strategy:
+  - update rs/rc template -> manual delete all pod, this way has short downtime
+  - create new pod -> change service label selector -> then delete old, this way called blue-green deployment, require new/old version can run togerther and require more hardware resource
+  - start and replace pod one by one, this called rolling-update
 
-  implmenet rolling update for pod(from server level, kubectl rolling-update is client level) 
+  kubectl rolling-update <old rc name> <new rc name> --image=<image>, rolling-update rc by send some commands to k8s api
+  
+  rolling-update process:
+  1. add deployment=xx to old rc
+  2. modify old pod add label deployment=xx
+  3. create new rc copy from old rc, and change deployment=yy label
+  4. edit new rc replica plus 1
+  5. when new rc desirde == current, edit old rc replica minus 1
+  6. repeat until old rc replica is 0, delete old rc, delete pod deployment label, delete new rc deployment label
+  
+  rolling-update is client side, maybe error in process(e.g network break, left a messing state), deprecated
+
+  deployment implmenet rolling update for pod on server level
+
+  deployment manage ReplicaSet, then ReplicaSet manage Pod
+
+  Depolyment startegy:
+  - RollingUpdate, replace pod one by one, this is default startegy and your app should support run different version at same time
+  - Recreate, delete all pod then create
+  
+  Deployment rollout process:
+  1. create new rs
+  2. repeat change old and new rs replica
+  3. when old rs replica to 0, finish
 
   kubectl rollout status deployment <name>, check deployment status 
-
-  strategy: rolling-update, create one -> shutdown one -> …, recreate: delete all then create 
 
   kubectl path deployemnt <name> -p <value>, update definition 
 
   kubectl set image deployment <name> <container name>=<image> 
 
-  rollout is implmenet by keep different replicaset 
+  rollout is implmenet by keep different replicaset revision history
 
-  kubectl rollout undo deployemtn <name>, roll back a image upate 
+  kubectl rollout undo deployment <name>, roll back a image upate 
 
   kubectl rollout history, show all revision history, (need –record when create deployemnt, otherwise CHANGE-CAUSE will be empty) 
 
-  kubectl rollout undo deployemnt <name> --to-revison=<num> 
+  kubectl rollout undo deployemnt <name> --to-revison=<num>, rollback to special revison
 
-  rolloingUpdate is controller by maxSurge maxUnavailable, maxSurge is how many pod can above desirde pod num, maxUnavaliable is how many pod current is not abaliable(match with desirde number) 
+  revison num is limit by Depolyment.spec.revisionHistoryLimit, default is 2
 
-  kubectl rollout pause deployment <name>, pause a rollout 
+  rolloingUpdate is control by spec.strategy.rollingUpdate.maxSurge spec.startegy.rollingUpdate.maxUnavailable
+  - maxSurge is how many pod can above desirde pod num, default is 25%, can set as absolute number
+  - maxUnavaliable is how many pod can is not avaliable(compare with desirde number), represent how many (total - maxUnavaliable) need be avaliable, default is %25, can set as absulute number
+  
+  maxUnavaliable is not said how many pod current can not ready, it means under diserde number. e.g. pod num is 3, maxSurge is 1, maxUnavaliable is 1, first step is 2 ready pod 1 and 2 not ready pod 2, unaviable pod numer is 2
+
+  kubectl rollout pause deployment <name>, pause a rollout, keep current pod state
 
   kubectl rollout resume deployment <name>, continue rollout 
 
-  minReadySeconds is time when pod all container is readiness ready then how time this pod can use to replace old one 
+  pause rollout used when do canary release
+  
+  pause deployemnt will prevent updates, undo also be prevented
 
+  Deployment.spec.minReadySeconds is time how long when pod all container is readiness until it can use to replace old one 
+
+  use minReadySeconds and readiness together, will avoid bad version update, rollout will stop, then after progressDealineSeconds time after, whole rollout failed
+
+  Deployment is under api version apps/v1
 * StatefulSet 
 
   statefulSet is similar as Deploment, but used for stateful service, like database, pod can use different volume, keep different state 
