@@ -1,0 +1,3 @@
+* mysql
+** get column type
+SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = '' AND COLUMN_TYPE= '';
