@@ -1,0 +1,12 @@
+* Basic
+  Anocanda is machine learning tools suite for python
+
+  IPython NoteBook, visiual python dev tool
+
+  ML has 2 class:
+  - supervised learning:
+    * classification, e.g recoginize hands write
+    * regression, e.g predicate fish age
+  - unsupervised learning(cluster)
+  
+  scikit-learn is python ml package, include dateset and trained model

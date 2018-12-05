@@ -1,12 +1,77 @@
 * basic
   same machine multiple emulator can use port to dial each other
 
+  Resouce has kinds of type:
+  - String, define in res/values/*.xml, then use string/<name> reference, in java file use R.string.<name> reference
+  - Layout file, define in res/layout/*.xml, in java file use R.layout.<name> reference, res/layout-land is for land mode
   
+  on application must has least one Activity
+
+  AndroidManifest.xml is for create apk(Android package)
+
+  AndroidManifest.xml declartion permission:
+  - <uses-permission>, require when install app
+  - <permission>, protect self permission
+  
+  Android mutliple thread is based on java, only UI thread(Main thread) can update ui, use View.post or Activity.runOnUIThread to commit change to UI thread
+
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
   - BroadcastReceiver, publish/subscriber pattern
   - ContentProvider, store share data across application
+** Activity
+*** Lifecycle
+   [[./activity_lifecycle.png]] 
+   
+  startActive/startActiveForResult , used to create another active in a active, need pass Intent arg, has two way match activity:
+  - explicity set by Intent
+  - match by intent-filter in AndroidManifest.xml
+
+  onRetianNonConfigurationInstance(), used to calculate time consuming value, called on onStop/onDestory, getLastNonConfigurationInstance() get privouse calculate value, called on OnCreate
+
+  screen rotate is a confugration change, active will re-create
+
+  Intent is pass in activity:
+  - Intent.xx, set action
+  - Data
+  - Category
+  - Type(MIME)
+  - Component, set jump location
+  - Extra
+  
+*** Fragment
+    one activity can has multiple fragement, display different content
+
+    fragment lifecycle is similar as activity, but in fine-grained
+
+    attach fragment to activity way:
+    - declare in layout file
+    - dynamic add to activity:
+      * get from FragmentManager
+      * create FragmentTranscation
+      * attach to Activity
+      * commit FragmentTranscation
+    
+** Service
+   - NOTIFYCATION_SERVICE
+   - ALARM_SERVICE
+   - AUDIO_SERVICE:
+     * SoundPool
+     * MediaPlayer
+     * MediaRecord
+     * SensorManager
+     * SensorEvent
+** BoardcastReceiver
+   constructor instruction:
+   1. register service
+   2. generate and send board intent
+   3. onReceive handle event and delegate
+   4. receiver onReceive
+   
+   registry way:
+   - AndroidManifest.xml <receiver> tag add <intent-filter>
+   - LocalBoardcastReceiver/Context registerReceiver
 * command tool
   #+BEGIN_SRC bash
   telnet <host> <port>, connect to emulator, available command:
@@ -20,3 +85,46 @@
    - hirechay view, include ui component
    - method call, method call time and stack
  
+* View
+  - button
+  - toggleButton
+  - checkbox
+  - ratingbar
+  - autocompleteTextView
+  
+** Listener
+  - onClick
+  - onLongClick
+  - onFocus
+  - onKeyPress
+ 
+ ViewGroup is a invisible view, include other views, it is a container:
+ - RadioGroup
+ - TimePicker
+ - DatePicker
+ - WebView
+ - MapView
+ 
+ AdapterView:
+ - ListView
+ - Spinner
+ - Gallery
+ 
+ Layout:
+ - Linear Layout
+ - Releative Layout
+ - Table Layout
+ - Grid View
+ 
+ Menu:
+ - Option Menu
+ - Context Menu
+ - Sub Menu
+ 
+ Toast used to show message on screen, Toast.makeText(contex,msg,durtion) Toast.show()
+
+ Notifycation show message on top bar, new NOtification.Builder.setXXX().build -> getSystemService(NOTIFYCATION_SERVICE).notify
+
+ 
+
+

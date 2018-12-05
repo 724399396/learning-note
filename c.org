@@ -378,11 +378,17 @@
 
   when fork a child process, with same stack, register, file description and so on. return twice
 
+  fork() create a process, has same memory, return twice, for parent return child pid, for child return 0, reutrn <0 when error
+
+  exit() terminate current process, free usage memory and file resource
+
+  wait() waite child process terminate
+
+  getpid() get current process id
+
+  exec(<filename>, *argv) read file then execute, never return, replace current memory/stack, keep file table
+
   execve use current process run argument special program. never return
-
-  exit will exit a process
-
-  wait, wait a process terminate
 
   kill, send signal to process
 
@@ -408,12 +414,25 @@
 
   dup2(fd1, fd2), close fd2, then set fd1 to fd2
 
+  pipe(p) create pipe then return fd, p[1] is used to write, p[0] is used read
+
   select(int numfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout), is synchronous IO multiplexing, fd_set is a file description set, some MACRO is operation for this, FD_ISSET,FD_SET,FD_CLR, any socket match condition will return, timeval set to 0 means return immediate, NULL never timeout
 
   getc(*fp) get character from file handler
 
   putc(*fp) put character to file handler
 
+  chdir, change current directory
+
+  mkdir, create directory
+
+  mknod(name, major, minor) create device file
+
+  fstat(fd), return file descriptor info, include filename,inode,inode link number, used size
+
+  link(f1, f2), link f2 to f1
+  
+  unlink, remove a link
 * Tools
 
   echo $? get previous command exit code

@@ -1,0 +1,409 @@
+* Basic
+  using xx import module
+  
+  using A = B, given B a alias A
+  
+  if compiler cant find type A, it will try add prefix in using import, final type is full named, if exist mutliple match, compiler throw ambigous
+  
+  namespace like java package, syntax is namespace <name> { <body> }, can nested
+
+  byte/sbyte/int/unit/long/float/double is type alias, reals type is in System package
+
+  @"" let content all raw, not escaped
+
+  enum <name> { <v1>, <v2> }, define enum, System.Enum.GetNames(typeof(<Enum>)) get this enum all value
+
+  c# support explicit/implicit type cast
+  
+  keyword checked/unchecked check arthimetic is overflow, can use /checked+ enable on compiler time
+
+  switch, support string, case need break, support goto case <xx> syntax
+
+  non nested class avialable modifier: public/internal
+  
+  nested class avialable modifier: public/protected/private/internal/protected internal
+
+  modifier internal means on same assembly
+  
+  modifier sealed used on abstract class, avoid other file extend
+
+  const/readonly like java final, const is on compile time, readonly is on runtime
+
+  c# method contract is Capitilize, e.g. Main()
+
+  c# Main method args not include program name
+
+  argument pass:
+  - pass by value, e.g primitive
+  - pass by reference, e.g. object/ ref out modified primitive
+  
+  ref vs out, out modified arg not accept pass in value
+
+  modifier params let method accept variable args, store in a array, must on last argument, when compile find method, has lowest priority
+
+  get/set, syntax xx type x { get {body} set {body}}, use as o.x = y or o.x
+
+  struct is like c, different with class is struct is not abstract, not support extend, but more efficent
+
+  all c# object extend from System.Object. e.g. Class Employee {} = class Employee : System.Object {}
+
+  System.Object default provide 4 public method: Equals/GetHashCode/ToString/GetType, 2 protected method: MemberwiseClose/Finalize
+
+  when new object, memory alloc on heap, object has extra info:
+  - type object pointer, point to type object(type object include static field, method table, table object point to System.Type)
+  - sync block index
+  
+  keyword new, let method not releate with parent hirechay
+
+  class声明的是reference type,运行时是分配在堆上的，struct和enum声明的是value type,运行时可以分配在栈上的,而且在做copy的时候，reference type 拷贝指针指向同一个对象, value type会拷贝整块内存, 还有一个区别在于heap上分配的会初始化为全0, stack分配不会做初始化, Value  Type继承自System.ValueType(重写了Equals和HashCode), struct的内存布局是自动优化的，class时按照声明顺序的，如果有需要都可以修改,如果一个structure需要被当作reference Type(比如加进容器),boxing会把他从栈上拷贝到heap上,原对象等待被回收, unboxing不会做拷贝，只会指向堆上的对象 
+
+  struct的virtual method不会导致boxing, normal method如果继承自reference type需要boxing, 注意各种boxing和unboxing的转换会导致创建各种栈上或者堆上的对象, 所以value type最好时immutable的, int, long等都是immutable的value type 
+
+  如果要比较对象identity一致性, 用ReferenceEquals, 因为==可能被覆盖, ValueType的Equals默认就是测试对象值是否相等的，因为使用的是反射所以性能不好，一般需要自己定义 
+
+  IEquatable<T> 接口定义了一个Equals(T)方法, IComparable<T>定义了一个CompareTo 
+
+  声明一维数组只能用 type[] x声明, 在确定的内容的时候，可以用{x1,x2..}，多维数组用[d1,d2..]声明,访问也是这样的语法, System.Array对象提供了一些如Sort, Reverse等操作 
+
+  使用:操作符继承或实现class或者interface, 用base访问父类对象(等同于java的super), this和java一致,在子类的构造器方法后用: base选择对应的父类构造器,this选择调用自己的构造器 
+
+  Virtual用于声明抽象方法,可以提供一个默认实现, abstract也用于声明抽象方法，不能提供默认实现,override用于实现抽象方法 
+
+  virtual的方法在调用的时候会根据具体类型去调用对应的方法,非virtual的用的是声明的类型去查找 
+
+  event的使用, 用delegate在class之外修饰一个没有body的方法，这个就是event, 然后在class里面用 event type x声明一个需要订阅的队列，后面用 x += new type(method)加入， -=取消, 然后调用x()触发事件 
+
+  Static operator+ 能够重载基本操作符+,其他类似, +, -, !, ~,++,--,true,false  +,-,*,/,%,&,|,^,<<,>>,==,!=,>,<,>=,<=  Operator method必须是public static的 
+
+  CLR(Common Language Runtime)类似于JVM 
+
+  Exception分为SystemException和AppliationException 
+
+  Indexer: 可以在class 内部声明 public type this [typename] { get {body} set {body}}这样的方法,可以用obj[indx]来访问你声明的对应的元素 
+
+  Attributes: 类似于java的Annotation,语法[xx] 
+
+  Delegates: delegate returntye name(param), name能够当做对象来持有参数类型是param返回类型是returntype的方法 
+
+  unsafe块里面能够执行一些c的操作, fixed配合unsafe使用防止获取指针以后被gc移动内存里的位置 
+
+  子类到父类的转换时隐式进行的，父类到子类要强转, xx is yy 用来判断是不是某个类型的子类(不会抛出异常), 通常使用if (xx is yy) (yy) xx这种形式，但是进行了两次检查，所以提供了一个 xx as yy的语法,如果时的话返回对象本身,如果不是返回null 
+
+  Dynamic 用来声明一个动态对象，是在运行时去获取实际的类型进行操作，编译器的类型就是Object, dynamic还有一个却别于object的地方, object不能implict convert 到子类，但是dynamic可以 
+
+  Dynamic能够简化很多需要使用反射的语法，但是dynamic会导入System.Dynamic.dll,对于很少一部分使用到反射的就没有必要使用dynamic,提高性能，节约空间，如果使用的多的话就用dynamic, dynamic的调用是通过DynamicObject这个对象上的方法实现的 
+
+  Class的默认访问级别是internal (同一Assembly可见),可以通过在Assembly的配置文件用InternalsVisibleTo属性来改变对某些Assembly也是可见的 
+
+  成员修饰符，Private,仅内部可见, protected内部和派生类可见(可以跨包), internal 同包可见， protected internal(protected + internal), public全部地方可见 
+
+  Partial 是c#提供的关键词，clr不存在这个特性编译器会把声明为partial的合并作为一个完整类型后编译，可以用在所有类型上， partial class可以让你分开定义同一个类，编译器会将所有定义合在一起编译，partial method可以声明在partial class 内，声明方法的签名，然后在别的partial class中用同样的语法写实现 
+
+  Const 是隐式的static的，不会在运行时分配空间，存储在Assembly里，注意比如A Assembly 引用了B assembly的const,如果B发生了变化，只编译B是不影响A的，必须重新编译A才会引用新值 
+
+  C#的field初始化的语法会被生成到构造器里面，如果没有构造器，会生成一个执行field初始化和调用默认父类构造器的构造器，如果有多个构造器，那么这些初始化语句会被放进每一个构造器里面，这种情况最好自己弄一个默认的初始化的构造 
+
+  value type的构造器不会默认被调用，必须显式的去调用，不然默认就只做分配空间初始化为0的动作，默认下所有字段会被初始化为0，如果你提供了带参数构造器，就必须在构造器了把所有字段初始化 
+
+  Public static implicit operator用来声明隐式转换，explicit声明显式转换 
+
+  Public static xx(this type...)用来声明extension method,可以是泛型的，也可以扩展action, function 
+
+  方法签名上可以用type name = value声明参数的默认值，然后引用的时候要么按顺序传值，要么用name: value传值 
+
+  可以使用out, ref关键词将参数按引用传递，无论是value type 还是 reference type 都是由调用者分配空间，与pass by value 的区别是可以在方法内修改该值指向的位置，out必须在被调用方法内初始化ref必须在传进方法前被初始化 
+
+  Property和event一样会生成很多代码backend field, getter, setter,如果你不提供不会生成，aip不推荐使用 
+
+  Object initialization是编译器提供的语法糖，在初始化实现了Ienumerable 的属性时，用的是Add 方法 
+
+  匿名对象内部的东西是read-only property,编译器会生成包含所有属性的构造函数，Equals, Hashcode 
+
+  要使用Event,先定义一个后缀为EvenArgs并继承自EvenArgs 的类作为消息传递的类，然后在要发送Event的类中声明event EventHandler<message type> name，然后定义一个event触发时候的方法，方法内需要线程安全的拷贝event对象，然后不为null的时候将this 和消息传给他，然后定义一个方法创建event并调用上一部定义的方法 
+
+  在需要监听event的类中，将上面定义的类的实例传入，然后使用eventName += -=来注册或者取消监听 
+
+  CLR的泛型能够持有reference type , value type，非泛型的容器在接受value type 的时候会有装箱，影响性能 
+
+  泛型参数在绑定之前称为open type,含有open type的方法不能被调用，当调用已经绑定了类型以后，称为close type 
+
+  同一泛型类的不同类型下不共享static field,如List<int>, List<long>,但是type constructor只被调用一次 
+
+  泛型方法对不同的类型在使用的时候会生成不同的代码，但是reference type 在这里认为是同一个类型，都是指针 
+
+  C#中用in 来标识逆变(contra-varaint), out来标识协变(covariant)，逆变只能用在入参，协变只能用于返回，如Func<string, datetime>是Func<object, object>的子类, 注意struct类型在这里不能被认为是object的子类(因为有装箱的操作) 
+
+  编译器总是先匹配非泛型版本的方法，不匹配的话尝试匹配泛型的方法 
+
+  C#可以接受同一方法签名，不同泛型参数个数的重载 
+
+  泛型能够在最后的位置用： xx 来声明constraint, primary constraint有class , structure两个, secondary constraint指的是接口类型, 还有constructor constraint用来声明类型必须存在一个什么样的构造器 
+
+  Null与value type比较的结果是不相等 
+
+  Interface 不要定义static类型的东西，部分语言不支持访问这些 
+
+  Interface上的方法不需要public virtual修饰符，如果子类继承的时候不标明virtual,那么该方法会被编译器标注为sealed virtual,阻止继承。也可以同时继承一个继承了接口的类和接口，这之后如果将方法声明为new,调用的时候依据virtual调用，找到最后一个virtual的方法(new之前的最后一个), 如果将方法声明为override,那么他就在方法的继承链上 
+
+  可以用 type.method声明explicit interface method implementation,不能指定任何修饰符，这个时候用接口类型来调用就是调用的该方法 
+
+  当继承多个接口并且不同接口里面有签名相同的方法时，需要使用显式接口方法继承 
+
+  EIMI 也可以用于处理非泛型接口，提供一个具体类型的public实现，然后接口的方法用EIMI声明，调用的时候如果声明的是该对象的类型，就有编译器安全，如果转换到接口上依然调用的是非泛型的版本 
+
+  EIMI存在几个问题，第一个是声明他的对象无法直接使用该方法，必须转换到对应的接口类型上才能调用，第二个是造成对值类型的装箱，第三个问题是子类无法用base调用到父类的EIMI方法,需要先转换为对应的接口类型，注意子类如果与父类继承了同样的非泛型接口，可能会导致无限循环 
+
+  在基本类型之间做转换有三种方式，第一种声明显示转换，由编译器生成IL进行转换，第二种用Convert类进行转换，第三种转换为Iconvertable 然后调用对应方法，效率由高到低 
+
+  String.Intern方法缓存并返回传入的字符串，literal声明的每次都会重新分配 
+
+  编译器会对string literal做pool,减小生成的代码的大小 
+
+  C#的char 是16位的，要表示32位的utf用text类型，stringinfo类能够帮助处理text类型 
+
+  IFormatable接口声明了一个接受format格式和formatter提供者参数的ToString方法，大多数FCL的value type都实现了该接口，不填写format则默认为G(general), 不填写provider会默认使用Culture Info 
+
+  System.Globalization.CultureInfo存储了当前线程的culture信息，用于字符串相关的如比较，转换等操作 
+
+  String.format用{index: format}来做占位符，从0开始 
+
+  可以自定义CustomerFormatter, 让类继承IFormatterProvider , ICustomerFomatter, 然后在ToString方法上先调用原有的序列化方法，然后添加自己的逻辑 
+
+  大部分的fcl里的基本类型也都定义了static parse方法 
+
+  要进行encode, decode,用system.text.encoding.encoding类的实例进行编码解码。可以用静态方法获取，获取的是缓存对象，也可以自己创建指定类型。有GetBytes, GetChar, GetString，GetByteCount等方法,要进行 从流中读取数据解码或者编码的时候，用get Encoder或者GetDecoder获取的对象，他能帮助你维护状态和多获取的字节  
+
+  base 64用System.Convert方法就行编码解码 
+
+  System.Security.SecurityString用于存储加密信息，他分配的是不受GC管理的内存，该方法实现了IDispose,一般用using语法使用 
+
+  Enum.GetUnderlyingType能够返回enum的实际标识类型，如byte, int,能够通过使用enum xx : type的语法来显式指定支撑类型 
+
+  Enum对象上的静态方法，GetEnums, GetEnumName, Parse, TyrParse,IsDefined等方法都很实用 
+
+  Enum可以用于bit flag,这时候需要自己加上Flag  Attribute并定义枚举的值，可以使用各种与或操作，ToString是特殊定义的，会根据值包含的内容展开，同样的用Parse 和 TryPaese能够从字符串转回枚举，可以转换多个枚举或得到的逗号分隔的字符串 
+
+  Array对象存储值类型的时候无需装箱，和栈上的情况类似，Array的overhead存储了数组的大小，起始的偏移量，存储值的类型等 
+
+  注意声明[,] 与[][]的区别，前者是每一维的长度都是相同的，后面可以是不同的 
+
+  Boxing和unboxing的数组不能相互转换, primary类型的数组之间也不能转换，这个时候可以使用Array.copy 
+
+  Array是协变的，所以也存在和Java一样在插入数据的时候需要进行类型检查，可能会抛出异常 
+
+  Array默认实现IEnumerable, ICollection, IList,一维的数组会实现泛型和非泛型版本的这些接口，但是如果一维数组是value type 的，不会实现非泛型版本的接口 
+
+  Array.CreatInstance可以用来创建指定lower bound 的数组，编译器对于0-based 一维数组有优化，所以尽量使用0-based 一维数组, [][]这样声明的数组也是有优化的,但是[,]这样的没有 
+
+  Stackalloc 能够在unsafe代码块内在栈上分配空间，也可以用unsafe 的structure 
+
+  delegate 是c#提供的一种声明传递函数的机制，delegate returnType Name(params) 声明了一个名为Name的delegate,入参和返回值都在申明上，要创建delegate,new Name(Func), func可以是静态方法，实例方法，Delegate这个类上提供了Combine, Remove等方法，也提供了+=, -=等重载的操作符方便操作 
+
+  Delegate 声明的方法会被编译为同名的类, 继承自System.MulticastDelegate，类含有4各方法，一个构造器，参数是对象实例和方法指针,Invoke 方法签名和delegate的一致，还有BeginInvoke, EndInvoke 
+
+  Delegate.Combine能够组合delegate,每次都会创建一个新的delegate对象，invokeList列表维护了需要按顺序调用的delegate的列表,调用的时候每个方法获得的入参都一致，只有最后一个方法的返回值会返回，GetInvocationList能够拿到这个list，按照自己需要的方式调用维护 
+
+  因为随着delegate的增加，很多只是名字不一样但是签名完全一致的出现了，所以出现了Action和Func 
+
+  在使用lambda的时候，编译器会为你生成delegate方法和缓存的delegate对象，根据你方法访问的字段决定 是否是static 的，访问级别是private的，lambada的参数可以指定类型，用(type name,)这样的语法 
+
+  如果lambda访问了local variable，那么会创建一个辅助对象存储这些字段, lambda编译生成的类会使用这个辅助对象上的字段 
+
+  MethodInfo 的CreateDelegate方法能够创建delegate, DynamicInvoke能够进行调用 
+
+  [] 语法用来使用Attribute,编译器会将这些信息一同写入metadata, 可以声明要作用到的类型，使用[target: Attribute]的语法，自定义的Attribute必须直接或间接继承自System.Attribute,声明的时候一般以Attribute结尾，使用的时候可以选择省略这段后缀，在实例化的时候，构造器参数直接传入，其他属性可以用name=type一起初始化，多个Attribute可以用多个[]声明，也可以在同一个[]里用，分隔，如果都没有参数可以用空格分隔 
+
+  System.Reflection.CustomerAttributeExtension存在IsDefined, GetCustomerAttribute, GetCustomerAttribute等方法 
+
+ 
+
+  Xx.GetCustomerAttribute会在运行时创建对象，如果有安全的需求，可以使用CustomerAttributeData上的方法获取，这个是不会执行任何C#代码，不会创建对象 
+
+  C#的可空value type 是用Nullable这个value type实现的，可以写Nullable<int> x =5， int?是前面类型的语法糖， Nullable value可以进行和非空和可空对象的转换，也可以作为适用于各种操作符 
+
+  a ?? b ，如果a 不为空返回a, 不然返回b 
+
+  可空对象在装箱时，如果是null,不会执行装箱，非null的话会提出里面的值进行装箱 
+
+  Lock, using, foreach 等会将方法包在try finally 块里面，保证释放资源 
+
+  GC使用内存分为generation 0, generation 1，generation 3，对象默认分配在g 0上， g0有一个budget,如果尝试分配新对象时导致G0的内存使用会超过这个值就会触发G0的垃圾回收，g0的存活对象会直接进入G1，垃圾回收完后会按照G1,G0 的顺序无空隙排列，NextPtr就会指向G0 的最后位置，同样的G1也有一个budget设置，如果超过了也会触发GC 让存活对象进入G2 
+
+  Large Object分配时使用高地址，不做内存连续的优化，直接进入G2 
+
+  GC 触发的几种方式，第一种是正常的对象分配时空间不足，第二种是调用GC.Collect, 第三是Windows通知内存不足 
+
+  C#提供了两种场景下的GC设 ，workstation 适用于客户端，提供了low latency的算法， server适用于服务端 
+
+  继承CriticalFinalizeObject 这个类的有几个特殊行为，首先是他的Finalize方法是在构造的时候就编译为native code 的，这样防止在释放的时候才发现无法编译，第二是这个类的派生类的Finalize会在非他的派生类后执行，保证其他类使用的时候能够引用。 
+
+  对于StreamWriter这类对象，它依赖已经于FileStream在他之后被释放，c#不为这允许这类对象Finalize,必须使用IDispose来释放文件资源 
+
+  对于Bitmap这类c#占用少量m没b资源，但是native占用大量内存的，可以用GC 类上的AddMemoryPressue, Remove Memory Pressure来告知GC 
+
+  System.Runtime.InteropService提供了HandleCollecter 能够用Add, Remove方法控制创建资源的个数 
+
+  在对象创建时，如果有非Object默认的Finalize方法会被加入到Finalize队列，在GC的时候，需要回收的对象如果不存在于这个队列就直接回收，存在就会进入freachable queue, 会有一个decided Thread来扫描队列，执行Finalize方法并从队列移除，没有要执行的就休眠，注意不要在Finalize方法里面访问栈上的值， 
+
+  还有一点注意的是freachable队列引用的对象也是可达的，是还不能被销毁的 
+
+  GC handle table 是另一个维护根节点的地方，在这里声明为normal, pinned 都都会被认为是GC Root,  waek, weakRecurring维护的对象是弱引用，在没有强引用指向的时候是可以被回收的，WeakReference是这类行为的个辅助类 
+
+  ConditionWeakTable 保证在ke mmy n被回收时，如果value没有强引用也被回收 
+
+  AppDomain 里面是一堆Assembly, 不同的AppDomain 是相互隔离的，AppDomian可以整体被卸载 
+
+  Thread.GetDomain获取当前线程所在的AppDomain, AppDomain.CreateDomain创建一个新的, Unload卸载， domain 有一个实例方法，CreateInstanceAndUnwrap传入assembly full name 和对象的名字，能够创建对象，如果该对象是MarshalByObjRef 的子类，那么该对象依然存在于另一个AppDomain里面，获取的是引用，跨domain 创建的对象由于没有引用，是根据时间回收的。如果该对象继承了Object, 并且实现了Serializeble,就可以跨domain 传递，获取到的是值，需要是方法调用的返回，直接创建的还是在另一个domain 里面 
+
+  System.Runtime.Remoting.IsTransparentProxy 可以用来判断对象是其他domian 的引用还是自己的值 
+
+  Unload 是同步执行的，默认等待10s,  
+
+  如果超时无法释放会抛出UnloadingException, 如果等待的线程本身被中断，会重启一个线程来等待 
+
+  ASP 的不同web 应用运行在同一个进程的不同AppDomain 里面，如果发生文件变化，会unload并生成一个新的 
+
+  System.Assembly.Load 载入Assembly, 如果已经载入则不会载入,会寻找GAC (global Assembly cache) , 工作目录等，LoadFromFile指定文件路径载入, 主要使用 AppDomain的load 方法是实例的，而且跨AppDomain 调用用于Assembly Ref 不是MarshObjectByRef 的子类，按值传递会有不同domain 访问文件配置不一样的问题，ReflectionOnlyLoad载入的只能通过反射执行 
+
+  Xx.GetType 是运行时获取的，typeof是编译期绑定的，Activator.CreateInstance能够创建大多数类的实例，Array的实例要用Array 上的静态方法create Instance创建，Delegate用MethodInfo 的CreateDelegate 创建，创建泛型对象用type对象上的MakeGenericType 指定类型 
+
+  System.Runtime.Serialization 包含了序列化和反序列化的类和方法，BinaryFormatter.Serilize 能够将对象序列化到字节流，Deserilize 能够反序列化回对象， 序列化通过反射完成，一个字节流可以写入多个序列化的对象，反序列化的时候按照序列化顺序读取，反序列化会去load Assembly，注意LoadFrom 载入的Assembly 可能会导致可以序列化但是反序列化的时候因为找不到Assembly失败 
+
+  对象默认是不可序列化的，需要加上Serializable Attribute，这个Attribute不会继承，序列化需要继承链上的所有对象都可序列化，可以用NonSerilized Attribute 标注部分属性不需要序列化， OnDeserialized能够注解在方法上指定反序列化字段设置完成时的行为，类似的还有OnSerilaizing, Onserialized, OnDeserialiIng, 对于一集对象处理时，先调用所有的ing方法，然后是序列或者反序列对象，之后是所有的ed 方法，ed方法调用时按照前面调用的反续执行的，考虑hashset  
+
+  当序列化的时候，如果发现对象实现了ISeriliazable, 就忽略该对象上的注解，直接使用实现的接口的GetObjectData方法来获取序列化需要的数据，如果对象实现了 该接口，必须 实现一个构造器，接受 
+
+  SeriliazationInfo, StreamContext 作为参数，GetObjectData使用SeraliazationInfo 的Add value 增加要序列化的值，构造器用SeriliazationInfo 的GetXxx 获取值，SteamContext 用来指定上下文，如同机器同进程，跨机器等 
+
+  如果要更改获取的反序列化的类型，调用info.SetType, 传入一个继承了IObjectReference 的对象，在反序列化的时候就会返回你指定的值 
+
+  ISerializationSurrogate 这个接口的实力能够进行注册后在对象的序列化之前和之后进行处理ateSelector 把他加入Formatter 里面才会使用 
+
+  SeriliazationBinder 能够接受Assembly 和type 作为参数，返回一个你需要的type, 需要通过设置到Formatter的binder上使用 
+
+  要创建一个线程，可以创建System.Threading.Thread 对象，传入一个delegate 作为要执行的方法，然后调用Start 后开始执行 
+
+  被标记为Background 的线程，如果当前进程下没有其他foreground 的线程，所有background线程会被销毁 
+
+  ThreadPool 会自己创建销毁线程，负责平衡待执行任务和线程个数，ThreadPool.QueueUsetWorkIten 往线程池添加任务 
+
+  C#的线程是协作式的，所以需要取消的话需要CancellationToken, 可以用CacellationTokenSource 创建，创建的对象上的Token 属性返回对应的Token , 该Token 可以传给需要 的方法使用，也可以用register方法注册回调，CancellationTokenSource.CreateLinkedTokenSource 可以连接token, 创建一个新Token, 当其中一个Token 被cancle, 他也会被cancle  
+
+  CancellationTokenSource 的实例方法cancelAfter 能够在指定时间后cancel Token 
+
+  New task 然后Start 或者Task.Run 创建并执行Task  
+
+  Wait 和 Result 会导致线程等待结果返回，wait 也许会使用当前线程去执行Task, 异常只有试图获取结果是才会抛出来，在执行线程是被吞了记录下来的，可以在TaskSchduler 上用UnobservedTaskException 注册回调，当一个Task 被回收当时有吞咽的异常就能得到通知 
+
+  ContinueWith 用来串接task, 同一个Task可以多次ContinueWith,这些是被加入队列，按顺序执行的，相互之间没有依赖，continuewith 的第三个参数可以接受Flag., 用来标识什么情况下继续执行 
+
+  Task 可以有父子关系，在创建的时候指定AttachToParent 这样父的Wait 等方法是在子Task 也都完成才会返回 
+
+  Task.Status 记录了当前task 的状态 
+
+  TaskScheduler 用来指定task 的执行策略，如PerTaskPerThread, PriorityScheduler  
+
+  Parallel 上提供了一些静态方法来批量执行 
+
+  AsParallel 这个扩展方法能把IEnumerable 变为并行的ParallelEnumrable, AsSequential 方法相反，在Parallel下有些操作执行结果是无序的，如果需要有序可以用AsOrdered方法，但是会降低效率 
+
+  Timer 对象用来定时定期执行回调 
+
+  ThreadPool 会自动创建或者销毁线程，执行策略是当有任务的时候放入global queue, 然后各个线程有自己的task stack, 当local task 的任务队列为空时，会尝试先从其他thread 的task 队列取任务，没有时从global 取任务，还是没有就挂起，最终长时间没有任务需要执行就会 
+
+  Async, await 会用GetAwaiter方法辅助 翻译为状态机 
+
+  Task.Factory.FromAsync 能够将Beginxxx , Endxxx 这种形式的异步转换为task 
+
+  C# 的线程创建支持用户态和内核态user mode 下创建快速，但是在锁上等待时不会被认为是block, 会让cpu 处于运行但是不处理任何指令，如果锁了称为live lock 消耗cpu 和内存，内核态的创建缓慢，但是等待锁的时候操作系统能够切换到其他线程，锁的时候消耗内存，只占用切换的时候的CPU 开销 
+
+  CLR 对于32位及以下数据的操作是atomic 的 
+
+  Volatile 类有Read 和Write方法，保证了两个事情，第一是保证刷新CPU缓存，第二是禁止了一些编译器对于单线程下的优化，方式是在Write发生时，所有之前的本地变量都会被同步写回主存，read 发生时，所有之后的本地变量从主存同步，也存在volatile 关键词 
+
+  Interlocked 类提供了很多原子的操作数类型的方法 
+
+  WaitHandler 是各种同步工具的子类，mutex, semophore 等 
+
+  Semophore 创建的时候需要指定一个全局的名称，这个是通过内核在不同进程间共享的 
+
+  EventWaitHandler 含有一个boolean 值，代表是否正在被使用，set,unset 设置值，子类是AutoSet 和ManualSet 两个类型 
+
+  Semophore 用WaitOne 和Release 方法使用 
+
+  混合模式锁，用InterLocked 等用户态的锁和Event 等内核态的锁共同管理，尽量使用用户态的锁的模式 
+
+  只有Mutex 会持有锁的所有者信息，可以用来做可重入锁 
+
+  Fcl 提供的hybird lock, ManualResetEventSlim, SemaphoreSlim, Monitor 提供了混合模式的，可在用户态等待的，记录线程拥有者和可重入的锁 
+
+  Monitor使用的对象上的sync lock 做同步，为了优化内存使用，Clr 分配了一块sync lock array, 所有对象初始化的时候sync lock 是一个值为-1的指针，当有锁的需要时指向sync lock array 的一块未使用地址，初始化线程持有id, 重入次数，内核锁等，当不再使用时归还这块内存，指针再次指向－1 
+
+  注意锁的对象可能跨domain, 如marshedbyobjectref, string 等，不要使用这些类型的对象作为锁 
+
+  Lock 是try finally Monitor 的语法糖 
+
+  RaderWriterLockSlim 是读写分离锁，CountDownEvent, Barrier  
+
+  CFL 提供了4个并发容器，都在System.Collection.Concurrent 下
+* Ubuntu Env
+  #+BEGIN_SRC bash
+  sudo add-apt-repository ppa:alexlarsson/flatpak
+  sudo apt update
+  sudo apt install flatpak
+
+  flatpak install --user --from https://mono-project.azureedge.net/repo/monodevelop.flatpakref
+  #+END_SRC
+  lkdasm similar like ILDasm, is IL deassmbler in linux
+
+  msc used compile, mono used to execute
+* Common Language Runtime
+  CLR(Comman Language Runtime) is IL(Intermedia Language) runtime
+
+  managed module is basic unit of CLR, include metadata and IL
+
+  one or more managed module combine a assembly
+
+  c# JIT compile IL to native code(first execute time), no interpreter
+
+  NGen compile IL to native code, cons is performance is bad than JIT compied, pros is start more quickly and can shared
+
+  CLR can run unsafe code(non IL part), compile from c# unsafe 
+  
+  CLR initialization will do verification, include verify metadata
+
+  metadata include raw data, serilize/deserilize template
+
+  c# compiler can set target platform, e.g. x64 x86 arm
+  
+  FCL(framework Class Library) is basic class package
+
+  exe config file is on same dir named with <name>.exe.config
+
+  static method call by instruction call
+
+  virtual method and normal method call by instruction callvirt, one exception base.xx will use call, otherwise always called child method
+
+  callvirt, first check is object null then find code use jit execute
+  
+  Type construtor is ensure thread safe and only excute once by CLR, don't let type constructor reference each other
+* Compile
+  csc.exe used to compile:
+  - /out:xx, set output file
+  - /t:exe, set compile type
+  - /r:MSCorLib.dll, define lib
+  - /t:winexe, generate ui app
+  - /t:appcontainerexe, generate windows app store app
+  - /t:module, genrate pe file(not include manifest), suffix is .netmodule
+* NHibernate
+  Reverse = true, means ignore this side update, use other side drive 
+
+  Delete-all-orphans mean when save parent, child will insert first, then update relation id to parent id 
+
+  Bag with composi-element when you update, will delete all child then re-insert 
+
+  Idbag with composi-element single insert/update/delete 
+
+  Bag with one-to-many, signle insert then association 
+
+ 

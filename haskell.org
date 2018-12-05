@@ -109,7 +109,7 @@
   
   beta reduction, use real parameter replace argument in body without conflit
 
-  Eta conversion, if variable only appear both in parameter and body once, omit it
+  Eta reduction, if variable only appear both in parameter and body once, omit it
 * Lazy
   - NF(normal form), e.g Char Int
   - HNF(head normal form)

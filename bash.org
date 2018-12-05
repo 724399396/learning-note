@@ -1,0 +1,85 @@
+* Self sign ssl key
+
+#+BEGIN_SRC bash
+
+openssl req \ 
+
+  -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key \ 
+
+  -x509 -days 365 -out certs/domain.crt
+
+#+END_SRC
+
+on CN(common name) input your address(not include port part)
+
+.key is private key
+
+.crt is certifacate and public key
+
+if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v3_ca] section
+
+* ssh
+** generate ssh key
+  #+BEGIN_SRC bash
+  ssh-keygen -t rsa -b 4096 -C 
+  eval "$(ssh-agent -s)" 
+  ssh-add ~/.ssh/id_rsa 
+  sudo apt-get install xclip 
+  xclip -sel clip < ~/.ssh/id_rsa.pub
+  #+END_SRC
+
+** remove ssh key when host change
+  #+BEGIN_SRC bash
+  ssh-keygen -R <host>
+  #+END_SRC
+* Shell
+  #+BEGIN_SRC bash
+  touch # create file
+  mkdir # create dir, -p recursive create
+  cp # copy, -r recursive
+  rm # remove file, -f no prompt, -r recursive
+  mv # move
+  rename # batch rename file by reg
+  cat/tac/nl # show file content
+  cat -A # show invisible character
+  more/less/head/tail # show file progress
+  echo $<var> # show environment varaible 
+  set # show all environment
+  env # show current user environment
+  export # show environment from export, set > env > export
+  unset # delete environment varaible
+  vimdiff # diff file
+  whereis # query data from db, -b binary file, -m source file, -m help file
+  locate # query by /var/lib/mlocate/mlocate.db, update by cron
+  which # find executable file
+  find # find every kind of file
+  wc # count number, -l line, -w word, -c character, -m bytes, -L longest line
+  cut -b<f>-<to> <filename> # output set column number content
+  file <filename> # get file type encode info
+  sort # -n number order, -r reverse, -t split character, -k sort by column number
+  uniq # delete continue duplicate
+  tee # output data to file
+  sed # find -> replace
+  awk # column get
+  curl # -X method, -c get cookie, -b pass cookie, -d post body
+  zip <target> <source> # -o output file, -r recursive, -q quite, -e encrypt, -l \n -> \r\n
+  unzip # -l show content not extract
+  tar # -c create, -x extract, -f filename, -t show, -p keep permission, -z gz, -J xz, -j bz2
+  df # disk usage
+  du # file size, -h human readable, -d <num> dir nest level, -a all file, -s summarize
+  dd # copy in file, -of output file, -if input file, -bs base size(byte), -count number, -conv convert function
+  mkfs.<type> # format disk to type
+  mount # mount info, also used to mount disk
+  fdisk # change disk partition 
+  type <command> # show command type
+  help <command>
+  man <command>
+  corntab # -f start -e edit -l show -r delete
+  $? # previous command exit code
+  grep # filter content, -r recursive, -n line number, -l ignroe binary
+  tr # delete special character
+  col # tab <-> space, -x tab -> space, -h space -> tab
+  join # connect two file, -t splitor, -l ignore case, -1 file 1 filed, -2 filed 2 file
+  paste # similar like join, but not compare
+  
+  #+END_SRC

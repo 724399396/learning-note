@@ -1,0 +1,16 @@
+* Basic
+| Parrallel                                                              | Concurrency                                                                 |
+| split task to multiple sub task, use multiple core to run at same time | reponse multiple task in 'same time', not care does it really run same time |
+
+concurrency is nondeterminism
+
+parrallel is hirechay:
+- bit level, cpu process on word level is parrallel for bit level
+- instruction level, pipe line is instruction parrallel
+- task level, this is programmer should consider most time
+
+parrallel is not for all scenario, e.g sum a array bottleneck is access all element(memory speed)
+
+execute time = D(e) + W(e) / P, D is task split level, W is task step number, P is thread number
+
+improve: 1 / ((1-p) + p/n)), p is parallel percent, n is parallel number

@@ -1,0 +1,25 @@
+
+* Basic
+keep-alive keep tcp connection 
+
+cookie used solve http is stateless
+* support methods:
+- GET 
+- POST (create in REST)
+- PUT (update in REST)
+- PATCH (update in REST)
+- HEAD
+- DELETE (delete in REST)
+- OPTIONS, get support methods list
+- TRACE
+* Content format
+Header and Content use \n\n split
+
+Header include Request header, Response Header, Response Entity
+
+* Status code
+- 1xx Informational, request is in processing
+- 2xx Success
+- 3xx Redirection
+- 4xx Client Error
+- 5xx Server Error

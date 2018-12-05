@@ -1,0 +1,72 @@
+* Basic
+  θ() is upper limit, O() is general limit
+* union-find
+  - quick find, connection modify all index
+  - quick union, tree structure, recursive find root index
+* Sort
+  sort stability, means sort by a field then by b field, second sort not mess first sort order
+
+  stable sort:
+  - Insertion sort
+  - Merge sort (choose left result first)
+
+  not stable sort:
+  - Selection sort
+  - Shell sort
+  - Merge sort (choose right first)
+  - Quick sort
+  - Heap sort 
+
+  - Selection sort, iterate n times, every time select minimum, O(n²)
+  - Insertion sort, iterate n times, every time interchange current element to proper location, worst O(n²), orderd O(n)
+  - Shell sort, improved from insertion sort, iterate multiple times, every time step is special sequence, it change insertion sort step 1 to big move step,
+    θ(n ^ (3/2)), orderd O(n log(n))
+  - Merge sort, recursive sort then merge two result, O(n log(n)), two improve tips:
+    * small set change to insertion sort
+    * judge before merge
+  - Quick sort, random choose element, split to less than | equal | bigger than, then recursive call
+  - Heap sort, use array presentation heap, parent node must bigger than it child node, start from 1, then i*n and i*n+1 is it child nodes, i/2 is parent node,
+    construct by swim/sink, sink is if parent node less than it chid node, interchange them then recursive continue, swim is node bigger than parent node, choose
+    bigger node in child interchange with parent node, recursive
+    get order array start from N/2, delete it and let N to this location, sink let it ordered, repeate
+    θ(n log(n)) , in-space(not need extract memory)
+* Search
+  Binary Search Tree(BST), search a key O(logN), θ(N) when tree height is N
+
+  2-3 tree, include 2 child and 3 child node, when insert generate 4 child node, split to two 2 child node, tree height + 1
+
+  read-black tree, simplest is leaf-leaning:
+  - only left node can be read
+  - left and right both red then lift
+  - insert node is red
+  - right red and left black, rotate left
+  - continuios two left red, rotate right then lift
+
+  interval search tree, every node keep sub tree interval, when query, if intersection, search this node sub child, if less than start, go left else go right
+
+  Hash table, constant time search/insert:
+  - separete chaning
+  - array + link
+  - linear probing
+
+* Graph
+  DFS(depth first search), iterate current vertex adjacent edges, mark, recursive into
+  - solve mazz
+  - connection
+  - topological sort, dfs -> reverse
+  - strong connection, topological sort -> dfs
+
+  BFS(bread first search), iterate current vertex adjacent edges, mark, enqueue to queue, get from queue until queue is empty
+  - shortest path
+
+  Minimal Spaming Tree(MST):
+  - Greedy algorithms, split graph to mark and not mark part, get all edge cross two part, select weigth minimum edge into MST
+  - Kruskal algorithms, sort eget by weight, chosoe edge mimimum and not cause cycle into MST
+  - Prime algorithms, sort eget by weight, only edge cross mst and not in mst then into mst, both not in keep, both in delete
+
+  Weight Direct Graph shortest path, core is relex, if s->e < s->a + a->e, then udpate this path:
+  - Dijkstra algrothims, can't solve negative path
+  - Toplogical order, can solve negative path, but can't solve negative cycle, used in image scale
+  - Bellman-ford, solve negative cycle
+
+  Fork-fulkerson algorithms, fond s to t augmenting path

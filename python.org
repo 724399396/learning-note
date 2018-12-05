@@ -1,0 +1,104 @@
+* Basic
+  # single line comment
+  / float divide, // get div quotient, % get div remainder, divmode get quotitent and remainder
+
+  and/or/not, apply to boolean, also short circuit
+
+  # -*- coding:utf-8 -*- declare literal encoding
+
+  pydoc, show method info
+
+  from xx import yy, import part of module
+
+  <script>,<arg1>.. = argv, get script name and arg
+
+  def <name>:  define a function, argument can write as (arg1, arg2 ..) or (*argv), use argv = <default> set a default value, """ """ function doc
+
+  colon(:) + indent  is block
+
+  break, break while/for
+
+  continue, continue while/for
+
+  <x> in <y>, check is x of y element
+
+  for <x> in <y>, iterate y elements
+
+  try ... expect .., handle exception
+
+  child call parent method need pass self
+
+  __init__.py is python package flag
+** List
+   [] create list, heterogeneous, access use [<index>], index based 0, use negative from end to start, based -1
+
+   [start:end] slice list
+
+   [start::step] access by step
+
+   len() get length
+
+   append, append element to end
+
+   innsert(<index>,<element>), insert element to index
+
+   count(<x>), count x number
+
+   reverse
+
+   extend(<list b>), append list b all element end
+
+   sort
+
+   del(<index>), delete element at index
+
+   <separator>.join(<list>)
+
+** Dictionary
+   {<key1>:<value1>, <key2>:<value2> ...}
+
+   del <dic>[<key>] delete element
+
+   items(), return key-value pair
+
+   get(<key>, <default>)
+
+* API
+
+  print, argument split by comma(,) final result is split by space( ), %r output raw data, %s output display data
+
+  input, read from stdin(try parse)
+
+  raw_input, read from stdin
+
+  int()/float(), parse str to number
+
+  str(), change object/number to string
+
+  open(<filename>) open a file object
+  file object api:
+  - read(<file obj>)
+  - close(<file obj>)
+  - readLine(<file obj>)
+  - truncate(<file obj>)
+  - write(<file obj>, <content>)
+
+  readLine(<file
+* Virtualenv
+  #+BEGIN_SRC bash
+pip install virtualenv # install
+virutalenv <location>/<project name> #  create virutal environment
+virutalenv -distrubute -p <python path> <location>/<project name> # create virutal environment with special python version
+source bin/active # let virtual environment active
+source bin/deactive
+  #+END_SRC
+* Django
+  django-admin is manage tool
+
+  default port 8000
+  #+BEGIN_SRC bash
+  django-admin start project <name> # create project
+  python mange.py runserver # run app
+  python manage.py migrate # migrate 
+  python manage.py createsuperuser # create admin user
+  #+END_SRC

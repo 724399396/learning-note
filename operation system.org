@@ -1,0 +1,24 @@
+* basic
+System interface design:
+- provide library, pros: efficent, cons: not controll by system
+- system call, split to user mode and kernel mode
+
+process is unix isolation unit, process keep state, memory page, user stack ,kernal statk info
+
+user use low virutal address, kernel use high virtual address
+
+when pc boot, read from disk boot loader, boot loader is series instruction, kernal start address(0x800000000) map to physical address 0x0, so boot loader size limit is 4Mi
+[[./boot-loader.png]]
+[[./memory-mapping.png]]
+* xv6
+xv6 page table is 32 bit, first 20 bit used in a array to find page table entry(PTE)
+
+PTE has 20 bit physical page number(PPN) and flag(12 bits)
+* qemu
+  #+BEGIN_SRC bash
+  sudo apt install qemu-kvm qemu virt-manager virt-viewer libvirt-bin
+
+  ctrl-a c # into debug mode
+  #+END_SRC
+  
+  
