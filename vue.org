@@ -1,0 +1,147 @@
+* basic
+  <vue instance>.<filed> is read from Vue definition data properties
+  
+  vue self filed/method is start $
+
+  array element/ object is not watched by vue, can use Vue.$set to modify those filed
+
+* Lifecycle
+  [[./vue-lifecycle.png]]
+
+* Instance
+** argument
+   - el, bind to page element by id
+   - data, reactive data
+   - created, after instance created will execute
+   - computed, when computed reply on data change, this computed filed auto change, delcare as function but need use as field(vue cache this)
+   - watch, watch data field change to execute some function
+
+* Component
+** Definition
+   #+BEGIN_SRC javascript
+   Vue.component('<name>', { 
+     props: [] //pass from html, v-bind:<name>="<variable>" 
+     template:, 
+   })
+   #+END_SRC
+** Template syntax
+   {{ <vriable> }} bind value from data, support js expression 
+
+   v-once, let bind only execute once 
+
+   v-html="<variable>", evaluate varibale as html 
+
+   v-bind:<attr>="<variable>", evaluate variable as element attr, v-bind:href can write as :href 
+
+   v-if="<expression>", when expression is true, render element, if not set key, when switch element will be keep, if you need not key, set to different key 
+
+   v-else, match v-if use 
+
+   v-else-if 
+
+   v-for="<v1> in <v2>" or "(v,index) in <vs>", when iterate object will get (value, key, index) 
+
+   v-on:<event type>="<method>", v-on:click can write as @click, have some modifier, .stop stopProganation, .preven preventDefault, .capture first call function then default behavior, .slef, .once 
+
+   v-model="<variable>" 
+
+   v-bind:class="<expressin>", support <class>: <boolean value>,  support object, array 
+
+   v-bind:style="<expression>", support js syntax, object 
+
+   v-show="<expression>", if expression is true, set show = true 
+
+   V-for precedence is higher than v-if, means v-if will execute on every  v-for result
+   
+
+   Component class will be keep, if you call component with class, will add to instead of replace 
+
+   Component initial argument most part like Vue 
+
+   data need be a function return object, because if it is a object, will share by all component 
+
+   $emit(methodName) send method call to component constructor location, second arg can pass, use $event in html or functino argument to accept 
+
+   <input v-model="text"> equal to <input :value="text" @input="text = $event.target.value"> 
+
+   <slot> can accpet html/component from parent inner, <slot name="xx"> used with <template slot="xx">, slotScope can let parent element access child slot value 
+
+   Is used for 2 purpose: (1) li also valid in <ol>, so can use <li is="componentName"> to call component (2) dynamic conponent <span :is="componentName">, keep-alive element can let dynamic component create once 
+
+   Props can be string array, means accept variable name list, can be object, can carray type, default value, required, validator 
+
+   Not prop value will direct add to root element of component 
+
+   Class/style property will merged from component template and prop 
+
+   Event is case sensitive, so use came-case is good way 
+
+   Model is new add field used for v-model, used as { model: { prop: '<name>', even: '<eventName' }, and used v-modle to used component, then value will pass wo <name>, event pass back by emit(<eventName>) 
+
+   .native means listen on component top element 
+
+   $listener wrap component as input/table element 
+
+   .sync, value + on:event 
+
+   Props can be array, means component props name, can be object, key is component name, value can be type, default, required, validator 
+
+   Non-prop attribute will direct pass to root element 
+
+   $attrs contains all pass to component attribute, inheritAttrs set to false let non-prop attribute not fallthrought to component root element 
+
+   .native and $listener can use togother to let event response by special element 
+
+   Mixin is a property when initialize Vue instance, Mixin can accept a object, smart merge mixin property and you prodivde in vue property 
+
+   Vue.mixin({}) is global mixin, affect every vue instance after this 
+
+   Custom property default is overwrite startegy, use Vue.config.optionMergeStrategy to overwrite 
+
+   Reunder: function(createElement), render element by jsx 
+
+   Functional: true, means this component is functional, no state 
+* Directive
+  Vue.directive("<name>", options) register a custom directive, used with v-<name> 
+
+  Property directives in vue options register locally, directives: { <name>: <options> } 
+
+  Lifecycle: bind(only once, when first use this directive),  inserted(every time component be insert to parent component), update(this or child component value update), componentUpdated(this or child component updated), unbind(only once) 
+* Plugin
+  Plugin expose a install method, this method will receive Vue object 
+
+  Vue.use(<plugin>) 
+* Filter
+  Can use in mustach template and v-bind 
+
+  Use | to donate, 
+
+  Filter can use filters to local register or use Vue.filter to register global
+* Transition
+  <transition name="<name>"></transition> 
+
+  Give element v-if v-show v-list transition effect 
+
+  V-enter, added before insert, remove on next frame 
+
+  V-enter-active, added before insert, remove after transition/animation finish 
+
+  V-enter-to, added after insert, remove on next frame 
+
+  V-enter -> v-enter-active -> v-enter-to 
+
+  V-leave -> v-leave-active -> v-leave-to 
+
+  If no name provide, find by v-xx, if name provide, find by <name>-xx 
+
+  Can use xx-class to used 3-rd animation class, set by Enter-active-class, enter-class and so on 
+
+  :duration can explicit enter and leave duration 
+
+  Js hook: before-enter enter after-enter enter-cancelled  before-leave leave after-leave leave-cancelled 
+
+  Apprea attribute let element first render also has transition 
+
+  Attribute mode, In-out out-in used in dynamic component 
+
+  Transition-group used on list, not support mode, default render a <span>, can use tag to change, every element required a key, v-move(<name>-move) class used for list item location change 

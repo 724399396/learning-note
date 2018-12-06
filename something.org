@@ -1,4 +1,14 @@
-0xEF,0XBB,0xBF is bom version utf header, place on utf8 file start, compatible with bom/non bom version utf8
+* UTF
+  0xEF,0XBB,0xBF is bom version utf header, place on utf8 file start, compatible with bom/non bom version utf8
 
-chrome://net-internal/#proxy get proxy info
+  uft16, fixed 2 bytes
+  utf8, 1-4 bytes
+  utf32, fixed 4 bytes
+
+  utf8:
+  - less than 0x10000, use 1 byte presentation
+  - greater than 0x10000, use 2 bytes, high byte (x - 0x10000) >> 10 + 0xdb00, low byte (x & 0x3ff) + 0xdc00
+
+* Chrome
+  chrome://net-internal/#proxy get proxy info
 

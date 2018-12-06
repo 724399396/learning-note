@@ -1,0 +1,211 @@
+// TODO read basic
+* Basic
+  Git diff use to show file change, default is compare unstage with stage, --staged or --cached is used compare commit and staged 
+
+  Git rm file from stage and working directory, if you already modify and add to stage, you need -f parameter, consider git target is not accident lose file change. If only want remove from stage, use --cached parameter 
+
+  Git log can show all history, -p means patched, show every commit change detail, -num set history number, --stat show change summary, --pretty can output use different format, like oneline, format can set custom output, --graph can show commit tree use character 
+
+  Git log <b1>·· <b2> show commit which b2 beyond to b1, same as git log b1 --not b2  
+
+  Git log can filter with kinds of condition, like author, time, commit, like -num --since --until -grep, -S find file change content inclucde your input string, --no-merges only show not merge commit, -- command also accept by git log  
+
+  git commit --amend replace last commit , you can change file and commit message  
+
+  Git reset set stage file from commit 
+
+  Git checkout -- set working directory file from commit 
+
+  Git remote show all remotes, -v show detail, git fetch remoteName can special which remote you fetch, this command only get data on,remoteName/branchName, you can merge/rebase it. git remote show <remote> show more detail 
+
+  Git push <remote> <branch> 
+
+  Git tag show all tags, -l can filter tag content， -a create a new annotated tag ， -lw create a new light weight tag，git tag <tag name> <hash> can create tag use commit, pit push <remote> <tag name> push tag to remote, git push <remote> --tags push all tags 
+
+  All git data store as blob, one file snapshot is a blob, all file of one commit is a blob, commit also is a blob 
+
+  Git log --decorate can show current head and all branch location 
+
+  Git branch show all branch, -v show last commit for every branch, --merged, --no-merged based on current branch or argument branch  to show, -vv also show remote branch track state 
+
+  Git push local branch: remote branch push block branch to remote and create  
+
+  Git checkout -b <localbranchname> <remote>/<branch> create local branch from remote and tracked, git checkout --tracked <remote>/<branch> , git checkout <branch> also work 
+
+  Git rebase generate your rebase file change, then base on your rebase to branch to apply those changes, create a clean history 
+
+  Git rebase --onto target branchDontWantInclude wantIncludeBranch will base on target, get all included branch all new commit exclude don't want included branch common commit 
+
+  Git rebase <from> <to> 
+
+  Git support 4 protocol remote server, first is local, remote location just is file path，2) http 3) SSH 4) git 
+
+  Bare repository means only contain git data, no file on working directory 
+
+  Git request-pull <source> <modified> can create a pull request file 
+
+  Git merge --squash only pick commit changes, will not create a new commit 
+
+  Git format--patch generete commit patch file  
+
+  Git apply can use diff generated patch file, a add, delete, modify working directory, --check check is this patch file cause any conflict 
+
+  Git am apply format-patch generated file,will create commit 
+
+  Git merge-base b1 b2 can found common ancestor 
+
+  Git diff b1…b2 compare base on common ancestor 
+
+  Git cherry-pick <commit number> can pick commit patch then create a new commit on current branch 
+
+  Git describe <branch> find nearest tag with branch 
+
+  Git archive create a Tarball or zip package for current files  
+
+  Git shortlog generate commit info group by person 
+
+  Git ls-remote show all remote head, include pull request, normal branch under refs/heads , pull request under refs/pull, you can fetch or merge pull request use full name like refs/pull/commit , or can edit .git/config file set fetch all pull request 
+
+  Git hub service already integrate some general service,like send email, notice Jenkins, if not match requirement, you can add hook let git hub send request to your service 
+
+  Github API can get/set information, some common need not authentication 
+
+  Git reflog record all your local operation which affect Head 
+
+  ^ and ~ means parent, ^2 is used for merge commit, means second parent, ~2 means parent's parent  
+
+  Git log <base>··<target> show commits that on branch target but not on branch base, same as git log ^base target 
+
+  ... Syntax means show all different commit with two branch 
+
+  git grep can search working directoy, -n show line number 
+
+  Git log -L :<search string>:<file> can found all change commit and detail  include string in file  
+
+  Git commit --amend modify last commit content and message 
+
+  Git rebase -i can HEAD~n modify last n+1 commit message and content, run this command will open a editor,list all commit you specify, it is time order, edit will stop after apply this commit, after you operate ,use git rebase --continue go on, squash will let this commit into previous commit, if you delete one log line, this commit will lose , 
+
+  git filter-branch is used to modify huge commit，e.g. Git filter-branch --tree-filter 'rm -f password.txt ',default apply to current branch 
+
+  Git cat-file used to show blob information 
+
+  Git ls-tree show a file under commit blob 
+
+  Git ls-file show file under index(stage area) 
+
+  Git reset vs checkout, reset will move HEAD and under HEAD branch point to together, checkout not affect branch point to, only change HEAD location, reset default (--mixed) change HEAD and index, --soft only affect HEAD , --hard affect all , reset file is similar except can't affect HEAD, because not make sense 
+
+  git merge has some help argument, -Xignore-space-change, this option ignore all tab, space, newline change 
+
+  When merge conflict, you can get 3-way merge version file, use git show :<number>:<file> , 1 is ancestor, 2 is your current branch, 3 is try merge branch, you also can use git ls-files -u to get file sha1  
+
+  Git merge-file -p <input file> can output a 3 way merge result 
+
+  When conflict, use git diff, --ours only show our change, --theirs show others, --base show two side 
+
+  If conflict , can use git checkout --conflict=<strategy> <file> generate new conflict file  
+
+  Git log --oneline --left-right HEAD...MERGE_HEAD is used show each side log when merge --conflict, --merge only show log cause conflict 
+
+  Revert will create a new commit to let your revert branchs change like does not happen, but in fact it is in history 
+
+  Rerere used record how resolve conflict before, then same conflict but can automatically resolve 
+
+  git blame used to determine which commit introduce file line, -L limit line number, -C show file original copy from  
+
+  Git bisect can use binary search to find which commit break code, git bisect start, then use bad <commit>, good <commit> set range, use good or bad tell git current commit branch status, if have a script can return 0 or 1, use run <script> 
+
+  Submodule is used to keep another project in your project, they can keep separately, for main project, include . gitmodule file and a directory, for git it create a special mode save this directory 
+
+  When you clone a project with submodule, you can use --recursive or goto directory then run git submodule init, git submodule update to get submodule content, most git command allow --submodule option 
+
+  Git submodule foreach '<command>' can apply command to every submodule 
+
+  Git bundle create, create a bundle file include a range of commit, can use as offline commit 
+
+  Git commit-tree create a new commit without patent but keep all content 
+
+  Git rebase --onto <new base> <old base> can switch commit base 
+
+  Git replace <branch a oldst > <branch b newest> can merge two commit history contain same commit 
+
+  Git config, core.editor change default etidor, commit.template, core.paper set log and diff show way, use.signingkey, core.excludesfile like a global ignore, help.autocorrect auto figure out which command you want and apply 
+
+  merge.tool custome set merge and diff tool 
+
+  Core.autocrlf control how process line ending, true means when commit auto concert from CRLF to LF, when checkout auto from LF to CRLF, input means convert when commit but not vice var, false means keep 
+
+  Core.whitespace control space strategy 
+
+  Service.fsckObject check every blob hash, will be slow. receive.denyNonFastForward, receive.DenyDeletes 
+
+  .gitattributes only apply to part of file, binary can tell git which pattern file are binary,  diff set diff way , filter can set two filter, smudge is use when you checkout, clean is used for when you commit, export-ignore set ignore file when archive 
+
+  Put a script file in .Git/hooks directory can enable it, client side hook can't be clone, pre-commit occur before you input commit message, commit-msg occur when you finish edit commit message, used to check commit mesaage, post-commit , pre-rebase, post-checkout 
+
+  Service side hook， pre-receive, update, post-receive 
+
+  , Service hook location on hook/update directory 
+
+  Git rev-list <begin>··<end> show commit hash  
+
+  Git cat-file show commit detail  
+
+  Git init will create a .git directory, include those files, description used as git web, config file is about this project config, info keep ignore info, hooks directory, 4 most important part is, object directory store all content, ref store all pointer to commit, HEAD point to your current commit, index store staging area  
+
+  Object part command: hash-object, read some content and generate a sha1, file store by git will location on .git/objects/<first 2 hash>/<left 38 hash>, content is file content, cat-file can used to show object content, -p help you figure out object type then display, -t show object type, file object type is blob, tree type record file name and files structure, tree child maybe object blob or another tree, syntax like this master^{tree} , update-index update stage area, write-tree use stage generate a tree, read-tree affect stage from a exist tree, commit-tree use tree generate a commit 
+
+  Object format:<type> <original length>\0<original content>, use this generate sha-1 and generate zip content  
+
+  refs just record commit sha-1, update-ref can edit ref point to 
+
+  HEAD point to current ref, symbolic-ref can read or update HEAD  
+
+  Tag is different commit, object type is tag, point to a commit, commit point to tree , light weight tag just create a refs/tags/<tag name> file contain commit sha-1, annotated tag create a object file then point to this  
+
+  Refs/remotes/<remote name>/<branch name> record last time you push commit hash  
+
+  Pack file is for save disk, when git GC, it will find same file name and similar size to pack, use delta to save similar file, verify-pack can show pack detail  
+
+  .Git/config file set remote track detail, fetch option set which brach to fetch where  
+
+  Git fetch <remote name> <remote branch location>:<local branch location> 
+
+  Git push <remote name> <local branch location>:<remote branch location> 
+
+  Git fsck find dangling object  
+
+  Git  count-objects show git use space  
+
+  Git rev-list show all object, 
+* Cli
+  #+BEGIN_SRC bash
+  git status # show current status
+  git status -s # short version, first column is stage status, second is unstage status, A(add) M(modified) ?(untracked)
+  git reverse # cancel commit
+  git bisect start
+  git bisect good <commit>
+  git bisect bad <commit>
+  git bisect reset
+  git blame # show file every line last commit info
+  git fsck --lost-found # found not tracked commit/bomb
+  #+END_SRC
+* gitignore
+  git support multiple gitignore file
+
+  ignore file default pattern is recursive
+  
+  ! is opposite pattern
+
+  start / means only apply to current directory(not recursive)
+
+  end with / is directory
+
+  * means any
+  
+  ? means exist
+
+  [] means choose
+
+  ** match any number directory

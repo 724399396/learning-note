@@ -1327,3 +1327,23 @@ test-suite ninety-nine-problem-haskell-test
 * Category theory
   One set, has objects, object has kinds of morphological, morphological has transitive
   
+* CPS
+  [[https://en.wikibooks.org/wiki/Haskell/Continuation_passing_style]]
+  change function from return value to accept a `continuation` to consume result return a new result
+** Definition
+   #+BEGIN_SRC haskell
+   chainCPS :: ((a -> r) -> r) -> (a -> ((b -> r) -> r)) -> ((b -> r) -> r)
+   chainCPS s f = \k -> s $ \x -> f x $ k
+
+   cont :: ((a -> r) -> r) -> Cont r a
+   runCont :: Cont r a -> (a -> r) -> r
+
+   instance Monad (Cont r) where
+     return x = cont ($ x)
+     s >>= f = cont $ \c -> runCont s $ \x -> runCont (f x) c
+
+   callCC :: ((a -> Cont r b) -> Cont r a) -> Cont r a
+   callCC f = cont $ \h -> runCont (f (\a -> cont $ \_ -> h a)) h
+   #+END_SRC
+   callCC core is \a -> cont $ \_ -> h a, because f k result is Cont r a, when you can k in f some where, $ \_ -> h a will ignore continuation function, whole callCC continuation value is a
+

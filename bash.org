@@ -32,7 +32,7 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   #+BEGIN_SRC bash
   ssh-keygen -R <host>
   #+END_SRC
-* Shell
+* Bash
   #+BEGIN_SRC bash
   touch # create file
   mkdir # create dir, -p recursive create
@@ -59,8 +59,8 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   sort # -n number order, -r reverse, -t split character, -k sort by column number
   uniq # delete continue duplicate
   tee # output data to file
-  sed # find -> replace
-  awk # column get
+  sed # find -> replace, -n only output affect line, -i modify file, -m-n, from line m to n,
+  awk # column get, -F spliter -v set varaible -f file
   curl # -X method, -c get cookie, -b pass cookie, -d post body
   zip <target> <source> # -o output file, -r recursive, -q quite, -e encrypt, -l \n -> \r\n
   unzip # -l show content not extract
@@ -76,10 +76,35 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   man <command>
   corntab # -f start -e edit -l show -r delete
   $? # previous command exit code
-  grep # filter content, -r recursive, -n line number, -l ignroe binary
+  grep # filter content, -r recursive, -n line number, -l ignroe binary, -e posix extension, -P Perl regex, -b binary include, -l ignore case -v reverse select
   tr # delete special character
   col # tab <-> space, -x tab -> space, -h space -> tab
   join # connect two file, -t splitor, -l ignore case, -1 file 1 filed, -2 filed 2 file
   paste # similar like join, but not compare
-  
+  xargs # split long args
+  lsblk # show all connect disk, include not mount
+  blkid # show disk uuid
+  #+END_SRC
+* User
+  #+BEGIN_SRC bash
+  whoami # show current log in user
+  groups # show user group, full group store in /etc/groups
+  adduser <user> # create a user
+  deluser <user> # delete a user, --remove-home delete home directory
+  usermod -G <group> <user> # add user to group
+  su -l <user> # run as user
+  #+END_SRC
+* Apt
+  #+BEGIN_SRC bash
+  apt search # search package
+  apt install -f # fix broken
+  apt install -d # download only, not install
+  #+END_SRC
+* Dpkg
+  #+BEGIN_SRC bash
+  dpkg -i # install
+  dpkg -R # install directory
+  dpkg -r # remove
+  dpkg -s # show installed
+  dpkg -S # search installed
   #+END_SRC

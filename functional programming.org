@@ -1,0 +1,47 @@
+ 
+* basic
+  referential transparent means no side effect, same input always get same output
+
+  if function for all input is referential transparent, this function is pure
+
+  substitution model is based on referential transparent
+
+  HOF(high order function), means function as arg or return value function
+
+  ADT(algebric data type), means a data is construct from kinds of type, every type has 0 to many argument
+
+  functional programming core: split expression and implementation
+
+* Lambda
+  Λx.y 代表参数是x, 返回结果是y的lambda表达式
+  
+  not bind argument is open term, binded arg is close term, if a lambda all arg is close term, this lambda call as combinator
+
+* Pure data structure
+  Lazy evaluate strategy has two essential properties:
+  1. a expression will be delay
+  2. a evaluate result will memoized
+
+* Lisp
+  two evaluate order:
+  - applicative-order, first evaluate then pass to function
+  - normal-order(expand-reduce), first expand final get result
+    
+  list evaluate is based on env. e.g procedure and variable lookup is based on env
+
+  procedure and parameter formal name is not restrictied, not bind varaible is free variable
+** syntax 
+  (define a b), define b a alias a, this is a special expression
+  
+  (operator operatns)
+
+  (cond (p1 e1) (p2 e2) ...), match condition, evaluate on order, when first p get true, return matched e
+
+  (if p consequent alternative), consequent and alternative is lazy
+
+  (and e1 e2), evaluate from left to right, first #f value will stop evaluate
+
+  (or e1 e2), evaluate from left to right, first #t value will stop evaluate
+
+  (not e)
+

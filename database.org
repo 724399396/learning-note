@@ -1,0 +1,63 @@
+* Sql
+ and or precedence should explicit by () 
+ 
+ escape, escape character
+ 
+ string is represent by ''
+
+ limit x = limit 0,x
+
+ union, used to union has same column tables, remove duplicate row
+ 
+ union all, same as union, but not remove duplicate row
+
+ driven table is decide by sql engine
+
+ when use join, 
+ - on .. and .., show joined table all row, not match conditon column is null
+ - on .. where .., only match conditon row display
+ 
+ insert into xx on duplicate <key> update <other key> = <value>
+
+ insert ignore
+
+ truncate table, delete all data keep structure
+
+ show create table <t>, show table create statements
+
+ alter table <xx>:
+ - add, add column
+ - drop, delete column
+ - change, modify column
+
+ copy table:
+ - select * from, include schema and data
+ - select * like, include schema
+ 
+ create view <name> as <select>, create view
+
+ when create union index, let more distinction column at start
+
+ explain, show sql query explain
+
+** function
+   - concat, concat string
+   - toupper
+   - tolower
+   - sqrt
+   - avg
+   - sum
+   - min
+   - max
+
+* Transaction Isolation Level
+  - Serializable: means can't read uncommited data, any query data by this transaction can't be update by another transaction, if insert data will affect this transaction query also be blocked.(hold read, write, range-read lock) 
+  - Repeatable Read: means can't read uncommited data and any query data by this transaction can't be update by another transaction. (hold read, write lock) 
+  - Read Commited: means can read commited data when other transaction commit. (hold write lock)
+  [[./transaction-isolation-level.png]]
+* Mysql
+  load data infile <path> into table <table>, import csv data to table
+
+  select <columns> into outfile <path> from <Table>, export csv data to file
+
+  mysqldump -u <user> <database> [<table>] > <path>, backup database/table
