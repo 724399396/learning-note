@@ -128,3 +128,17 @@
  
 
 
+* Proxy/NoProxy
+no proxy method:
+- test dl.google.com by ping.chinaz.com get ip then config host
+- edit build.gradle in project root, add 
+  #+BEGIN_SRC gradle
+ maven {url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+  #+END_SRC
+  in buildscript.repositories and allprojects.repositories
+
+proxy method:
+- edit ~/.gradle/gradle.properties add
+  #+BEGIN_SRC bash
+  org.gradle.jvmargs=-DsocksProxyHost=127.0.0.1 -DsocksProxyPort=108
+  #+END_SRC

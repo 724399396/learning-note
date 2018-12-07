@@ -163,7 +163,9 @@
   - InstanceSigs, allow type signatures for memebers in instance definitions(add type signure when instance)
   - StandaloneDeriving, allow use of stand-alone deriving declarations(sperate class declaration and deriving declaration)
   - TypeFamilies, implies MonoLocalBinds KindSIgnatures ExplicitNamespaces, allow use and definition of indexed type and data families [[https://wiki.haskell.org/GHC/Indexed_types]]
-  - BinaryLiterals, allow use binary notation in interer literals, e.g 0x 
+  - BinaryLiterals, allow use binary notation in interer literals, e.g 0x
+  - ForeignFunctionInterface, allow ffi
+  - CPP, allow c preprocessor
 
 * typeclass
   typeclass similar to interface
@@ -355,6 +357,9 @@
     #+BEGIN_SRC haskell
    void :: (Functor f) -> f a -> f ()
     #+END_SRC
+*** Laws
+    fmap id = fmap
+    fmap (f.g) = fmap f . fmap g
 ** Applicative
 *** Definition
     #+BEGIN_SRC haskell
@@ -433,14 +438,14 @@
     #+END_SRC
 
 ** MonadPlus
-   #+BEGIN_SRC haskell
-   class Monad m => MonadPlus m where
+   it similar with Alternative, can used to implmenet Monoid
+*** Definition
+    #+BEGIN_SRC haskell
+    class Monad m => MonadPlus m where
      mzero :: m a
      mplus :: m a -> m a -> m a
-   #+END_SRC
-   it similar with Alternative, can used to implmenet Monoid
-
-   match laws:
+    #+END_SRC
+*** Laws
    - mzero `mplus` m = m
    - m `mplus` mzero = m
    - m `mplus` (n `mplus` o) = (m `mplus` n) `mplus` o
@@ -453,6 +458,23 @@
     #+BEGIN_SRC haskell
     class Monad m => MonadIO (m :: * -> *) where
       liftIO :: IO a -> m a
+    #+END_SRC
+** Category
+*** Definition
+    #+BEGIN_SRC haskell
+    class Category (cat :: k -> k -> *) where
+      id :: forall (a :: k). cat a a
+      . :: forall (b :: k) (c :: k) (a :: k). cat b c -> cat a b -> cat a c
+    #+END_SRC
+** Arrow
+*** Definition
+    #+BEGIN_SRC haskell
+    class Category a => Arrow (a :: * -> * -> *) where
+      arr :: (b -> c) -> a b c
+      first :: a b c -> a (b, d) (c, d)
+      second :: a b c -> a (d, b) (d, c)
+      (***) :: a b c -> a b' c' -> a (b, b') (c, c')
+      (&&&) :: a b c -> a b c' -> a b (c, c')
     #+END_SRC
 * Functor Applicative Monad 
   some function is similar, should use more general 
@@ -1149,11 +1171,10 @@ sequenceA :: (Applicative f, Traversable t) => t (f a) -> f (t a)
    lift only determine once level, so if a high monad stack, need lift multiple times, liftBase provider a recursive definition, lift once get top definition
 
 *** Laws
-
+    #+BEGIN_SRC haskell
     lift . return = return
-
     lift (m >>= f) = lift m >>= lift f
-
+    #+END_SRC
 * GHCi
   ghci, go into repl
 
@@ -1346,4 +1367,36 @@ test-suite ninety-nine-problem-haskell-test
    callCC f = cont $ \h -> runCont (f (\a -> cont $ \_ -> h a)) h
    #+END_SRC
    callCC core is \a -> cont $ \_ -> h a, because f k result is Cont r a, when you can k in f some where, $ \_ -> h a will ignore continuation function, whole callCC continuation value is a
+* Foreign Function Interface
+  ffi is haskell call other language contract format
 
+  support type:
+  - function
+  - Foreign.C.Types
+    
+  example: 
+  #+BEGIN_SRC haskell
+  foreign import ccall "math.h sin"
+  c_sin :: CDouble -> CDouble
+  #+END_SRC
+  
+  hsc2hs support use #const ref c const
+* Yesod
+** dependencies
+   - yesod
+   - persistent-sqlite
+   - yesod-static
+   - esqueleto
+** needed language extensions
+   - QuasiQuotes
+   - OverloadedStrings
+   - TemplateHaskell
+   - TypeFamilies
+ 
+ need provide a instance Yesod
+ mkYesod is Template Haskell, generate parseRoute/renderRoute,yesodDispatch, format is
+ #+BEGIN_SRC haskell
+ mkYesod "" [parseRoute | path RName method |]
+ #+END_SRC
+
+ Yesod devel, into dev mode, auto compile when code change
