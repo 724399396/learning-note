@@ -86,6 +86,8 @@
 
      ShareCompat.IntentBuilder is a easy way create share intent
 
+     android.intent.action.MAIN intent is for entry activity
+
      inner actions:
      - Intent.ACTION_VIEW
      - Intent.ACTION_EDIT
@@ -152,6 +154,8 @@
    in strings.xml, \n means new line, ' and " use \ to escape, <b> bold, <i> italic
    
    android:autoLin="web", let http in text content linkable
+
+   android:inputType, indicates accept which type and match input keyboard
 ** View attributes:
    - id
    - text
