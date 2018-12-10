@@ -32,6 +32,16 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   #+BEGIN_SRC bash
   ssh-keygen -R <host>
   #+END_SRC
+** ssh port forward
+   in need login machine:
+   #+BEGIN_SRC bash
+   autossh -R <your port>:localhost:<remote port> <name>@<remote ip>
+   #+END_SRC
+   in remote machine:
+   #+BEGIN_SRC bash
+   ssh -L <your port>:<romote ip>:<remote port>
+   ssh -p <yourt port> <name>@localhost
+   #+END_SRC
 * Bash
   #+BEGIN_SRC bash
   touch # create file
