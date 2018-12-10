@@ -15,6 +15,7 @@
   
   Android mutliple thread is based on java, only UI thread(Main thread) can update ui, use View.post or Activity.runOnUIThread to commit change to UI thread
 
+  Logcat is standard log util, use Log.<level>(<tag>, <message>) to log
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
@@ -72,7 +73,7 @@
    registry way:
    - AndroidManifest.xml <receiver> tag add <intent-filter>
    - LocalBoardcastReceiver/Context registerReceiver
-* command tool
+* tools
   #+BEGIN_SRC bash
   telnet <host> <port>, connect to emulator, available command:
   - power
@@ -85,6 +86,8 @@
    - hirechay view, include ui component
    - method call, method call time and stack
  
+** AVD(Android Virtual Device)
+   create and manage virtual device(emulator)
 * View
   - button
   - toggleButton
@@ -127,8 +130,9 @@
 
  
 
-
 * Proxy/NoProxy
+test download speed: https://dl.google.com/android/repository/sys-img/google_apis/x86-28_r07.zip
+
 no proxy method:
 - test dl.google.com by ping.chinaz.com get ip then config host
 - edit build.gradle in project root, add 
@@ -142,3 +146,11 @@ proxy method:
   #+BEGIN_SRC bash
   org.gradle.jvmargs=-DsocksProxyHost=127.0.0.1 -DsocksProxyPort=108
   #+END_SRC
+* Gradle
+gradle has tow config file:
+** /build.gradle
+   this is project level config, include repositories, project depedency, tasks
+** /app/build/build.gradle
+   this is module level config, include module depepdencies, sdk version require
+   
+   android.defaultConfig.minSdkVersion, set min sdk require
