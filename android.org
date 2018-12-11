@@ -17,8 +17,11 @@
 
   Logcat is standard log util, use Log.<level>(<tag>, <message>) to log
 
-
   Notifycation show message on top bar, new NOtification.Builder.setXXX().build -> getSystemService(NOTIFYCATION_SERVICE).notify
+
+  getResources().getIdentifier(<name>, <type>, <package name>) get resource from app/res/values
+
+  use compatiblity class in support library to support old version
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
@@ -251,3 +254,10 @@
 app/src/test is unit test directory
 
 app/src/androidTest is instrumented test directory
+* Android SDK
+Android SDK includes Adndroid Support Library, which not include in Android Framework:
+- Backward-compatible version of framework components
+- additional layout and user interface elements
+- support difference divice form factors
+- components support material design
+- other features, include palette support, annotations, preferences
