@@ -247,3 +247,7 @@
    
    android.defaultConfig.minSdkVersion, set min sdk require
 
+* Test
+app/src/test is unit test directory
+
+app/src/androidTest is instrumented test directory
