@@ -42,6 +42,10 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
    ssh -L <your port>:<romote ip>:<remote port>
    ssh -p <yourt port> <name>@localhost
    #+END_SRC
+** add utf bom header
+   #+BEGIN_SRC bash
+   sed -i '1s/^\(\xef\xbb\xbf\)\?/\xef\xbb\xbf/' foo-*
+   #+END_SRC
 * Bash
   #+BEGIN_SRC bash
   touch # create file

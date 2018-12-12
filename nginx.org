@@ -1,0 +1,351 @@
+* basic
+  Max connection = work_processes * work_connections 
+
+  Default max process run as root, work process run as http, use user [user] to change work process user 
+
+  Server block, can has multiple server block, each block  
+* Tools
+** Siege
+   Siege is a load testing and beanchmarking utils 
+
+   Apt-get install seige 
+** Apache Bench
+   Tools for beanchmark http request 
+
+   Apt-get install apache2-utils 
+
+   Yum install httpd-tools  
+* Http module
+  [[http://nginx.org/en/docs/http/ngx_http_core_module.html#variables]]
+
+  #+BEGIN_SRC nginx
+  <section> { 
+    <directive> <parameters>; 
+  } 
+  #+END_SRC
+
+  Global configuration is a section without {} 
+
+  Directives: 
+
+  user, the user and group work processer run, if group omit, then same as user 
+
+  worker_processes, the number of worker process number, good rule is equal to cpu core number for cpu bound, 1.5 to 2 for io bound 
+
+  error_log, where is error log to write, can set level to debug,info,notice,warn,error,crit,alert,emerg, debug only work when build with –with-debug 
+
+  pid,  pid file location, override compiled default 
+
+  use,  indicate which connection process method events.use, override compiled default 
+
+  event.work_connections, set s maximum number of  simultaneous connections per work processs can open 
+
+  include  derictive can use anywhere, syntax include <config file path>
+
+  Http module is default avaliable unless you build with –without-http 
+ 
+
+** directives: 
+   3 type: 
+   - Standard Directive: only be declare once on special context 
+   - Array Directive: can be declare multiple times, not overriding previous instead of append, e.g. access_log 
+   - Action Directive: invoke action, e.g. return 
+
+   Directive is inherence 
+
+   chunked_transfter_encoding allow disable chunked transfer response encoding 
+
+   client_body_buffer_size, set to avoid request body write to disk 
+
+   client_body_in_file_only, save client request body (for debug or other usage) 
+
+   client_body_in_single_buffer, force save request body to single buffer(avoid copy) 
+
+   client_body_temp_path, request body saved path 
+
+   client_body_timeout, time to wait read client body finish 
+
+   client_header_buffer_size, request header buffer, need bigger than default 1KB 
+
+   client_header_timeout, read request header timeout 
+
+   client_max_body_size, define a avaliable size for request body, if exceed return 413 to client 
+
+   keepalive_disable, control keep-alive 
+
+   keepalive_requests, define how many connection can keep on per keepalive connection 
+
+   keepalive_timeout, set how many time if no data transfter this keep-alive should close 
+
+   large_client_header_buffers, define maximum size client request header 
+ 
+
+
+   File io directives: 
+
+   aio,  enable asynchronus file io, conflict with sendfile, under linux, derictive directio is required 
+
+   directio 
+
+   directio_alignment, default is 512, on XFS is recommend 4K 
+
+   open_file_cache, cache for open file descriptors, directory lookup, file lookup error 
+
+   open_file_cache_error, cache for lookup errors 
+
+   open_file_cache_min_uses, minimum cache number 
+
+   open_file_cache_valid 
+
+   postpone_output, minimum data send to client, if possible, no data will be send until reach this size 
+
+   eead_ahead, kernal read file 
+
+   sendfile, allow copy file data from one fd to another 
+
+   sendfile_max_chunk, maximum size of data copy on sendfile, avoid work process be seizing 
+
+   Server {}, this is a virtual host 
+
+   Server.listen <address>:<port> <other args>, set listen address and port, default can set this server as default if no server match find, otherwise first block will be default 
+
+   Server.server_name <name1, name2 ...>,  server_name match has priority, full match > prefix * match > postfix * match > reg match 
+
+   Server.server_names_hash_bucket_size, each server_name hash bucket size 
+
+   Server.server_names_hash_max_size, max hash memory usage 
+
+   Server.server_name_in_redirect on|off, when redirect use server_name as host name 
+
+   Location <path> {}, path has kinds of format, = <path> means full equal, ~ <path> means case sensitive, ~* <path> case insensitive, ^~ match prefix is ok, @ only used in internal 
+
+   If multiple location match, first one be used 
+
+   Location.root <path>, resource will send to <path>/<url> (inlucde location variable) 
+
+   Location.alias <path>, resource will send to <path>/<url> (exclude location varaible) 
+
+   Location.index <file1, file2...>, when access /, on order use file1, file2 to response 
+
+   Location.error_page <code1, code2 ..> <page| =handler>, when get code use page or handler to response 
+
+   Location.recursive_error_pages on|off 
+
+   Location.try_files path1 [path2] uri, on order access file, return first found, if no file can use, redirect to uri 
+
+   Client_body_in_file_only on|off|clent, if not off, store http file in disk, if is on, this file will not be delete, if is clean, will delete when request finish 
+
+   client_body_in_single_buffer on|off, store request body to buffer, if exceed buffer size will store to disk 
+
+   client_header_buffer_size <size>, http request header buffer size, if exceed, use large_client_header_buffer_size 
+
+   large_client_header_buffers <number> <size> 
+
+   client_body_buffer_size <size>, 
+
+   Connection_pool_size, 
+
+   Request_pool_size 
+
+   client_header_timeout <time>, default 60s, if on this time no header send to server, return 408 
+
+   client_body_timeout <time> default 60s 
+
+   send_timeout <time>, default 60s 
+
+   lingering_time <time>, when request body to large, then send 413 code to client, if client ignore it, after this time, this connection will be close 
+
+   keepalive_disable[msie6|safari|none], disable some browser keep alive 
+
+   keepalive_timeout <time>, 
+
+   Keepalive_requests <n>, must connection one keep alive can hold same time 
+
+   Tcp_nodelay 
+
+   Tcp_nopush, when open send_file, all reponse header will in same TCP package 
+
+   Limit_except <Method> {}，allow or deny user some type request 
+
+   client_max_body_size <size>, limit requet Content-Length max size 
+
+   Limit_rate <speed>, limit user send speed 
+
+   Sendfile on|off, use linux sendfile system to send file, avoid kernal/user switch 
+
+   Aio on|off, conflict with sendfile, kernal level asynchronize file send 
+
+   Directio on|off, conflit with sendfile, kernal buffer read file 
+
+   Open_file_cache max=N inactive=time| off 
+
+   ignore_invalid_headers, underscores_in_headers on|off,  
+
+   if_modified_since <off|exact|before>, off means always return file with 200, exact will diff is any change to return, before only diff time to return 
+
+   merge_slashes on|off, default on 
+
+   Resolver address, dns resolver 
+
+   Resolver_timeout <time> dns resovler timeout 
+
+ 
+
+   Upstream name {}, define batch of upstream server 
+
+   Upstream.server <address>, define a single upstream server, can be domain name, unix sockt, ip address, parameter: weight, default 1, max_fails, fail_timeout 
+
+   Ip_hash, client afifinity 
+
+   Proxy_pass <address|upstream> 
+
+   proxy_set_header <key> <value>, proxy_pass not send header, so need manual set 
+
+   Proxy_method <Method>, change every request method when send proxy 
+
+   Proxy_hide_header <header>, hide this header 
+
+   Proxy_pass_header <header>, pass to server this header 
+
+   proxy_pass_request_body on|off, default on 
+
+   proxy_pass_request_headers on|off, default on 
+
+   Proxy_redirect, when upstream server return 301 or 302, can change Location/refresh value 
+** Location
+   Location <path>, prefix match, can match any work prefix and path prefix 
+
+   Location = <path>, exact match, only full match  
+
+   Location ~ <path>, regex match, case sensitive 
+
+   Location ~* <path>, regex match, case insensitive 
+
+   Location ^~ <path>, preferential prefix match, same as prefix match 
+
+ 
+
+   Priority: 
+
+   = > ^~ > ~* = ~ > prefix match 
+
+ 
+
+   Location @{name}, give location a name, not a path, this name can used by other 
+** Condition
+   if ( $variable != xx) 
+
+   If ( $varaible ~ "")
+** Return Rewrite
+   Return 307 <path>, return path on location to client, then client request path, url is change to path 
+
+   Rewrite <reg> <path>, if request path match reg, then change it to path, then use path re go throught nginx process, reg match varaible can capture by reg group, use $1 $2 refer in path 
+
+   Rewrite can pass rewrite multiple time, but add last on rewrite directive means this is last rewrite, avoid other rewrite to change it 
+** Try file
+   try_files <path1> <path2> <uri>, try path on order , if any match return, otherwise rewrite to uri, can use $uri variable 
+** log
+   Access.log is record every request 
+
+   Error.log record like 404 and configuration file error 
+
+   Access_log and error_log directive can change it context log location 
+** Add header
+   Add_header is a directive, can set response header 
+   Expire also is a directive, it can set expire header 
+** Rate limit
+   Limit_req_zone <limit base type> zone=<name>:<size> rate=<rate>; create a limit zone 
+
+   Limit_req zone=<name>; use created zone 
+
+   Burst can set on limit_req_zone and limit_req , means allow request on rate limit, not return 503, but if concurrent request > limit + burst, then it is 503 
+
+   After burst, can set nodelay, response quick as possible, but if exceed burst number, also 503 
+** Reverse proxy
+   Proxy_pass <location>, if you location not end with  /, niginx will pass full uri path to this location, for eaxample /php/uri will pass to <location>/php/uri, but if you ends with /, then location part will be omited 
+
+   Proxy_set_header, send request with header added to proxy server 
+** Load balancer
+   Upstream <name> { server <lo1>; server <lo2>｝ 
+
+   Proxy_pass http://<name> 
+
+   It automatically distributed request to this servers, auto not send request to not respond server, if server back, it will send this server again 
+
+   Ip_hash, directive in upstream, let same ip always request same server, keep session, if this server down, will swtich to other 
+
+   Least_conn, directive in upstream, avoid connection to slow server 
+** Gzip
+  Gzip on; is a directive let child context open gzip support 
+
+  Gzip_comp_level, from 0 to 8, bigger level means less file and more cpu usage, general set to 3 or 4 
+
+  Gzip_types, mime type which gzip can used, can set multiple time, final result is sum 
+** https
+  Create same server name as https, then return 301 https://$host$request_uri to redirect http to https 
+ 
+
+  Listen 443 ssl http2; enable ssl and http2 
+
+  Ssl_certificate <crt location>, set certificate file 
+
+  Ssl_certificate_key <key location>, set key file 
+ 
+
+  openssl req -x509 -days 10 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/self.key -out /etc/nginx/ssl/self.crt generate ssl key and certificate 
+ 
+  Ssl_protocols TLSv1 TLSv1.1 TLSv1.2; replace old ssl protocol 
+
+  Ssl_prefer_server_ciphers on; 
+
+  ssl_ciphers <prefer encrypt method and not prefer method> 
+
+  Ssl_dhparameter <location>, enable diffe-hellman key exchange(more security) 
+
+  openssl dhparam 2048 -out /etc/nginx/ssl/dhparam.pem  generate dhparam file 
+** Https
+   Http2: 
+   1. binary protocol 
+   2. compressed header 
+   3. persistent connections 
+   4. multiplex Streaming  
+   5. server push  
+
+   Http2_module need ssl_module 
+   Nghttp2 is an implmenetation of http/2 and its header compression algorithm hpack in c 
+   Apt-get install nghttp2-client 
+ 
+* Install
+  Package manager: 
+
+  Ubuntu: apt-get install nginx 
+
+  Centos: yum install epel-release –y && yum install nginx 
+ 
+
+  Build from source: 
+
+  (1) download nginx from nginx.org 
+
+  (2) install pre-requirement 
+
+  Ubuntu: build-eseential, libpcre3, libpcre3-dev, zlib1g, zlib1g-dev, libssl-dev 
+
+  Centos: yum groupinstall "Development Tools", yum install pcre pcre-devel zlib zlib-devel openssl openssl-devel 
+
+  (3)./configure file is a bash shell, have kinds of argument can controll nginx compile 
+
+  ./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module 
+
+  (4) make 
+
+  (5) make install 
+* Cli
+  Nginx binary default under install location/sbin/nginx 
+
+  Nginx, -c set config file, -p set root dir, -g set parameter, -t test config file, -q output log, -v show version info, -V version info and configure argument, -s send signal(stop: send SIGTERM, SIGINT to master pid, quit: send SIGQUIT when all connection finish to quit nginx, reload: send SIGHUP reload config file, reopen: send SIGUSR1 reopen log file) 
+
+  Upgrade nginx online, kill –s SIGUSR2 <master pid>, this will rename pid file to old.pid file, start new nginx file, kill –s SIGQUIT <old pid> 
+
+
+ 

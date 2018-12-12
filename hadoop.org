@@ -1,174 +1,479 @@
 * basic
-Map-reduce is split to job, job contain mutiple tasks, contain two types: map tasks and reduce tasks 
+  Map-reduce is split to job, job contain mutiple tasks, contain two types: map tasks and reduce tasks 
 
-Yarn will schedule task to run, if task failed, it automatically rescheduled to a different node 
+  Yarn will schedule task to run, if task failed, it automatically rescheduled to a different node 
 
-Input is split to fixed size, called input splits or splits, each split run a map task, this size can configure, but it is normal to set to HDFS block size(because this size is max single node can hold, avoid data transfer) 
+  Input is split to fixed size, called input splits or splits, each split run a map task, this size can configure, but it is normal to set to HDFS block size(because this size is max single node can hold, avoid data transfer) 
 
-Map task output is write to local disk instead of HDFS, because this is intermediate result, no need to store to HDFS to replicate, if result miss will rerun map task to generate 
+  Map task output is write to local disk instead of HDFS, because this is intermediate result, no need to store to HDFS to replicate, if result miss will rerun map task to generate 
 
-Reduce task input is from all map task output, reduce task is write to HDFS 
+  Reduce task input is from all map task output, reduce task is write to HDFS 
 
-Combiner function is between map and reduce, it is for optimize data transfter, it maybe called 0, 1 and more times 
+  Combiner function is between map and reduce, it is for optimize data transfter, it maybe called 0, 1 and more times 
 
-Partitioner is used split map output, when multipe reducer exist, same key map output will process by one reducer 
+  Partitioner is used split map output, when multipe reducer exist, same key map output will process by one reducer 
 
-Steaming api, mapper will receiver input line by line and output result to each line, reducer will receive map result(ordered, need goup by self), output result, use hadoop $HADOOP_HOME/share/hadoop/tools/lib/hadoop-steaming-*.jar -input –output –mapper –reducer –combiner to run 
+  Steaming api, mapper will receiver input line by line and output result to each line, reducer will receive map result(ordered, need goup by self), output result, use hadoop $HADOOP_HOME/share/hadoop/tools/lib/hadoop-steaming-*.jar -input –output –mapper –reducer –combiner to run 
 
-Namenode data is store on ${dfs.namenode.name.dir}, the current directory contain fsimage, editlog, current edit fiel 
+  Namenode data is store on ${dfs.namenode.name.dir}, the current directory contain fsimage, editlog, current edit fiel 
 
- fsimage contain check point information, but no datanode info, it will reconstructor when rebuild namenode memory from datanode 
+  fsimage contain check point information, but no datanode info, it will reconstructor when rebuild namenode memory from datanode 
 
-Editlog is file edit info, it is transcation  
+  Editlog is file edit info, it is transcation  
 
-Edit_inprogress is current edit file(until submit transaction to generate edit log) 
+  Edit_inprogress is current edit file(until submit transaction to generate edit log) 
 
- Secondarynode tell namenode sync inporgress file to edits, then fetch latest fsimage and edits file from namenode(http get), apply fsimage and edits in memory, generate a new fsimage, put back to namenode with .ckpt extension, namenode check it then rename to normal 
+  Secondarynode tell namenode sync inporgress file to edits, then fetch latest fsimage and edits file from namenode(http get), apply fsimage and edits in memory, generate a new fsimage, put back to namenode with .ckpt extension, namenode check it then rename to normal 
 
-Datanode directory under ${dfs.datanode.data.dir}, HDFS block start with blk prefix, when number of block reach set size, will create a new subdirectory 
+  Datanode directory under ${dfs.datanode.data.dir}, HDFS block start with blk prefix, when number of block reach set size, will create a new subdirectory 
 
-When namenode start, it reconstructor a new fsimage from latest image and edists, before this finish, it under safe mode, only read can perform 
+  When namenode start, it reconstructor a new fsimage from latest image and edists, before this finish, it under safe mode, only read can perform 
 * hdfs
-FileSystem provide hdfs api 
+  FileSystem provide hdfs api 
 
-FileSystem.get  provide kinds of method to get FileSystem 
+  FileSystem.get  provide kinds of method to get FileSystem 
 
-FileSystem instance .open open a file, get FSDataInputStream, implement seek(), positionRead() 
+  FileSystem instance .open open a file, get FSDataInputStream, implement seek(), positionRead() 
 
-FileSystem instance .create write or create a file, get FSDataOutputStream, only getPos, hdfs only support write to end of file, new file will create it parent directory 
+  FileSystem instance .create write or create a file, get FSDataOutputStream, only getPos, hdfs only support write to end of file, new file will create it parent directory 
 
-FileSystem instance .mkdirs create directories 
+  FileSystem instance .mkdirs create directories 
 
-FileSystem instance .listStatus get file status like user, group, replicate, modified time from path or paths with PathFilter 
+  FileSystem instance .listStatus get file status like user, group, replicate, modified time from path or paths with PathFilter 
 
-FileSystem instance .globStatus get files use pattern and PathFilter 
+  FileSystem instance .globStatus get files use pattern and PathFilter 
 
-FileSystem instance .delete delete file or directory 
+  FileSystem instance .delete delete file or directory 
 
-Data read stream flow: client open will response by namenode, namenode return some first block to client, client use this node location directly read from datanode(this will be closest node to client0, when first block read to end, get next data block location from namemode, any error will report to namenode 
+  Data read stream flow: client open will response by namenode, namenode return some first block to client, client use this node location directly read from datanode(this will be closest node to client0, when first block read to end, get next data block location from namemode, any error will report to namenode 
 
-Data write stream flow: client create fille, namenode ensure permission and file not exist, return a FSDataOutputStream, write data will split to chunk, DataStreamer will consumer chunk data(replicate), when datanode ack, remove from queue, namenode record data location 
+  Data write stream flow: client create fille, namenode ensure permission and file not exist, return a FSDataOutputStream, write data will split to chunk, DataStreamer will consumer chunk data(replicate), when datanode ack, remove from queue, namenode record data location 
 
-Replication 3 strategy, first replication is place to same rack different node, second is to different rack, third is place to same rack as second but another node, only one network transfer require 
+  Replication 3 strategy, first replication is place to same rack different node, second is to different rack, third is place to same rack as second but another node, only one network transfer require 
 
-Flush() not guarantee data is can read by other node, hflush() guarantee all node can read just writed data, but not guarantee data is write to disk, close file will execute hflush(), hsync() guarantee data write to disk 
+  Flush() not guarantee data is can read by other node, hflush() guarantee all node can read just writed data, but not guarantee data is write to disk, close file will execute hflush(), hsync() guarantee data write to disk 
 
-Distcp used to parallel copy file between hdfs, distcp is implement by map reduce, parameters: -p preserved permission, time … , -update only update new file, -delete delete file not exist from source, -m set map parallel number, if cross hadoop version, use webhdfs protocol 
+  Distcp used to parallel copy file between hdfs, distcp is implement by map reduce, parameters: -p preserved permission, time … , -update only update new file, -delete delete file not exist from source, -m set map parallel number, if cross hadoop version, use webhdfs protocol 
 * yarn
-Yet another resource negotiator, is used manager resource 
+  Yet another resource negotiator, is used manager resource 
 
-Yarn has two domain, resource manger, node manager 
+  Yarn has two domain, resource manger, node manager 
 
-Hadoop 1.x is MapReduce 1, configuration by taskscheduler and jobschedulers 
+  Hadoop 1.x is MapReduce 1, configuration by taskscheduler and jobschedulers 
 
-Hadoop 2.x is MapReduce 2, host on yarn 
+  Hadoop 2.x is MapReduce 2, host on yarn 
 
-Yarn has 3 run policy: 1) FIFO(first in first out), 2) Capacity 3) Fair Scheduler, can change in yarn-site.xml by yarn.resourcemanager.scheduler.class property 
+  Yarn has 3 run policy: 1) FIFO(first in first out), 2) Capacity 3) Fair Scheduler, can change in yarn-site.xml by yarn.resourcemanager.scheduler.class property 
 
-On Capacity policy, there be a hierarchical queue structure, use yarn.scheduler.capacity.<queue-name>.<sub-property> to configure 
+  On Capacity policy, there be a hierarchical queue structure, use yarn.scheduler.capacity.<queue-name>.<sub-property> to configure 
 * I/O
-Hadoop keep every file CRC, when read or write, it will check crc is corret 
+  Hadoop keep every file CRC, when read or write, it will check crc is corret 
 
-When you want operate on corruption data, can ignore crc 
+  When you want operate on corruption data, can ignore crc 
 
-Default is 512 byte to generate a crc file with .crc extension 
+  Default is 512 byte to generate a crc file with .crc extension 
 
-Hadoop support DEFLATE, gzip, bzip2, LZO, LZ4, Snappy format compression and decompression, implement CompressionCodec 
+  Hadoop support DEFLATE, gzip, bzip2, LZO, LZ4, Snappy format compression and decompression, implement CompressionCodec 
 
-CompressionCodec instance .createInputStream and .createOutputStream to get a compress/decompress stream 
+  CompressionCodec instance .createInputStream and .createOutputStream to get a compress/decompress stream 
 
-CompressionCodecFactory can get correspond codec by file extension 
+  CompressionCodecFactory can get correspond codec by file extension 
 
-Haddop lib support native implement for deflate, gzip and bzip2, when compress/decompress, will auto use those native implement, property io.native.lib.available controller this 
+  Haddop lib support native implement for deflate, gzip and bzip2, when compress/decompress, will auto use those native implement, property io.native.lib.available controller this 
 
-If codec need call with many times, use CodecPool 
+  If codec need call with many times, use CodecPool 
 
-FileOutputFormat.setCompressOutput FileOutputFormat.setOutputCompressorClass control reduce output format, also controll by property mapreduce.output.fileoutputformat.compress, mapreduce.output.fileoutputformat.compress.codec 
+  FileOutputFormat.setCompressOutput FileOutputFormat.setOutputCompressorClass control reduce output format, also controll by property mapreduce.output.fileoutputformat.compress, mapreduce.output.fileoutputformat.compress.codec 
 
-Map result compress controll by mapreduce.map.output.compress, mapreduce.map.output.codec 
+  Map result compress controll by mapreduce.map.output.compress, mapreduce.map.output.codec 
 
-Writables is hadoop default serialization framework, serialization need match 4 purpose: compact, fast, extensible, interoperable, Avro is a framework to overcome limitation of Writable 
+  Writables is hadoop default serialization framework, serialization need match 4 purpose: compact, fast, extensible, interoperable, Avro is a framework to overcome limitation of Writable 
 
-Writable interface, void write(DataOutput out), void readFields(DataInput in) 
+  Writable interface, void write(DataOutput out), void readFields(DataInput in) 
 
-All java primitive(except char) has Writable implement, VInt and VLong is variable length, first byte is signal, second byte is length, VInt can convert to VLong, Text is Writable implement for String, Text implement is base on utf8 and mutable 
+  All java primitive(except char) has Writable implement, VInt and VLong is variable length, first byte is signal, second byte is length, VInt can convert to VLong, Text is Writable implement for String, Text implement is base on utf8 and mutable 
 
-BytesWritable, 4 bytes length + followed elem, it is mutable 
+  BytesWritable, 4 bytes length + followed elem, it is mutable 
 
-NullableWritable is singleton immutable, write/read no data 
+  NullableWritable is singleton immutable, write/read no data 
 
-ObjectWritable is general-purpose wrapper for: primitives, String, enum, Writable, null and arrays 
+  ObjectWritable is general-purpose wrapper for: primitives, String, enum, Writable, null and arrays 
 
-SequenceFile purpose is solve small file problem, (decrese name node memory, optimize for map reduce), SequenceFile.createWriter to write, Sequence.Reader instance overloaded next() method to read 
+  SequenceFile purpose is solve small file problem, (decrese name node memory, optimize for map reduce), SequenceFile.createWriter to write, Sequence.Reader instance overloaded next() method to read 
 
-Property io.serializations default set writable and avro, can add other framework, like Protol Buffer, Thrift 
+  Property io.serializations default set writable and avro, can add other framework, like Protol Buffer, Thrift 
 
-Hadoop fs –text can show sequence file in text format 
+  Hadoop fs –text can show sequence file in text format 
 
-MapFile is sorted SequenceFile 
+  MapFile is sorted SequenceFile 
 
-Avro datafile is better choice than sequenceFile 
+  Avro datafile is better choice than sequenceFile 
 * Map Reduce
-MRUnit is a test framework for test Map Reduce 
+  MRUnit is a test framework for test Map Reduce 
 
-MapDriver().withMapper.withInput.withOutput.runTest to test mapper, withOutput can call 0 or more times to set expect output  
+  MapDriver().withMapper.withInput.withOutput.runTest to test mapper, withOutput can call 0 or more times to set expect output  
 
-ReduceDriver().withReducer().withInput().withOutput().runTest to test driver 
+  ReduceDriver().withReducer().withInput().withOutput().runTest to test driver 
 
-MiniDFSCluster, MiniMRCluster, MiniYARNCluster is for test prepare a mini distribute env 
+  MiniDFSCluster, MiniMRCluster, MiniYARNCluster is for test prepare a mini distribute env 
 
-Application id is application_<resource manager start timestamp>_<application counter, 0 based>, job id is job_<resource manager start timestamp>_<application counter>, task id is task_<resource manager start timestamp>_<application counter>_m/r_<task id>, task maybe 
+  Application id is application_<resource manager start timestamp>_<application counter, 0 based>, job id is job_<resource manager start timestamp>_<application counter>, task id is task_<resource manager start timestamp>_<application counter>_m/r_<task id>, task maybe 
 
-Retry, so is id by attempt_<resource manager start timestamp>_<application counter>_m/r_<task id>_<retry times> 
+  Retry, so is id by attempt_<resource manager start timestamp>_<application counter>_m/r_<task id>_<retry times> 
 
-Counter is help debug 
+  Counter is help debug 
 
-MRUnit withCounter use to test counter 
+  MRUnit withCounter use to test counter 
 
-Yarn has a log collector, default is disable, enable by set yarn.log-aggregation-enable to true 
+  Yarn has a log collector, default is disable, enable by set yarn.log-aggregation-enable to true 
 
-Job performance tip: 1) number of mappers (if mapper run seconds to finish, should decrese mapper size), 2) number of reducer 3) check can enable combiner, 4) compressing 5) custom serilization implement RawComparator 6) shuffle tweaks 
+  Job performance tip: 1) number of mappers (if mapper run seconds to finish, should decrese mapper size), 2) number of reducer 3) check can enable combiner, 4) compressing 5) custom serilization implement RawComparator 6) shuffle tweaks 
 
-JobControl is used to control job execute time and other 
+  JobControl is used to control job execute time and other 
 
-Apache Oozie is a frame work to control job workflow 
+  Apache Oozie is a frame work to control job workflow 
 
-Job client get job from Resource manager, resource manager create a application, then job client store application to hdfs, then client submit job to resource manager, resource manager call node manager start container(MRAppMaster), master retrieve input splits from HDFS, then use split to start new container run map/reduce task 
+  Job client get job from Resource manager, resource manager create a application, then job client store application to hdfs, then client submit job to resource manager, resource manager call node manager start container(MRAppMaster), master retrieve input splits from HDFS, then use split to start new container run map/reduce task 
 
-OutputCommitter is used config job/task setup/commit/abort 
+  OutputCommitter is used config job/task setup/commit/abort 
 
-FileInputFormat, set file input location and split policy 
+  FileInputFormat, set file input location and split policy 
 
-InputSplit get a array of file location, pass to application master, master use location to scheduler task for locallization 
+  InputSplit get a array of file location, pass to application master, master use location to scheduler task for locallization 
 
-CombineFileFormat is used for a large of small file as input 
+  CombineFileFormat is used for a large of small file as input 
 
-NLineInputFormat let every map receive N line input 
+  NLineInputFormat let every map receive N line input 
 
-SequenceFileInputFormat, BinaryInputFormat, MultipleInputFormat, DbInputFormat, TableInputFormat(HBase) 
+  SequenceFileInputFormat, BinaryInputFormat, MultipleInputFormat, DbInputFormat, TableInputFormat(HBase) 
 
-Counter: 
+  Counter: 
 
-Counter is used to analyze, counter is better than log to debug 
+  Counter is used to analyze, counter is better than log to debug 
 
-There be some built-in counter, e.g. number of bytes read, map input records 
+  There be some built-in counter, e.g. number of bytes read, map input records 
 
-User can defined custom counter, use enum field as key, context.getCounter(enum.field).inrement(), enum type will be group, field will be counter name, you can also create dynamic counter by string group and counter name 
+  User can defined custom counter, use enum field as key, context.getCounter(enum.field).inrement(), enum type will be group, field will be counter name, you can also create dynamic counter by string group and counter name 
 
-Sort: 
+  Sort: 
 
-TotalOrderPartitioner and InputSampler use to total sort 
+  TotalOrderPartitioner and InputSampler use to total sort 
 
-Tools: 
+  Tools: 
 
-ChainMapper, ChainReducer 
+  ChainMapper, ChainReducer 
 
-FieldSelectionMapReduce and FieldSelectionMapper, FieldSelectionReducer select field from input 
+  FieldSelectionMapReduce and FieldSelectionMapper, FieldSelectionReducer select field from input 
 
-IntSumReducer, LongSumRecucer, sum key 
+  IntSumReducer, LongSumRecucer, sum key 
 
-InverseMapper, inverse key and map 
+  InverseMapper, inverse key and map 
 
-MultithreadedMapper 
+  MultithreadedMapper 
 
-RegexMapper, count input match regex 
+  RegexMapper, count input match regex 
+* Configuration
+  Configuration instance .addResource read configure from xml file, later file config override previous config, mark as final config cannot be overrided 
+
+  System property can override file config, but is conf not exist, system property can't override 
+
+  Tool and ToolRunner can easy parse hadoop configuration, implement tool and use ToolRunner.run to run, support argument -D property=value, -conf filename, -fs uri, -jt host:port 
+
+  DnsToSwitchMapping, if you have racks more than one, you can config network toplogic by this interface, for hadoop network optimize 
+
+  Slaves, under config directory, use to tell hadoop daemon script which machine is in cluster, this file only exist on namenode and resource manager 
+
+  Hadoop-env.sh -> mapred-env.sh -> yarn-env.sh, later config override previous same key 
+
+  HADOOP_LOG_DIR, config hadoop log location, .log file is generate by log4j, daily rolling, never delete, .out file is standard output and standard error, generate new when start daemon, keep recently 5, 1-5, 5 is oldest 
+  Kerberos used to authentication user, check what he say it is who
+* cli 
+  Hadoop <className>, to run a hadoop map reduce, <className> can get from system envorionment 'HADOOP_CLASSPATH' 
+
+  Hadoop jar <jar location> <className>, run a hadoop map reduce 
+
+  Hadoop namenode –format initilize a  hdfs, only namenode is initialize 
+
+  Hadoop fs, interactive with hdfs 
+
+  Mapred job, interactive with map/reduce job 
+
+  Start-dfs.sh, (1) start namenode return by hdfs getconf –namenodes,  (2) start datanode on machine list in slaves files, (3) start secondary namenodes return by hdfs getconf –secondarynamenodes 
+
+  Start-yarn.sh, (1) start resource manager on local machine, (2) start node manager on machine list in slaves files 
+
+  mr-jobhistory-daemon.sh start historyserver, start map reduce job history service 
+
+  hdfs dfsamdin 
+
+  Hdfs fsck 
+
+  Start-balacener.sh, let cluster balance 
+
+  Hadoop daemonlog –setlevel <address> <logname> <level> to change log level 
+* benchmark
+  hadoop jar $HADOOP_HOME/share/hadoop/mapreduce/hadoop-mapreduce-*-tests.jar list all beanchmark program 
+
+  teragen genrate/test total sort
+* Book 
+  MapReduce algrothms: Data-Intensive Text Processing with MapReduce 
+
+  Hadoop Manager: Hadoop Operations by Eric Sammer (O’Reilly, 2012). 
+
+  Spark: Learning Spark by 
+
+  Holden Karau, Andy Konwinski, Patrick Wendell, and Matei Zaharia (O’Reilly, 2014)
+* Port
+  50070  hdfs namenode dashboard 
+
+  50090  hdfs secondary namenode  
+
+  50075 hdfs datanode 
+
+  8088    yarn dashboard 
+
+  8042    mr history 
+
+  8032    resource node port 
+
+  8033    resource node manage port 
+
+  8020    hdfs port 
+
+  50020 namenode rpc 
+
+  10020 job history port(query)
+* Commission/decommission node 
+  Commission: 
+
+  (1) add node in include file 
+
+  (2) hdfs dfsadmin –refreshNodes 
+
+  (3) yarn rmadmin –refreshNodes 
+
+  (4) update slaves file 
+
+  (5) start namenode and resource manager 
+
+  Decommission: 
+
+  (1) add node in exclude file 
+
+  (2) hdfs dfsadmin –refreshNodes 
+
+  (3) yarn rmadmin –refreshNodes 
+
+  (4) wait sync finish 
+
+  (5) remove node in include file 
+
+  (6) hdfs dfsadmin –refreshNodes 
+
+  (7) yarn rmadmin –refreshNodes 
+
+  (8) remove from slaves file 
+* related projects 
+** Apache Avro:  
+
+   serilization framework replcace Writable 
+   extension is .avsc 
+
+   Primitive types: null, boolean, int, long, float, double, bytes, string 
+
+   Complex types: array, map(key is string), record(like json object),  enum, fixed, union 
+
+   Java has 3 way to use avro:  
+
+   (1) Reflect 
+
+   (2) Generic, GenericDatumWriter/Reader, work with EncoderFactory.binaryEncoder/binaryDecoder and schema 
+
+   (3) Specific(need maven plugin or avro cli to generate class file), generated java class and SpecificDatumWriter/Reader 
+
+   Datafile is like sequenceFile in Writable, DataFileWriter/DateFileReader 
+
+   Avro support use different scheme to read/write data, when read, need supply both schema 
+
+   Schema name can use alias when read, used when read 
+
+   Schema field support order, ascending, descending, ignore 
+
+   Avro support binary comparsing(same as Writable), but this sort is implmement by avro, sort by your supply schema 
+
+** Apache Parquet: 
+
+   Columnar storage format, colume foramt is better in encoding and read column 
+
+   Primitive types: boolean, int32, int64, int96, float, double, binary fixed_len_byte_array 
+
+   Keyworkd: start with message, field can mark as required, optional, repeated 
+
+   Parquet us logic type present string, enum, date, list 
+
+** Flume: 
+
+   Collect data to hdfs/solr/hbase 
+
+   Data flow: source-chanel-sink 
+
+   One source can go to multiple chanel 
+
+   Agen can constructor to tiers 
+
+   Sink group can treate multiple agent as one, load-balance 
+
+** Sqoop: 
+
+   Move data from RDBMSs to HDFS 
+
+   Sqoop import, import data and geneate java file 
+
+   Sqoop codegen, generate java file 
+
+   -- connect set connection string, -- table <table>,  --username <user>, --where <where condiciton>, -- split-by <split to map task's condiciton>, -m <map task number>, -- check-column and – last-value (incremental imports), -- increment lastmodified 
+
+   sqoop export, from hdfs to db 
+
+** Pig: 
+
+   Higher abstraction to process big dataset than map reduce 
+
+   Pig latin is language to express data flow 
+
+   Pig can run local modle use local file system with –x local, otherwise run on hadoop cluter 
+
+   Pig have three ways to execute: (1) Script, script file or –e "" (2) Grunt, interactive shell (3) Embedded, run from java PigServer class 
+
+   Pig is data flow process, syntax like sql, but not suppor random query and update, all query update all batch, same as map reduce, hive is more like RDBMS, pig can use hcatlog to use hivex 
+
+*** Syntax
+    <var> = LOAD <file> AS (<name>:<type>, <name1>:<type1>…); 
+
+    Type has: chararray, int 
+
+    DUMP <var>, show varaible 
+
+    DESCRIBE <var>, show variable structure 
+
+    FILTER <var>  BY <condition> 
+
+    GROUP <var> BY <filed> 
+
+    FOREACH <var> GENERATED <var1>, <var2>… 
+
+    ILLUSTRATE <var> generate sample data 
+
+    STORE <var> into <path> 
+
+    Explain <var>, show mapreduce execute plain 
+
+    DISTINCT 
+
+    $<location> reference field by index, from 0 
+** Hive: 
+
+   Sql like, run on hdfs 
+
+   $HIVE_HOME/bin/schematool -initSchema –dbType <type>, to init schema 
+
+   Syntax like mysql 
+
+   $HIVE_HOME/bin/hive --config <dir> start hive with config 
+
+   default is store on /user/hive/warehouse/<table name>, no any change by hive 
+
+   LOAD DATA LOCAL INPATH <path> [OVERWRITE] INTO TABLE <tableName> 
+
+   CREATE TABLE will move data to /user/hive/warehourse and meta data on database 
+
+   CREATE EXTERNAL TABLE will only create meta data, not move or check data 
+
+   Partition and buckets let query more efficent 
+
+   Hive's schema is on read, so when write, no any consume, just coy data, and can modify schema after 
+
+   RDBMS's schema is on write, so when write need match to schema 
+
+** Apache Crunch: 
+
+   Like pig, but in java/scala level 
+
+** Apache Spark: 
+
+   In memory like map reduce execute, support Stream(Spark Streaming), Sql (Spark Sql), Machine Learning(MLlib), graph processing(GraphX) 
+
+   Spark-shell, provider a execute context, value sc(SparkContex) is avaliable 
+
+** HBase: 
+
+   Distributed column-oriented database 
+
+   Region is minimal unit for table, as table grow, will split to region 
+
+   Transcational level is row level(even many column) 
+
+   Structure is one master and many regionservers(same as namenode and datanode) 
+
+   start-hbase.sh start hbase 
+
+   hbase shell drop into interactive shell 
+
+   create <table name>, <column family> create table 
+
+   put <table name>, <row>, <column family>, <value> 
+
+   Config hbase-site, set hbase.rootdir and hbase.zookeeper.property.dataDir 
+
+** Apache Zookeeper: 
+
+   Tool to construct distribute system 
+
+   Zoo.cfg is configuration file 
+
+   ZkServer.sh start, start zookeeper 
+
+   Every node called znode, can contain data and children, data limit is 1M 
+
+   Ephemeral vs persistent, ephemeral node will disappear after create client no response(timeout) 
+
+   Zookeeper opeartion is no-block, base on version and atomic 
+
+   Multipledata is used to bind a bulk operation to a single atomic opearation 
+
+   Every watcher only work once 
+** Solr
+*** REST api
+    GET solr/<collectionName>/select   query data 
+
+    POST solr/<collectionName>/schema modify schema 
+*** Cli
+    Solr –e <template> can run some pre define solr system 
+
+    Bin/post can use to post to solr 
+
+    Bin/solr create –c <collectionName> 
+*** query
+    q:  set query parameter, *:* means all, <field>:<value> search field contain value, <value> contain all field contain this value, + means and, + also means contain this value, - means not contain 
+
+    start: start location 
+
+    rows: start limit number 
+
+    fl: comma seperate field list to show 
+
+ 
+
+    Facet.field group by this field's value 
+
+    Facet.mincount only show count above this value record 
+
+    Facet.range facet.range.start facet.range.end facet.range.gap use to range query 
+
+    Facet.pivot=<field1>,<field2> group by field 1 first, then by field2
+*** dashboard
+    Default dashboard port, 8983 
+
+    <host>/#/solr is dashboard 
+
+    <host>/#/<name>/query is query page

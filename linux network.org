@@ -1,0 +1,4 @@
+* basic
+Iproute2 is a package, include ifconfig, route and other network related command 
+* ip tool
+ip link list , show nat router 

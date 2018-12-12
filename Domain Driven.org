@@ -1,0 +1,23 @@
+Domain is real world problem in programing abstraction, like bank system has accounts, banks, debits... 
+
+A special domain + domain vocabulary = bounded context 
+
+3 type object: 
+
+Entity: has an entity, has different state in lifecycle 
+
+Value object: semantically immutable, can be shared 
+
+Service: more macro-level abstraction than entity and object, involve multiple entity and value object, usally business case 
+
+3 pattern to manipulate: 
+
+Factories, generate entity 
+
+Aggregates, root of entity and object 
+
+Repositories, persistent entity 
+
+Responsibility: Resilience + Elasticity + Message Driven 
+
+Resilince means handle failure, for software and hardwarendle failuring

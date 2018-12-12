@@ -1,0 +1,493 @@
+* Html css
+  <head>标签包含了一些不给用户显示的内容,常见元素如下 
+
+  <head> 
+  <title>...</title>  标题 
+  <meta> 
+  <link> 
+  <style>...</style> 
+  <script>...</script> 
+  </head> 
+
+ 
+
+  <a href="#">代表当前页面 
+
+  <p>代表段落 <h1>直到<h6>代表标题 <em>斜体 <strong>粗体 <span>无语义,设置单独样式用 <q>加上引号 
+
+  <blockquote>引用长文本 <br/>代表换行 &nbsp;代表换行  <hr/>是一条分割线 
+
+  <address>斜体显示地址 <code>标记一行代码 <pre>标记多行(保留原样可以使用) 
+
+  <ul><li>用于表示无序列表,前面是点 <ol><li>用于表示有序列表,前面是从1开始的数字 
+
+  <div>用于划分板块 里面的id元素用于区分, 经常用于划分不同的块,使用不同的css 
+
+  <table>表格的标记 <tbody>元素嵌套在<table>里,代表所有信息下载玩后再显示 <tr>代表行<td>代表列,<th>代表表头 <table>里面的summary属性代表摘要(不显示),<caption>是标题 
+
+  <a href="目标网址" title="鼠标滑过显示的文本">链接显示的文本</a> 
+
+  <a href="目标网址" target="_blank">click here!</a>在新窗口中打开 
+
+  <a href="mailto">代表发送邮件, 后面参数形式与get一致 
+
+  <img src="图片地址" alt="下载失败时的替换文本" title = "提示文本"> 
+
+  <form>提交数据 type: text 文本(placeholder 点击后消息，没有内容显示), password 密码 radio 单选框(同一组单选框的值,name属性必须一致,不然就可以多选) checkbox 复选框 submit 提交 reset重置表单, form元素里的action表示提交的地址, method表示是get还是post 
+
+  name:传到后台的名字 value:默认值 
+
+  <textarea rows="行数" cols="列数">文本</textarea> 
+
+  <select>子标签代表下拉列表,multiple="multiple"属性代表可以多选,<option>是子标签,里面value是传入后台的值,中间的是显示内容,用selected="selected"属性代表默认选择 
+
+  <label for="控件id名称"> 鼠标选择控件,单击后会选择相应的内容 
+
+  <a href="">text</a>用来增加一个anchor, 点击后跳转 
+
+  <img src="">增加图片(相对路径或者其他server的) 
+
+  <video width="" height="" controls><source src="" type=""></video>  用来嵌入视频 
+
+  <ul><li></li></ul>创建无序的list 
+
+ 
+
+  在head元素里用<link ref="stylesheet" type="text/css" href=""/>引入一个css文件 
+
+  css用于设置样式,包括字体,颜色,宽带等等, 在css文件里面用选择器 {属性} 来修改html的属性 
+
+  样式声明可以是双向的,由css文件用类型或者是#id来选择html去渲染,或者写一个.xx,然后在html里面用class=""引用 
+
+  <style>里面声明 
+
+  font-family: font1,font2...;指定一系列的字体,按照浏览器安装的选择一个最靠前的 
+
+  font-size:px 字体大小 color 颜色 font-weight:blod 加粗 background-color背景颜色 text-align对齐方式 
+
+  Background-image:url("")指定背景图片, backgroud-size:指定背景图片的使用方式(resize的感觉) 
+
+  css 样式由选择符和声明组成，而声明又由属性和值组成. 声明之间用;分隔,键值间用:分隔 
+
+  html用<!-- -->来注释 css用/* */来注释 
+
+  可以用id声明div， 然后再head里面用#id{}写属性 
+
+  可以直接在html元素内加上 style=""属性来使用css(内联式) 
+
+  在<head>里设一个子元素声明<style type="text/css">来声明样式(嵌入式) 
+
+  <link href="base.css" rel="stylesheet" type="text/css" /> 来引用(外部式) 
+
+  优先级:内联式 > 嵌入式 > 外部式 
+
+  类选择器用.xxx声明一个样式,然后html元素用class=""来引用 
+
+  id选择器用#xxx声明id,然后用id=""属性引用 
+
+  id选择器只能用一次,而且不能同一个地方用多个 
+
+  .food>li{border:1px solid red;}这行代码会使class名为food下的子元素li（水果、蔬菜）加入红色实线边框。请注意这个选择器与子选择器的区别，子选择器（child selector）仅是指它的直接后代，或者你可以理解为作用于子元素的第一代后代。而后代选择器是作用于所有子后代元素。后代选择器通过空格来进行选择，而子选择器是通过“>”进行选择 
+
+  =_ * {} 通配选择器 a:hover{} 伪类型选择器的一种,鼠标划过就显示这个效果 ,用来分割选择器 _=
+
+  a{display:block;} 
+
+  块级元素特点： 
+
+ 
+
+  1、每个块级元素都从新的一行开始，并且其后的元素也另起一行。 
+
+  2、元素的高度、宽度、行高以及顶和底边距都可设置。 
+
+ 
+
+  3、元素宽度在不设置的情况下，是它本身父容器的100%（和父元素的宽度一致），除非设定一个宽度。 
+
+ 
+
+  一个html的element从内到外依次是 content -> padding(内容与边框之间) -> border(元素的边框) -> margin(元素之间) 
+
+  Border属性指定一个元素的border的 size type color 
+
+  Margin能够控制各个方向的距离, margin-top, margin-bottom, margin-left, margin-right 
+
+  Display属性 Block 换行显示不同元素, inline连续的排列, 不同的元素有默认的显示方式,可以更改, flex 垂直方向上对齐子元素(display: flex;  
+  flex-wrap: wrap;  
+  justify-content: center;) 
+
+  Float属性能够更改元素的位置 
+
+  Position: relative 能够指定相对位置 
+
+  :active {} 是鼠标点击时候的style 
+
+  https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css 是bootstrp提供的css的位置, 页面被分为12列(这个只是在写的时候的概念,boostrap会根据不同的设备,像素等决定如何显示), container就是12列, col-sm-x 就是x列, jumbotron是整个页面(12列之外的范围) head, section, footer也是html元素 
+
+  H5能够使用localStorage和sessionStorage来存储数据 
+* Jquery
+  $()是jQuery()的简写 
+
+  $("#xx")按id获取 
+
+  $(“xx")按照元素的类型名称获取 
+
+  $(".xx")按照元素的class属性 
+
+  $("*")所有元素 $("div *")等 
+
+  $("x1 x2") x1的所有的递归子节点 
+
+  $("x1 > x2")x1的直接子节点 
+
+  $("x1 + x2")选择与x1紧邻的下一x2元素 
+
+  $("x1 + x2")选择与x1紧邻的下全部x2元素 
+
+  用,分割多个选择器 
+
+  以下方法均有获取和设置功能: 
+
+  css()方法能够更改样式 addClass增加（用空格分割） 
+
+  attr()属性 
+
+  html()内容 
+
+  使用removeAttr(name)和removeClass(class)分别可以实现移除元素的属性和样式的功能 
+
+  append(content)方法的功能是向指定的元素中追加内容 
+
+  appendTo()插入内容$(content).appendTo(selector) 参数content表示需要插入的内容，参数selector表示被选的元素，即把content内容插入selector元素内，默认是在尾部。 
+
+  $(selector).before(content) 或者 after 
+
+  $(selector).clone() 
+
+  $(selector).replaceWith(content)和$(content).replaceAll(selector) 
+
+  wrap()和wrapInner()方法都可以进行元素的包裹，但前者用于包裹元素本身，后者则用于包裹元素中的内容 
+
+  $(selector).each(function(index)) 
+
+  remove()方法删除所选元素本身和子元素，该方法可以通过添加过滤参数指定需要删除的某些元素，而empty()方法则只删除所选元素的子元素。 
+
+  $(document).ready(function(){})等价于$(function(){}); 
+
+  $(selector).bind(event,[data] function) 
+
+  参数event为事件名称，多个事件名称用空格隔开，function为事件执行的函数。$(selector).hover(over，out); 
+
+  over参数为移到所选元素上触发的函数，out参数为移出元素时触发的函数。 
+
+  $(selector).toggle(fun1(),fun2(),funN(),...) 绑定多个，依次执行 
+
+  $(selector).unbind(event,fun) 
+
+  $(selector).one(event,[data],fun) 
+
+  $(selector).trigger(event) 
+
+  $(selector).live(event,[data],fun) 
+
+  focus 聚焦 blur 失去焦点 change 内容改变 
+
+  $(selector).hide(speed,[callback])和$(selector).show(speed,[callback]) 显示 隐藏 
+
+  load(url,[data],[callback]) 
+
+  ajax() 
+
+  jquery能够处理三种情况, event, manuplating dom, animate 
+
+  toggle()用来在显示和隐藏之间切换 
+
+  $(document).ready()表示页面加载完后执行 
+
+  click(function (){})绑定点击事件 
+
+  animate({}, time)在指定时间内移动元素 
+
+  keypress()绑定键盘输入事件, 可以带入event参数 $(ducoment).keypress(event) ,event里面有事件的具体内容 
+
+  addClass, removeClass能够增加删除class=""里面的内容 
+
+  $('p')选择p元素, $('<h1>')创建一个h1元素 
+
+  text()方法获取元素的text内容, text(content)修改内容 
+
+  Val()获取文本框的内容, val(content)修改 
+
+  newEle.appendTo(target)方法向target元素增加newele元素, prependTo()在前面增加, ele.delete()删除这个元素 
+
+  parent选择父, children返回所有子元素, silbing 是兄弟, prev前一个兄弟, next() 后一个兄弟, prependTo(xx)在xx里面添加子元素, addClass增加样式, removeClass,  
+
+  注意是length, 不是length() 
+
+  SlideDown(milliseconds)方法向下展示(将当前元素在指定时间内用向下的方式展示), slideUp向上隐藏 
+
+  FadeIn淡入, 在指定时间内显示, fadeOut, 在指定时间内隐藏 
+* javascript
+  用<script type="text/javascript"></... 来声明js代码 
+
+  用<script src="">来引用一个外部js文件,外部js里直接写js语句 
+
+  js用//单行注释,/* */多行注释 
+
+  用 function() 函数名 { } 声明函数, fucntion decelration, var xx = function() {}, fcuntion expression, decelration是可以hoist的 
+
+  {} 或者 new Object() 创建对象 
+
+  用 xx.yy 等语法来引用object的元素, xx.yy = zz赋值 或者 xx['yy'] = zz 
+
+  typeof 判断类型,object function等 
+
+  {}不一定是scope的边界,只有在function的情况下是 
+
+  var声明的是global, let声明的是local, var可以hoist 
+
+  Argumentst是传入参数的类似数组的形式，还提供了callee等方法 
+
+  Function (a = b) 能够为a提供一个默认值, function(a, …b)能把剩余参数以数组的形式放入b，...操作符也能用在将一个数组参数拆为多个参数传入，或者用在arr1引用arr 2作为部分值 
+
+  closure是指function可以引用范围之外的值，捕获他的引用，自己创建一个env,即使脱离了当前env也能运行，注意this引用,可能会因为闭包导致问题,this实际上是调用方的引用,可以用self之类的存储真正需要的对象,arrow function能够解决这个问题 
+
+  For in遍历key,for of遍历value, for [ (a of b) a op]生成新的数组 
+
+  Document.write输出文本内容 
+
+  Delete能够删除object, 删除object的property, 删除数组元素 
+
+  In 用来判断是否存在， instanceof判断是否是某个类的实例 
+
+  Date对象用来表示时间, Date()返回当前时间的字符串表示 
+
+  ``用来创建string template, 里面可以用${}直接写表达式 
+
+  Intl下包含了DateTimeFormat, NumberFormat等支持不同语言格式化, Collator用于排序 
+
+  /reg/用于书写正则表达式,或者用 new RegExp(), flag(g 全局, I 忽略大小写, m 多行模式), /pattern/flag 或者 new RegExp('pattern', 'flag') 
+
+  Array的length属性可以修改，会实际影响到里面的数据,forEach不会遍历多个逗号语法声明的undefined,显示的undefined会遍历,Array上的方法,contact(), join(deliminator), push(elem), pop(), shift()移除左边第一个元素, unshift(elem), slice(start,end), reverse(),sort(), indexOf(elem),forEach(func), map(func), filter(func), every, some, reduce 
+
+  Map是ECMAScript2015新增加的数据结构,for..of遍历, set(), get(), has(),size 
+
+  Set, add(), has(), delete(), size, 转为Array, Array.from()或者[…set] 
+
+  EMACScript5里面有3种遍历object的key的方法, for .. in, Object.keys, Object.getOwnPropertyNames.  Object.getProtoTypeOf能够用于递归获取一个object的所有properties 
+
+  创建object的几种方式, {}, new Object(), function name() { this.xx }, Object.create 
+
+  定义get, set语法，[gs]et property () {},也可以用Object.definePropert 
+
+  用prototype设置, __proto__能够一级一级的往上查找父类 
+
+  遍历元素的方式:Iterator, 返回一个next方法, next方法的返回值是value和done, Iterable要求object拥有System.iterator的属性 
+
+  alert()弹窗 confirm确认消息 返回值true 或 false代表按下相应按钮 prompt(str1,str2) 确认键返回消息，　取消返回null 
+
+  window.open用于打开新窗口，有各类参数可调整 window.close() 关闭本窗口, 窗口对象.close()关闭对象窗口 
+
+  document.getElementById()通过id获取元素元素对象.innerHTML修改内容 
+
+  Object.style.property=new style 修改元素的css效果 style.display "none" "block" 隐藏或显示内容 
+
+  Object.className 获取或修改元素的class属性 
+
+  用var xx = new Array()声明数组  xx.length获取长度 , string也是array 
+
+  onclick 点击 onmouseover 鼠标经过 onmouseout 鼠标离开 onchange 文本内容改变 onselect文本内容被选择 onfocus 光标聚集 onblur光标离开 onload 网页导入 onunload网页卸载 
+
+  Date()对象 getFullYear()获取年份 getDay() 0-6 星期天到周六 getTime()全时间 
+
+  Math可以直接使用,Math.ceil()向上取整(靠近数轴右边的方向) floor()向下取整 round()四舍五入,如果 x 与两侧整数同等接近，则结果接近 +∞方向的数字值 。(如 -5.5 将舍入为 -5; -5.52 将舍入为 -6) random() [0-1) 
+
+  String charAt indexOf与java基本一致  stringObject.split(separator,limit)  stringObject.substring(starPos,stopPos) stringObject.substr(startPos,length) 
+
+  arrayObject.concat(array1,array2,...,arrayN) 返回一个连接好的数组  join()用指定分隔符输出数组  reverse()颠倒数组  slice() 方法可从已有的数组中返回选定的元素(包左不包右)  sort()排序，可指定排序函数(若返回值<=-1，则表示 A 在排序后的序列中出现在 B 之前。若返回值>-1 && <1，则表示 A 和 B 具有相同的排序顺序。若返回值>=1，则表示 A 在排序后的序列中出现在 B 之后） 
+
+  window对象, alert open  setInterval(func,time)按照指定间隔调用函数,间隔单位为毫秒。clearInterval(id_of_setInterval), id_of_setInterval是setInterval返回的id 
+
+  setTimeout(func,time)指定时间后执行 clearTimeout()取消 
+
+  History对象 length历史长度， back后退 forward向前 go指定跳转某个历史记录,go(-1)相当于返回上一个 go(1)等于forward() 
+
+  location用于获取或设置窗体的URL，并且可以用于解析URL。  
+
+  Navigator 对象包含有关浏览器的信息，通常用于检测浏览器与操作系统的版本。 
+
+  screen对象用于获取用户的屏幕信息。height返回分辨率的高，width返回分辨率的宽.availWidth返回屏幕内部的宽，没有任务栏.availHeight返回高 
+
+  getElementById()指定  getElementsByName()  elementNode.setAttribute(name,value) chidNodes所有子节点  firstChild第一个子节点 parentNode父节点 nextSibling同级的下一节点 previousSibling同级上一节点   appendChild(newnode)指定节点后添加子节点 
+
+  document.createElement()创建节点 insertBefore() 方法可在已有的子节点前插入一个新的子节点。 node.removeChild(chidNode)  node.replaceChild (newnode,oldnew )  
+
+  window.setInterval(func, millisecond) 间隔执行 
+
+  Console.log 
+  用<script type="text/javascript"></... 来声明js代码 
+
+  用<script src="">来引用一个外部js文件,外部js里直接写js语句 
+
+  js用//单行注释,/* */多行注释 
+
+  用 function() 函数名 { } 声明函数, fucntion decelration, var xx = function() {}, fcuntion expression, decelration是可以hoist的 
+
+  {} 或者 new Object() 创建对象 
+
+  用 xx.yy 等语法来引用object的元素, xx.yy = zz赋值 或者 xx['yy'] = zz 
+
+  typeof 判断类型,object function等 
+
+  {}不一定是scope的边界,只有在function的情况下是 
+
+  var声明的是global, let声明的是local, var可以hoist 
+
+  Argumentst是传入参数的类似数组的形式，还提供了callee等方法 
+
+  Function (a = b) 能够为a提供一个默认值, function(a, …b)能把剩余参数以数组的形式放入b，...操作符也能用在将一个数组参数拆为多个参数传入，或者用在arr1引用arr 2作为部分值 
+
+  closure是指function可以引用范围之外的值，捕获他的引用，自己创建一个env,即使脱离了当前env也能运行，注意this引用,可能会因为闭包导致问题,this实际上是调用方的引用,可以用self之类的存储真正需要的对象,arrow function能够解决这个问题 
+
+  For in遍历key,for of遍历value, for [ (a of b) a op]生成新的数组 
+
+  Document.write输出文本内容 
+
+  Delete能够删除object, 删除object的property, 删除数组元素 
+
+  In 用来判断是否存在， instanceof判断是否是某个类的实例 
+
+  Date对象用来表示时间, Date()返回当前时间的字符串表示 
+
+  ``用来创建string template, 里面可以用${}直接写表达式 
+
+  Intl下包含了DateTimeFormat, NumberFormat等支持不同语言格式化, Collator用于排序 
+
+  /reg/用于书写正则表达式,或者用 new RegExp(), flag(g 全局, I 忽略大小写, m 多行模式), /pattern/flag 或者 new RegExp('pattern', 'flag') 
+
+  Array的length属性可以修改，会实际影响到里面的数据,forEach不会遍历多个逗号语法声明的undefined,显示的undefined会遍历,Array上的方法,contact(), join(deliminator), push(elem), pop(), shift()移除左边第一个元素, unshift(elem), slice(start,end), reverse(),sort(), indexOf(elem),forEach(func), map(func), filter(func), every, some, reduce 
+
+  Map是ECMAScript2015新增加的数据结构,for..of遍历, set(), get(), has(),size 
+
+  Set, add(), has(), delete(), size, 转为Array, Array.from()或者[…set] 
+
+  EMACScript5里面有3种遍历object的key的方法, for .. in, Object.keys, Object.getOwnPropertyNames.  Object.getProtoTypeOf能够用于递归获取一个object的所有properties 
+
+  创建object的几种方式, {}, new Object(), function name() { this.xx }, Object.create 
+
+  定义get, set语法，[gs]et property () {},也可以用Object.definePropert 
+
+  用prototype设置, __proto__能够一级一级的往上查找父类 
+
+  遍历元素的方式:Iterator, 返回一个next方法, next方法的返回值是value和done, Iterable要求object拥有System.iterator的属性 
+
+  alert()弹窗 confirm确认消息 返回值true 或 false代表按下相应按钮 prompt(str1,str2) 确认键返回消息，　取消返回null 
+
+  window.open用于打开新窗口，有各类参数可调整 window.close() 关闭本窗口, 窗口对象.close()关闭对象窗口 
+
+  document.getElementById()通过id获取元素元素对象.innerHTML修改内容 
+
+  Object.style.property=new style 修改元素的css效果 style.display "none" "block" 隐藏或显示内容 
+
+  Object.className 获取或修改元素的class属性 
+
+  用var xx = new Array()声明数组  xx.length获取长度 , string也是array 
+
+  onclick 点击 onmouseover 鼠标经过 onmouseout 鼠标离开 onchange 文本内容改变 onselect文本内容被选择 onfocus 光标聚集 onblur光标离开 onload 网页导入 onunload网页卸载 
+
+  Date()对象 getFullYear()获取年份 getDay() 0-6 星期天到周六 getTime()全时间 
+
+  Math可以直接使用,Math.ceil()向上取整(靠近数轴右边的方向) floor()向下取整 round()四舍五入,如果 x 与两侧整数同等接近，则结果接近 +∞方向的数字值 。(如 -5.5 将舍入为 -5; -5.52 将舍入为 -6) random() [0-1) 
+
+  String charAt indexOf与java基本一致  stringObject.split(separator,limit)  stringObject.substring(starPos,stopPos) stringObject.substr(startPos,length) 
+
+  arrayObject.concat(array1,array2,...,arrayN) 返回一个连接好的数组  join()用指定分隔符输出数组  reverse()颠倒数组  slice() 方法可从已有的数组中返回选定的元素(包左不包右)  sort()排序，可指定排序函数(若返回值<=-1，则表示 A 在排序后的序列中出现在 B 之前。若返回值>-1 && <1，则表示 A 和 B 具有相同的排序顺序。若返回值>=1，则表示 A 在排序后的序列中出现在 B 之后） 
+
+  window对象, alert open  setInterval(func,time)按照指定间隔调用函数,间隔单位为毫秒。clearInterval(id_of_setInterval), id_of_setInterval是setInterval返回的id 
+
+  setTimeout(func,time)指定时间后执行 clearTimeout()取消 
+
+  History对象 length历史长度， back后退 forward向前 go指定跳转某个历史记录,go(-1)相当于返回上一个 go(1)等于forward() 
+
+  location用于获取或设置窗体的URL，并且可以用于解析URL。  
+
+  Navigator 对象包含有关浏览器的信息，通常用于检测浏览器与操作系统的版本。 
+
+  screen对象用于获取用户的屏幕信息。height返回分辨率的高，width返回分辨率的宽.availWidth返回屏幕内部的宽，没有任务栏.availHeight返回高 
+
+  getElementById()指定  getElementsByName()  elementNode.setAttribute(name,value) chidNodes所有子节点  firstChild第一个子节点 parentNode父节点 nextSibling同级的下一节点 previousSibling同级上一节点   appendChild(newnode)指定节点后添加子节点 
+
+  document.createElement()创建节点 insertBefore() 方法可在已有的子节点前插入一个新的子节点。 node.removeChild(chidNode)  node.replaceChild (newnode,oldnew )  
+
+  window.setInterval(func, millisecond) 间隔执行 
+
+  Console.log 
+** Strict mode
+   [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode]]
+** ES6 export import
+   One module can have one default export, default export can no name and when import, it can name to any you like, import default is outside of curly brace 
+* Angular
+  Var app = angular.module('name',[]);声明一个app,然后在html的body里面声明 ng-app 
+
+  接下来用app.controller('ControllerName', [ dependency.., function(dependency) {})声明controller, 接下来就可以在html里面写ng-controller="controllerName" 
+
+  {{}}用来访问controller里面绑在$scope上的值, |用来声明filter 
+
+  Ng-repeate="x in xx", ng-src, ng-click 
+
+  App.directive('name', function () { return { restrict:, scope, templateUrl, link }) 创建一个directive, 在html里面用标签(小写-分割的形式)来引用 
+
+  App.factory用来创建service 
+
+  $http对象用来发送http请求 
+
+  App.config提供一个function，里面用$routeProvider可以控制url和template的关系, tempalte会被写到<div ng-view>的位置，在url里面可以用:xx标示要提取的值,然后再controller里面用$routeParams获取 
+* Css
+  选择器优先级: 
+
+  Id > 标签 > class 
+
+  *全选 
+
+  Selector: pseudo-selector , pseudo-selector常用的包含: link, visited, hover, first-child, nth-child 
+
+  Display有4个值:block (take full width), inline-block(allow other in same line), inline(not a block, only require width as it need), none(disappear) 
+
+  从外到内的layer的:margin->border->padding->context 
+
+  Margin: top right bottom left 
+
+  Float: left right 
+
+  Clear: left right both 
+
+  Position: absoulte relative fixed 
+** Flex
+   Justify-content: affect horizontal cross 
+
+   Flex-Start, flex-end, center, space-between, space-around,  space-between element align border then same space between them, around also keep space to border 
+
+   Align-item: affect verticle cross 
+
+   Flex-start, flex-end, center 
+
+   Flex-direction: affect horizontal/verticle cross, column will let horizontal become verticle 
+
+   Row(default), row-reverse, column, column-reverse 
+
+   Order: ..-1,0,1.. apply to element, change order 
+
+   Align-self: same value as align-item, also affect self 
+
+   Flex-wrap: no-warp, all element on same line 
+
+   Wrap, can become multiple line 
+
+   Wrap-reverse 
+
+   Flex-flow = flow-direction + flow-wrap 
+
+   Align-content: set multiple line order, 
+
+   Flex-start, flex-end, center, space-between, space-around, stretch 

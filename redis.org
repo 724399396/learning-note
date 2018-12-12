@@ -1,0 +1,56 @@
+* cli
+SET <key> <value> 
+
+GET <key> 
+
+INCR <key>, atom increment 
+
+EXPIRY <key> <second>, let key expiry after <second> 
+
+TTL <key>, get key expiry left time 
+
+ 
+
+Ordered List: 
+
+LPUSH/RPUSH <list> <value> 
+
+LPOP/RPOP <list> 
+
+LRANGE <list> <start index, from 0, include> <end index, from 0, include, -1 to end>, get elements 
+
+LLEN <list>, get length 
+
+ 
+
+Set: 
+
+SADD <set> <value> 
+
+SREM <set> <value>, remove 
+
+SISMEMBER <set> <value>, test is value in set 
+
+SMEMBERS <set>, get all element 
+
+SUNION <set1> <set2>, get union result from set1 and set2 
+
+ 
+
+Orderd Set: 
+
+ZADD <set> <key> <value> 
+
+ZRANGE <set> <start index> <end index> 
+
+ 
+
+HSET <key> <object key> <object value> 
+
+HGETALL <key> 
+
+HGET <key> <object key> 
+
+HMSET <key> <object key1> <object vlaue1> <object key2> … 
+
+HINCRBY <key> <object key> <increment value> 

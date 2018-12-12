@@ -22,6 +22,12 @@
   getResources().getIdentifier(<name>, <type>, <package name>) get resource from app/res/values
 
   use compatiblity class in support library to support old version
+
+  Back button(in bottom function bar) and Up botton(<-) is different thing:
+  - back button, provides navigate to screen that most recently viewd
+  - up botton, navigation from child to parent
+  
+  LayoutInflater convert a xml definition to View class
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
@@ -44,6 +50,8 @@
 
     fragment lifecycle is similar as activity, but in fine-grained
 
+    use getActivity get fragement attached activity
+
     attach fragment to activity way:
     - declare in layout file
     - dynamic add to activity:
@@ -51,10 +59,15 @@
       * create FragmentTranscation
       * attach to Activity
       * commit FragmentTranscation
+    - use dialogFragment instance show method
+    
+    use Adapater is common pattern for presenting different screens of content with an Activity
+
+    onCreateView method return inflater.inflate(layout id) to render fragement layout file
 *** parent-child
     activity can declare parent in AndroidManifest.xml file, use android:parentActivityName declare, for compatible older version(api less 16), need add meta-data android.support.PARENT_ACTIVITY
 
-    child activity auto has a left arrow in app bar, click will return to parent activity
+    child activity auto has a up button (<-) in app bar, click will return to parent activity
 
 *** Intent
     startActive/startActiveForResult to use intent start activity
@@ -144,21 +157,96 @@
   - autocompleteTextView
   - ConstriantLayout
   - LinearLayout
-  - ScrollView,
+  - ScrollView
 
-** ScrollView 
+ View is basic ui element, any view add android:onClick attributes can clickable
+** Views
+*** ScrollView 
    scrollview contain only one child view, but view can be ViewGroup
 
    keep all child view in memory
 
    make it can scroll
 
-** TextView 
+*** TextView 
    in strings.xml, \n means new line, ' and " use \ to escape, <b> bold, <i> italic
    
    android:autoLin="web", let http in text content linkable
 
-   android:inputType, indicates accept which type and match input keyboard
+*** Snackbar
+*** FloatingActionButton
+*** ImageView
+*** EditText
+    let user input data
+
+    android:inputType, indicates accept which type and match input keyboard, inputType can combine use |
+
+    android:imeOptions, change default done key, then setOnEditorActionListener implmement logic
+**** inputType
+     - textAutoCorrect: Suggest spelling corrections.
+     - textCapSentences: Start each new sentence with a capital letter.
+     - textPersonName: Show a single line of text with suggestions as the user types, and the Done key for the user to tap when they're finished.
+     - textMultiLine: Enable multiple lines of text entry and a Return key to add a new line.
+     - textPassword: Hide a password when entering it.
+     - textEmailAddress: Show an email keyboard rather than a standard keyboard.
+     - phone: Show a phone keypad rather than a standard keyboard.
+*** Radio buttons
+    user see all options side by side, only can choose one
+
+    Radio button place in Radio Group, Radio group set orientation property, ratio order is delcare order
+
+    Radio button share same onClick method
+*** Spinner
+    show user a dropdown list, only can choose one
+
+    use string-array in strings.xml store options
+
+    implmement AdapterView.OnItemSelectedListener to implmement logic
+*** AppBarLayout ToolBar
+    used to set action bar
+
+    The template modifies the AndroidManifest.xml file so that the .MainActivity Activity is set to use the NoActionBar theme. This theme is defined in the styles.xml file.
+
+    activity call setSupportActionBar() and pass toolbar to it
+
+    app/res/menu include menu options:
+    - id
+    - orderInCategory, a value define display order, lowest value show first
+    - title
+    - showAsAction:
+      * always, always appearea in the app bar(if there isn't enought room it mayb overlap with other menus icons)
+      * ifRoom, appears in the app bar if there is room
+      * never, never appears in the app bar, its text appears in the overflow menu
+      
+    override onCreateOptionMenu to set menu content
+
+    override onOptionsItemSelected(MenumItem) implmement logic
+*** ContextMenu
+    same like action menu, but register by registerForContextMenu(View), then override onCreateContextMenu in activity to set menu content, override onCOntextItemSelected to implmement logic
+*** Dialog
+**** AlertDialog
+     show a dialog let user choose positive or negative
+
+     use AlertDialog.Builder to build
+**** Picker
+*** ViewPager TabLayout
+    viewpager auto handle tab page switch, left/right swipe
+    
+    FragmentPagerAdapter: Designed for navigating between sibling screens (pages) representing a fixed, small number of screens.
+
+    FragmentStatePagerAdapter: Designed for paging across a collection of screens (pages) for which the number of screens is undetermined. It destroys each Fragment as the user navigates to other screens, minimizing memory usage. The app for this task uses FragmentStatePagerAdapter.
+    
+    FragmentManager used to manage switch content
+*** ScrollView RecyclerView
+    ScrollView is easy to use, but not recommened for long, scrollable lists
+
+    RececlerView is subcalss of ViewGroup and is more resource-efficient way to display scrollable list
+
+    LayoutManager mange content, Adapater map data to display view use ViewHolder
+
+    ViewHolder implement OnClickListener and set view clickHandler to this holder let every item clickable
+
+    Adapater.notifyDataSetChanged will reload data to render
 ** View attributes:
    - id
    - text

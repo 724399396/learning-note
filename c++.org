@@ -1,0 +1,36 @@
+* basic
+<iostream> 里包含了基本的输入输出 
+
+using namespace std 表示能够使用std的库 
+
+cout  是Console out, 使用 cout << xx 来输出, cin 是 Console in 
+
+使用new在heap上分配内存,delete pointer删除 
+
+class A{};声明类, 在类里用public: protected: private:控制权限 
+
+const 声明不可变常量, 在类里必须用initlial list初始化 ,在构造器上用 A(): variable(value), varaible2(value2)的形式 
+
+~是destructor的声明 
+
+operator+(){} 这种形式可以声明操作符重载 
+
+class A: public B {} 声明A继承B, 构造器父类先调用, 解构器子类先调用 
+
+virtual 是抽象方法的声明, 用 virtual xx xx() = 0 声明pure abstract method  
+
+friend用来声明一个方法，它不属于class，但是能够访问私有变量 
+
+template <class A,...> 或者 template <typename A> 用来声明模板(也就是泛型) 
+
+<fstream>包含了文件的操作 
+
+Void MyClass::xx() {} 用来在头文件和实现分开的时候声明类的各个实现 
+
+template<> class MyClass<int>{} 能够指定特殊的泛型情况 
+
+Try { throw 1} catch(int x) { } , catch(…)用来捕捉所有异常 
+
+Fstream file("location") 或者 fstream file; file.open("location")打开文件,close关闭, 可以用ios::xxx指定各种模式 
+
+ 

@@ -1,11 +1,13 @@
 * DONE CPS
   SCHEDULED: <2018-12-06 四>
 
-* TODO Kubernetes in Action
-  SCHEDULED: <2018-12-19 三>
-
-* TODO Note from OneNote to Github
+* DONE Note from OneNote to Github
   SCHEDULED: <2018-12-12 三>
+
+* TODO Android Fundamental
+
+* TODO Kubernetes in Action
+  SCHEDULED: <2018-12-26 三>
 
 * TODO Deep Learning with Python
 
