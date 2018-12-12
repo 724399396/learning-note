@@ -122,3 +122,13 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   dpkg -s # show installed
   dpkg -S # search installed
   #+END_SRC
+* back up system
+  Refer to this howto: http://ubuntuforums.org/showthread.php?t=35087
+
+  In simple terms, the backup command is: sudo tar czf /backup.tar.gz --exclude=/backup.tar.gz--exclude=/dev --exclude=/mnt --    exclude=/proc --exclude=/sys --exclude=/tmp --exclude=/lost+found /. Add more --exclude= parameters if you need to.
+
+  It will create an archive of all your files at /backup.tar.gz, which you can then copy over to another computer/drive and restore your files if the install goes pear-shaped. You can do it from a LiveCD, by mounting the "bad" system under /media or /mnt and running tar xf /path/to/drive/with/backup.tar.gz -C /mnt (substitute for the actual path to the "bad" system).
+
+** GRUB
+
+  This will not cover GRUB, however you can easily reinstall it by following this guide here. You only need to do steps Three and Four.
