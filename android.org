@@ -313,6 +313,20 @@
 
    Toast used to show message on screen, Toast.makeText(contex,msg,durtion) Toast.show()
 
+** ShapeDrawable
+   ShapeDrawable is primitive geometric shape define color,shape,padding and more
+** Style
+   style is bunch of shared property
+
+   style auto extend parent property, if child has same property then override parents'
+
+   child property can include addtional attributes
+
+   create in res/values/styles.xml, use item name="<property name>" then value be property value, then use style=@style to reference
+
+   use AppCompatDelegate to change app theme mode
+
+   change theme need activity recreate to take effect
 * Proxy/NoProxy
   test download speed: https://dl.google.com/android/repository/sys-img/google_apis/x86-28_r07.zip
 
