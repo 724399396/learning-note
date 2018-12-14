@@ -160,6 +160,8 @@
   - ScrollView
 
  View is basic ui element, any view add android:onClick attributes can clickable
+
+ android load image into memory even only show a small thumbnail, use Glide efficient load large images
 ** Views
 *** ScrollView 
    scrollview contain only one child view, but view can be ViewGroup
@@ -247,6 +249,10 @@
     ViewHolder implement OnClickListener and set view clickHandler to this holder let every item clickable
 
     Adapater.notifyDataSetChanged will reload data to render
+
+    ItemTouchHelper used to implememnt swipe/drag function in RecyclerView
+*** CardView
+    for material degisn guideline recommened used in image and text mixed
 ** View attributes:
    - id
    - text
