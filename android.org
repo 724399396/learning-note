@@ -162,6 +162,8 @@
  View is basic ui element, any view add android:onClick attributes can clickable
 
  android load image into memory even only show a small thumbnail, use Glide efficient load large images
+
+ android support res file for different resolution/orientation/locale, it will auto choose approciate res file
 ** Views
 *** ScrollView 
    scrollview contain only one child view, but view can be ViewGroup
@@ -245,6 +247,8 @@
     RececlerView is subcalss of ViewGroup and is more resource-efficient way to display scrollable list
 
     LayoutManager mange content, Adapater map data to display view use ViewHolder
+
+    change LayoutManager can change view display way, verticle/horizontal/grid
 
     ViewHolder implement OnClickListener and set view clickHandler to this holder let every item clickable
 
