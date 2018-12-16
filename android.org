@@ -86,8 +86,8 @@
     - Component, set jump location
     - Extra
 **** Intent data pass:
-   - data, a url argument
-   - extras, key/value pairs in a Bundle
+     - data, a url argument
+     - extras, key/value pairs in a Bundle
 **** Explicit Intent
      take two parameter, first is from activity class, second is to activity class
 
@@ -159,23 +159,23 @@
   - LinearLayout
   - ScrollView
 
- View is basic ui element, any view add android:onClick attributes can clickable
+  View is basic ui element, any view add android:onClick attributes can clickable
 
- android load image into memory even only show a small thumbnail, use Glide efficient load large images
+  android load image into memory even only show a small thumbnail, use Glide efficient load large images
 
- android support res file for different resolution/orientation/locale, it will auto choose approciate res file
+  android support res file for different resolution/orientation/locale, it will auto choose approciate res file
 ** Views
 *** ScrollView 
-   scrollview contain only one child view, but view can be ViewGroup
+    scrollview contain only one child view, but view can be ViewGroup
 
-   keep all child view in memory
+    keep all child view in memory
 
-   make it can scroll
+    make it can scroll
 
 *** TextView 
-   in strings.xml, \n means new line, ' and " use \ to escape, <b> bold, <i> italic
+    in strings.xml, \n means new line, ' and " use \ to escape, <b> bold, <i> italic
    
-   android:autoLin="web", let http in text content linkable
+    android:autoLin="web", let http in text content linkable
 
 *** Snackbar
 *** FloatingActionButton
@@ -363,13 +363,39 @@
    android.defaultConfig.minSdkVersion, set min sdk require
 
 * Test
-app/src/test is unit test directory
+  app/src/test is unit test directory
 
-app/src/androidTest is instrumented test directory
+  app/src/androidTest is instrumented test directory
+
+** UI Test
+   Espresso is include in android support repository for android ui test
+
+   for test on physical device, close animations from Developer Options -> Drawings, close:
+   - Window animation scale
+   - Transition animation scale
+   - Animator duration scale
+   
+   - use Viematcher find a  View, e.g. onView(withId(R.id.xx))
+   - use ViewAction to perform a action, e.g. click
+   - use ViewAssertion to check if the result of the action matchers an assertion, e.g. check
+   
+   for test dynamic added element, use onData to find element
+
+   Android studio support record expresso test
 * Android SDK
-Android SDK includes Adndroid Support Library, which not include in Android Framework:
-- Backward-compatible version of framework components
-- additional layout and user interface elements
-- support difference divice form factors
-- components support material design
-- other features, include palette support, annotations, preferences
+  Android SDK includes Adndroid Support Library, which not include in Android Framework:
+  - Backward-compatible version of framework components
+  - additional layout and user interface elements
+  - support difference divice form factors
+  - components support material design
+  - other features, include palette support, annotations, preferences
+* Thread
+** AsyncTask
+   AsyncTask is an abstract class, must subclass in order to use it
+
+   - onPreExecute(): This method runs on the UI thread, and is used for setting up your task (like showing a progress bar).
+   - doInBackground(): This is where you implement the code to execute the work that is to be performed on the separate thread.
+   - onProgressUpdate(): This is invoked on the UI thread and used for updating progress in the UI (such as filling up a progress bar)
+   - onPostExecute(): Again on the UI thread, this is used for updating the results to the UI once the AsyncTask has finished loading.
+   
+   AsyncTaskLoader solve activity recreate miss view issue, activity implmement LoaderManager.LoaderCallbacks
