@@ -485,7 +485,6 @@
    -Xprint:typer, help debug implicit
 
 
-
 * jvm options
 
   JAVA_OPTS="" scala, config jvm argument
@@ -645,7 +644,6 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % version)
    routes.xx refrence url address by variable, type safe, easy refactor
 
    
-
 * Spark
 
   $SPARK_HOME/bin/spark-shell, go to scala console mode
@@ -718,10 +716,14 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % version)
 
   Aggregator is work like reduce in DataSet
 
-  Accumulator is used to record metric value
+** SharedVaraibles
+   when spark run, program copy to every work node, if you need change varaible, need sync in whole cluster
+*** Broadcast Varaibles
+    Broadcast variables allow the programmer to keep a read-only variable cached on each machine rather than shipping a copy of it with tasks
+*** Accumulator
+    Accumulators are variables that are only “added” to through an associative and commutative operation and can therefore be efficiently supported in parallel.
 
   
-
 * Test
 
 ** quickCheck
@@ -807,7 +809,6 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % version)
    functor.laws[F].check
 
 
-
 * Existential type
 
   [[https://www.drmaciver.com/2008/03/existential-types-in-scala/]]
@@ -857,7 +858,6 @@ var is complie to method <T> <name>() and void name_$eq(<T>)
 scala object compile to <name>$.class format, MODULE$ is a instance of this class
 
 java static class convert to scala object
-
 
 
 * Parser

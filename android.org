@@ -28,6 +28,16 @@
   - up botton, navigation from child to parent
   
   LayoutInflater convert a xml definition to View class
+** Notification
+    Starting with Android 8.0 (API level 26), your code can assign each of your app's notifications to a user-customizable notification channel
+
+    use NotificationManager to create notification channel, send notification
+
+    use NotificationCompat.Builder to create Notification
+
+    Notification can be cancel/update
+
+    notification can contain action button, then use NotificationReceiver to reponse to this button
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
@@ -124,9 +134,18 @@
    3. onReceive handle event and delegate
    4. receiver onReceive
    
+   starting from android 8.0(api 26), most android system broadcasts can't register by statically way
+
+   Boardcast Intent is diffrent from activity Intent, best practice is use BuildConfig.APPLICATION_ID + message name
+   
    registry way:
-   - AndroidManifest.xml <receiver> tag add <intent-filter>
-   - LocalBoardcastReceiver/Context registerReceiver
+   - statically, AndroidManifest.xml <receiver> tag add <intent-filter>
+   - dynamically, use registerReceiver(receiver, intentFilter) to regist, when activity/server destory, need unRegisterReceiver
+   
+   custom broadcasts:
+   - Normal broadcasts, asynchronous, create broadcast intent and pass to sendBroadcast(Intent) method
+   - Local broadcasts, receive in same app as the sneder, more efficent and security, create broadcast intent and pass to LocalBroadcastManager.sendBroadcast
+   - Ordered broadcasts, delivered to one receiver at a time, can progagate result to next receiver or cancel this broadcast to other receiver, pass intent to sendOrderedBroadcast(Intent, String)
 * tools
   #+BEGIN_SRC bash
   telnet <host> <port>, connect to emulator, available command:
