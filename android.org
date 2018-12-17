@@ -38,6 +38,13 @@
     Notification can be cancel/update
 
     notification can contain action button, then use NotificationReceiver to reponse to this button
+** AlarmManager
+   launch and repeat repeat a PendingIntent at specified time
+
+   AlarmManager once/period send Broadcast Intent
+
+   AlarmManager not work when device is in Doze mode, if need ensure, use setAndAllowWhileIdel/setExtractAndAllowWhileIdle, or use WorkManager API
+
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
