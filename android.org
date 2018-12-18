@@ -28,6 +28,7 @@
   - up botton, navigation from child to parent
   
   LayoutInflater convert a xml definition to View class
+
 ** Notification
     Starting with Android 8.0 (API level 26), your code can assign each of your app's notifications to a user-customizable notification channel
 
@@ -45,6 +46,24 @@
 
    AlarmManager not work when device is in Doze mode, if need ensure, use setAndAllowWhileIdel/setExtractAndAllowWhileIdle, or use WorkManager API
 
+** Shared preferences
+   Shared preferences allow you to store small amounts of primitive data as key/value pairs in a file on the device
+
+   this file is accessible to all the components of your app, but is not accessible to other apps
+
+   shared preference even if your app stop and restarts, or if the device reboots
+
+   use Activity instance.getSharedPreferences(filename, mode) get Shared preferences
+
+   save data in onPause
+
+   get Preferences.Editor to edit preference
+
+   editor apply save preference asynchronously, commit save sycnrhonously but discouraged
+** App Setting
+  res/xml contain SwitchPreference
+
+  com.android.support:preference-<version> include PreferenceFragmentCompat, is compatible version for PreferenceFragment
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
@@ -81,6 +100,8 @@
     use Adapater is common pattern for presenting different screens of content with an Activity
 
     onCreateView method return inflater.inflate(layout id) to render fragement layout file
+
+    use replace(android.R.id.content, <Fragment>) to replace active to fragement content
 *** parent-child
     activity can declare parent in AndroidManifest.xml file, use android:parentActivityName declare, for compatible older version(api less 16), need add meta-data android.support.PARENT_ACTIVITY
 
