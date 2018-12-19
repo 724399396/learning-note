@@ -30,15 +30,15 @@
   LayoutInflater convert a xml definition to View class
 
 ** Notification
-    Starting with Android 8.0 (API level 26), your code can assign each of your app's notifications to a user-customizable notification channel
+   Starting with Android 8.0 (API level 26), your code can assign each of your app's notifications to a user-customizable notification channel
 
-    use NotificationManager to create notification channel, send notification
+   use NotificationManager to create notification channel, send notification
 
-    use NotificationCompat.Builder to create Notification
+   use NotificationCompat.Builder to create Notification
 
-    Notification can be cancel/update
+   Notification can be cancel/update
 
-    notification can contain action button, then use NotificationReceiver to reponse to this button
+   notification can contain action button, then use NotificationReceiver to reponse to this button
 ** AlarmManager
    launch and repeat repeat a PendingIntent at specified time
 
@@ -61,9 +61,9 @@
 
    editor apply save preference asynchronously, commit save sycnrhonously but discouraged
 ** App Setting
-  res/xml contain SwitchPreference
+   res/xml contain SwitchPreference
 
-  com.android.support:preference-<version> include PreferenceFragmentCompat, is compatible version for PreferenceFragment
+   com.android.support:preference-<version> include PreferenceFragmentCompat, is compatible version for PreferenceFragment
 ** JobScheduler WorkManager
    JobScheduler only available on API 21 an higher, for compatibility, use WorkManager
 *** JobScheduler
@@ -77,10 +77,39 @@
     - if conditions described in JobInfo no longer met, job stop and this method be called
     - return boolean determines what to do if job not finish, true will rescheduled, otherwise dropped
     
-   use JobInfo set condition, e.g. NetworkStatus Idle Charging
+    use JobInfo set condition, e.g. NetworkStatus Idle Charging
    
-   JobScheduler not ensure call when condition match, can set a DeadLine force it execute ignore condition
->>>>>>> android
+    JobScheduler not ensure call when condition match, can set a DeadLine force it execute ignore condition
+    >>>>>>> android
+** Recommended Architecture Components
+   [[./android_archeticture_component.png]]
+
+   - Entity: In the context of Architecture Components, the entity is an annotated class that describes a database table.
+   - SQLite database: On the device, data is stored in an SQLite database. The Room persistence library creates and maintains this database for you.
+   - DAO: Short for data access object. A mapping of SQL queries to functions. You used to have to define these queries in a helper class. When you use a DAO, your code calls the functions, and the components take care of the rest.
+   - Room database: Database layer on top of an SQLite database that takes care of mundane tasks that you used to handle with a helper class. The Room database uses the DAO to issue queries to the SQLite database based on functions called.
+   - Repository: A class that you create for managing multiple data sources. In addition to a Room database, the Repository could manage remote data sources such as a web server.
+   - ViewModel: Provides data to the UI and acts as a communication center between the Repository and the UI. Hides the backend from the UI. ViewModel instances survive device configuration changes.
+   - LiveData: A data holder class that follows the observer pattern, which means that it can be observed. Always holds/caches latest version of data. Notifies its observers when the data has changed. Generally, UI components observe relevant data. LiveData is lifecycle-aware, so it automatically manages stopping and resuming observation based on the state of its observing activity or fragment.
+   
+   [[https://codelabs.developers.google.com/codelabs/android-training-livedata-viewmodel/index.html?index=..%2F..android-training#0]]
+
+   create Entity by use android.arch.persistence.room annotation, e.g. @Entity @PrimaryKey @ColumnInfo
+
+   create Dao by use android.arch.persistence.room annotation, e.g. @Dao @Insert @Query @Delete
+
+   LiveData is under android.arch.lifecycle, create neccessary code to react with database change
+
+   extends RoomDatabase and Annotation with @Database to implement Room database, usally only need on instance, room execute on separte thread
+
+   extends AndroidViewModel to create ViewModel
+
+   ViewModel wraning:
+   - Never pass context into ViewModel instances.
+   - Do not store Activity, Fragment, or View instances or their Context in the ViewModel.
+   
+   use ViewModelProviders.of to get ViewModel instance, when activity first create it create ViewModel, when it re-create it return existing ViewModel
+
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
