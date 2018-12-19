@@ -64,6 +64,23 @@
   res/xml contain SwitchPreference
 
   com.android.support:preference-<version> include PreferenceFragmentCompat, is compatible version for PreferenceFragment
+** JobScheduler WorkManager
+   JobScheduler only available on API 21 an higher, for compatibility, use WorkManager
+*** JobScheduler
+    system automatically execute JobService when condition match
+    
+    onStartJob:
+    - called when system determinies you task should run
+    - return boolean indicate whether job need run a separate thread, true means work on different thread, your app call jobFinished() explicity, false means job is completed by end of onStartJob(), system call jobFinished()
+    
+    onStopJob:
+    - if conditions described in JobInfo no longer met, job stop and this method be called
+    - return boolean determines what to do if job not finish, true will rescheduled, otherwise dropped
+    
+   use JobInfo set condition, e.g. NetworkStatus Idle Charging
+   
+   JobScheduler not ensure call when condition match, can set a DeadLine force it execute ignore condition
+>>>>>>> android
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
