@@ -132,7 +132,9 @@
 
     fragment lifecycle is similar as activity, but in fine-grained
 
-    use getActivity get fragement attached activity
+    when activity destoryed and recreated, Fragment is not destroyed
+
+    onCreateView method return inflater.inflate(layout id) to render fragement layout file
 
     attach fragment to activity way:
     - declare in layout file
@@ -142,12 +144,26 @@
       * attach to Activity
       * commit FragmentTranscation
     - use dialogFragment instance show method
+**** lifecycle:
+     - The system calls onAttach() when a Fragment is first associated with an Activity. Use onAttach() to initialize essential components of the Fragment, such as a listener.
+     - The system calls onCreate() when creating a Fragment. Use onCreate() to initialize components of the Fragment that you want to retain when the Fragment is paused or stopped, then resumed.
+     - The system calls onCreateView() to draw a Fragment UI for the first time. To draw a UI for your Fragment, you must return the root View of your Fragment layout from this method. You can return null if the Fragment does not provide a UI.
+     - When a Fragment is in the active or resumed state, it can access the host Activity instance with getActivity() and easily perform tasks such as finding a View in the Activity layout.
+
+**** dynamic fragement
+     - declare <FrameLayout> in activity layout file
+     - getSupportFragmentManager()
+     - beginTransaction -> modify -> commit()
     
-    use Adapater is common pattern for presenting different screens of content with an Activity
+     use Adapater is common pattern for presenting different screens of content with an Activity
 
-    onCreateView method return inflater.inflate(layout id) to render fragement layout file
+     use replace(android.R.id.content, <Fragment>) to replace active to fragement content
 
-    use replace(android.R.id.content, <Fragment>) to replace active to fragement content
+     fragement.setArgument(bundle), receive bundle, then this bundle is available in fragement.getArguments()
+**** static fragement
+     fragement can static add in activity, used <fragement> element in activity layout file, android:name to Fragment class file, tools:layout to layout file
+     
+     static fragement is reused component way
 *** parent-child
     activity can declare parent in AndroidManifest.xml file, use android:parentActivityName declare, for compatible older version(api less 16), need add meta-data android.support.PARENT_ACTIVITY
 

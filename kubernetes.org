@@ -674,20 +674,25 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   Deployment is under api version apps/v1
 * StatefulSet 
+  statefulSet provide separate storage and stable identity
 
   statefulSet is similar as Deploment, but used for stateful service, like database, pod can use different volume, keep different state 
 
-  statefulSet pod name is named with <stateful set name>-<index> 
+  statefulSet pod name is named with <stateful set name>-<index>, index from 0
+
+  statefulSet manage pod has govering service, prodive a qualified domain name e.g a-0.foo.default.svc.cluster.local, a is statefulSet name, foo is govering service name
 
   scaling down a statefulset first remove highest index pod 
 
-  statefulSet us volume cliam template create pvc for each pod, index is same as pod 
+  statefulSet us sepc.volumeCliamTemplate create pvc for each pod, index is same as pod
 
   <apiServerHost>:<port>/api/v1/namespaces/<namespace>/pods/<pod name>/proxy/<path> can access pod by kube api 
 
   scaling down a statefulset will keep pvc and pv 
 
-  start statefulset is one-by-one(this is avoid race condition) 
+  statefulSet is at-most-one semantics
+
+  start statefulset is one-by-one(this is avoid race condition)
 
   statefulset can find peer pod  by srv dns lookup 
 
@@ -1024,3 +1029,5 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   Helm ls, show deployed release 
 
   Helm delete <release>, delete release 
+* Tools
+  dig SRV <qualified domain name>, get SRV records
