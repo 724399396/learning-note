@@ -709,48 +709,89 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   for intf in /sys/devices/virtual/net/docker0/brif/*; do echo 1 > $intf/hairpin_mode; done. Change permission 
 
 * component 
+  kubectl get componentstatus 
 
+  kubernetes system components communicate only with API server
+
+  The API server is the only component that communicates with etcd
+
+  Kublect is only component that always run as a regular system components, others can run as pod
+
+  api server update etcd with optimistic locking strategy, use metadata.resourceVersion as version, when update, provide version to compare with current, if same update data and version number
+ 
+  pause container is the container holds all the containers of a pod together, pod shared same network and other namespace is provided by this pause container
 ** Master node: 
-
 *** Base components: 
-
     - Kubernetes Api Server: every component and other    node commonication with 
-
     - Scheduler: schedule app to work nodes 
-
     - Controller manager: cluster level function, track work nodes, handle node failure 
-
     - Etcd: reliable distributed cluster configuration store 
+**** etcd
+     k8s data store under /registry
 
+     access ectd in minikube:
+     ETCDCTL_API=3 etcdctl --cacert=/var/lib/minikube/certs/etcd/ca.crt  --cert=/var/lib/minikube/certs/etcd/peer.crt  --key=/var/lib/minikube/certs/etcd/peer.key -w=json
+
+     etcd3 api server value is store on base64 encode
+
+     etcd use RAFT consensus algorithm to ensuring hight availability and consistent
+
+     etcd usually deploy with odd number and only majority(quorum) of cluster can update to next state
+**** API server
+     must single run, can have other standby
+
+     prodive a CRUD interface
+
+     validation received objects
+
+     http request -> authentication plugins -> authorization plugins -> admission control plugins -> resoruce validation -> etcd
+     
+     api server only operate on ectd store data, don't do other thing like create pod
+**** Scheduler
+     watch api server, assign not assigned pod to a node by update metadata via api server
+
+     find can assigned node -> choose best one
+
+     use schedulerName to set use different scheduler, can provide custom implementation
+**** Controller Manager
+     - Replication manager
+     - ReplicaSet, DaemonSet, Job Controllers
+     - Deployment controller
+     - StatefulSet controller
+     - Node controller
+     - Service controller
+     - Endpoints controller
+     - Namespace controller
+     - PersistentVolum controller
+     - Others
+     
+     watch from api server, then perform create/update/delete operation to metadata via apiserver
 *** Addons components: 
 
     - Kubernetes DNS server 
-
     - Dashboard 
-
     - Ingress Controller 
-
     - Heapster 
-
     - Container Network plugin 
 
 ** Work node: 
-
    - Docker, rkt, or other container runner, run app 
-
    - Kubelet, talks to server api and manager app 
-
    - Kubernetes Service Proxy(kube-proxy), load-balance network traffic between app
 
+**** Kubelet
+     registry work node it running on to api server
+
+     watch api server, use container runtime to run container from api server metadata
+
+     kubelect can use local manifest directory to run container
+
+**** Kubernetes Service Proxy
+     configured iptables rule to redirect connection from service ip to pod ip
 ** rule 
-
-   kubectl get componentstatus 
-
    kubelet must run as system component, other compoent can run as sysetem component or run as pod 
 
    kubelet also need run on master node, it need run kube-system namespace pod 
-
-   only kubernetes api direct talk to etcd 
 
    etcd is only place k8s store data 
 

@@ -110,6 +110,45 @@
    
    use ViewModelProviders.of to get ViewModel instance, when activity first create it create ViewModel, when it re-create it return existing ViewModel
 
+** Widget
+   a widget is belong to app, display in home screen
+
+   a app can have mutliple widgets
+
+   [[https://codelabs.developers.google.com/codelabs/advanced-android-training-widgets/index.html?index=..%2F..advanced-android-training#3]]
+   
+   a widget can update by 2 ways, both way send a broadcast intent with action ACTION_APPWIDGET_UPDATE:
+   - define interval in widget's provider-info
+   - request widget update explicitly
+   
+   android:updatePeriodMillis min time is 1800000
+
+*** Lifecycle
+    -onEnabled, when first widget add to user screen called, even if add mutliple widgets, only call once
+    -onDisabled, when last wiget delete from user screen
+** Sensor Manager
+   getSystemService(Context.SENSOR_SERVICE) get SensorManager
+
+   sensorManager.getSonsorList(Sensor.TYPE_ALL) get device all sensor
+
+   sensorManager.getDefaultSensor(type) get speical type sensor
+
+   when sensor data change, android sensor framework generate a SensorEvent, can registry SensorEventListener to receive
+
+   listen on sensor data change consume battery, so don't listen on OnCreate, registry/onRegistry in start/stop
+
+**** sensor based orientation
+     1. listen on Sensor.TYPE_ACCELEROMETER and Sensor.TYPE_MAGNETIC_FIELD
+     2. get value accelerometer and magnetometer
+     3. SensorManager.getRotationMatrix(rotationMatrix, null, accelermeterData, magnetometer)
+     4. SensorManager.getOrientation(rotationMatrix, oritantionValue)
+     
+     three angle means, value from  -π (-3.141) to π:
+     - Azimuth: The direction (north/south/east/west) the device is pointing. 0 is magnetic north.
+     - Pitch: The top-to-bottom tilt of the device. 0 is flat.
+     - Roll: The left-to-right tilt of the device. 0 is flat.
+
+     for match rotate device, use windowManager.getDefaultDisplay to get device rotation then use SensorManager.remapCoordinateSystem to convert rotationMatrix
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
