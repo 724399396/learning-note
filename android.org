@@ -290,6 +290,28 @@
  
 ** AVD(Android Virtual Device)
    create and manage virtual device(emulator)
+** Profile GPU Rendering Tool
+   To run the Profile GPU Rendering tool and complete this practical exercise, you need a physical or virtual device running at least Android 4.1 (API level 16) with Developer Options turned on.
+
+   putting pixels on screen involves hardwares:
+   - cpu computes display lists
+   - gpu renders image to display
+   - memory store your app data
+   - battery provides power for all hardware
+   
+   when profiling an app, need siable instant run, otherwise impact performance and has a complicate stack trace
+
+   on device developer optinon, choose profile GPU rendering to on screen as bars
+
+   each bar presents one frame rendered.
+
+   if bar goes above green line, means frame took more than 16 ms to render
+** Memory Profile Tool
+   Android Profiler is set of tools provide real-time information about app
+   
+   Memory Profiler is used tranck performance problem and creashes about memory
+
+   Fatal signal 6 (SIGABRT), code -6 on logcat is means OOM
 * View
   - Button, clickable element
   - RadioButton
