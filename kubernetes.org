@@ -708,7 +708,7 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   for intf in /sys/devices/virtual/net/docker0/brif/*; do echo 1 > $intf/hairpin_mode; done. Change permission 
 
-* component 
+* Component 
   kubectl get componentstatus 
 
   kubernetes system components communicate only with API server
@@ -719,7 +719,9 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   api server update etcd with optimistic locking strategy, use metadata.resourceVersion as version, when update, provide version to compare with current, if same update data and version number
  
-  pause container is the container holds all the containers of a pod together, pod shared same network and other namespace is provided by this pause container
+  pause container is the container holds all the containers of a pod together, pod shared same network and other namespace is provided by this pause container, then this veth connect to host bridge
+
+  different node need has different address range, and node has routing table to every node address range
 ** Master node: 
 *** Base components: 
     - Kubernetes Api Server: every component and other    node commonication with 
@@ -773,7 +775,16 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
     - Ingress Controller 
     - Heapster 
     - Container Network plugin 
+     
+**** Container Network Interface Plugin
+     provide a flat, nat-less network
 
+     when pod start, pause container create a virtual Ethernet inerface pair, one interface remains in host's namespace(ipconfig get vethxxx), other is in pause container namespace named eth0
+
+     - Calico
+     - Flannel
+     - Romana
+     - Weave Net
 ** Work node: 
    - Docker, rkt, or other container runner, run app 
    - Kubelet, talks to server api and manager app 
@@ -788,6 +799,10 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
 **** Kubernetes Service Proxy
      configured iptables rule to redirect connection from service ip to pod ip
+
+     kube-proxy also watch endpoints to change iptables
+
+     when package send from client to service(from node will handle by this node iptables, from outside will target a node ip then handle by this target node), every node has iptables to change destination to real pod ip and port
 ** rule 
    kubelet must run as system component, other compoent can run as sysetem component or run as pod 
 
@@ -811,19 +826,36 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
    high avaliable k8s: multiple etcd(odd number), multiple api server(every connect to one etcd, has loadbalancer), multiple controller manager and scheduler(on active, other stand by), active is dicide by leader election(finish by api server endpoints(now is configmap)) 
 
+** High Available
+   run multiple etcd and configured aware each other
+
+   run multiple api server, because it is almost stateless and etcd is auto distributed, so don't need do any thing for it, then add a loadbalancer for all api server
+
+   run multiple controller manager and scheduler with --leader-elect option(k8s use etcd optimistic concurrency finish leader-election)
 * Kube api security 
+  api server receive request, then go through authentication plugins, when first plugin extract user id, group then skip left authentication plugins
 
   pod authentication use service account 
 
   user authentication not manager by kube api 
+  
+  group, used to grant permission for some users:
+  - system:unauthenticated
+  - system:authenticated
+  - system:serviceaccounts
+  - system:serviceaccounts:<namespace>
 
   serviceAccount, pod use to authentication to api server, default every namespace has a serviceaccount 
 
+  serviceAccount is namespaced resource, pod only use it's namespace's serviceaccount
+
   rBAC(Role Base Access Control) is resource work with plugin for auhtorization 
 
-  kubeclt create serviceaaount <name> 
+  kubeclt create serviceaccount <name> 
 
-  pod use spec.serviceAccountName to reference serviceaaount 
+  serviceAccount include a image pull secrets
+
+  pod use spec.serviceAccountName to reference serviceaaount, a pod serviceAccount must set when created, it can't be change later
 
   role/ClusterRole, define which action allow/deny 
 
