@@ -4,11 +4,11 @@
 * DONE Note from OneNote to Github
   SCHEDULED: <2018-12-12 三>
 
-* TODO Android Fundamental
-
+* DONE Android Fundamental
+* TODO refactor train configMap to Secret
+* TODO use hostPort try kakfa in k8s
+* TODO Android Advanced
 * TODO Kubernetes in Action
   SCHEDULED: <2018-12-26 三>
-
 * TODO Deep Learning with Python
-
 * TODO Algorithms 4th

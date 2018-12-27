@@ -851,8 +851,6 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   rBAC(Role Base Access Control) is resource work with plugin for auhtorization 
 
-  kubeclt create serviceaccount <name> 
-
   serviceAccount include a image pull secrets
 
   pod use spec.serviceAccountName to reference serviceaaount, a pod serviceAccount must set when created, it can't be change later
@@ -861,7 +859,13 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   roleBindings/ClusterRoleBindings, associate Role and usre/serviceaccount/group 
 
-  role is namespace level, ClusterRole is cluster level 
+  A subject(human/serviceaccount) is associated with one or more roles
+
+  role is namespace level, ClusterRole is cluster level, RoleBinding can use ClusterRole
+
+  RoleBinding subject can be any namespace serviceaccount
+
+  Role define resource is auto namespaced, e.g. decalre services means only this namespace's services
 
   roleBinding match one role to multiple sa/user/group 
 
@@ -871,7 +875,44 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   view allow access most of resources(except role rolebinding secret), edit allow edit most of resource(exclude secret), admin allow modify any resource of it namespace(exclude ResourceQuotas, namespace), cluster admin allow modify any resource 
 
+  Although you can create a RoleBinding and have it reference a ClusterRole when you want to enable access to namespaced resources, you can’t use the same approach for cluster-level (non-namespaced) resources.
+  
+  roleBinding to clusterRole `view`, only access in this namespace resources(list in view cluster role), but use clusterRoleBinding can access all namespace resource
+
+  kubernetes come with default ClusterRoles and ClusterRoleBindings, when restart will recreate: cluster-admin > admin > edit > view
+** Summarizing
+| For accessing                                                                                      | Role type to use | Binding type to use |
+| Cluster-level resources (Nodes, PersistentVolumes, ...)                                            | ClusterRole      | ClusterRoleBinding  |
+| Non-resource URLs (/api, /healthz, ...)                                                            | ClusterRole      | ClusterRoleBinding  |
+| Namespaced resources in any namespace (andacross all namespaces)                                   | ClusterRole      | ClusterRoleBinding  |
+| Namespaced resources in a specific namespace (reusing the same ClusterRole in multiple namespaces) | ClusterRole      | RoleBinding         |
+| Namespaced resources in a specific namespace(Role must be defined in each namespace)               | Role             | RoleBinding         |
+** CLI
+   #+BEGIN_SRC bash
+   kubeclt create serviceaccount <name> 
+   
+   kubectl create role <name> --verb=<verb> --resource=<resource>
+   
+   kubectl create rolebinding <name> --role=<role> --serviceaccount=<sa>
+   #+END_SRC
+  
 * Network security
+
+  set spec.hostNetwork to true let pod use host network namespace
+  
+  spec.containers.ports, let pod use host port
+
+  security contex:
+  - Specify the user (the user’s ID) under which the process in the container will run.
+  - Prevent the container from running as root (the default user a container runs as is usually defined in the container image itself, so you may want to prevent containers from running as root).
+  - Run the container in privileged mode, giving it full access to the node’s kernel.
+  - Configure fine-grained privileges, by adding or dropping capabilities—in contrast to giving the container all possible permissions by running it in privileged mode.
+  - Set SELinux (Security Enhanced Linux) options to strongly lock down a container.
+  - Prevent the process from writing to the container’s filesystem.
+
+  spec.containers.securityContext.runAsUser, change container run user
+
+  spec.containers.securityContext.runAsNonRoot, set to true prevent container run as root
 
   networkPolicy, work with network plugin to control network access, use label selector to controll ingress and egress rule 
 
@@ -884,7 +925,6 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   ipblock.cidr, set which ip range can acess 
 
 * Network
-
   container in same pod share network, k8s create a container from pause image, this image will create a eth, other container in this pod will use same network namespace so they can see this eth, and a veth will create, it is a two end pipe network, one end connection to pod eth, another end connect to docker bridge network(docker0), pod network on node split by CIDR to avoid conflitct 
 
   service network is handle by kube-proxy, first pod send request, eth0 in pod not recgonize, so it send to docker0 through pipe, docker0 forward to node eth, then kube-proxy will change iptables, this package will sent to correct node by iptables rule 
