@@ -149,6 +149,18 @@
      - Roll: The left-to-right tilt of the device. 0 is flat.
 
      for match rotate device, use windowManager.getDefaultDisplay to get device rotation then use SensorManager.remapCoordinateSystem to convert rotationMatrix
+** Language support
+   android studio provide a translator editor for strings.xml
+
+   start end is used replace left/right to work both in LTR(left to right) and RTL(right to left) language, need set android:supportsRtl to ture in <application>
+
+   java.text.DateFormat.getDataInstance().format/parse use user choose locale format date
+
+   java.text.NumberFormat.getInstance(), format/parse number use user choose locale
+
+   java.text.NumberFormat.getCurrencyInstance(), format/parse currency use user choose locale
+
+   Locale.getDefault(), get user selected locale
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
