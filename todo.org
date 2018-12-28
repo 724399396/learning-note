@@ -6,7 +6,8 @@
 
 * DONE Android Fundamental
 * TODO refactor train configMap to Secret
-* TODO use hostPort try kakfa in k8s
+* TODO add PodSecurityPolicy/NetworkPolicy in trainplatform
+* TODO CI/CD
 * TODO Android Advanced
 * TODO Kubernetes in Action
   SCHEDULED: <2018-12-26 三>

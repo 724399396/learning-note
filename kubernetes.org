@@ -910,19 +910,19 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   - Set SELinux (Security Enhanced Linux) options to strongly lock down a container.
   - Prevent the process from writing to the container’s filesystem.
 
-  spec.containers.securityContext.runAsUser, change container run user
-
-  spec.containers.securityContext.runAsNonRoot, set to true prevent container run as root
-
   networkPolicy, work with network plugin to control network access, use label selector to controll ingress and egress rule 
 
   CIDR(Classless Inter-Domain Routing) 
 
-  spec.podSelector is use to define which pod be control, ingress controll other pod access this pod 
+  NetworkPolicy.spec.podSelector is use to define which pod be control
+  
+  NetworkPolicy.spec.ingress controll which pod can access this pod which port
 
-  namespaceSelector use to set namespace level network policy 
+  NetworkPolicy.spec.ingress.from.namespaceSelector use to set namespace level network policy 
 
-  ipblock.cidr, set which ip range can acess 
+  NetworkPolicy.spec.ingress.ipblock.cidr, set which ip range can access this pod
+
+  Networkpolicy.spec.egress.to, controll selected pot outbound network
 
 * Network
   container in same pod share network, k8s create a container from pause image, this image will create a eth, other container in this pod will use same network namespace so they can see this eth, and a veth will create, it is a two end pipe network, one end connection to pod eth, another end connect to docker bridge network(docker0), pod network on node split by CIDR to avoid conflitct 
@@ -959,7 +959,7 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   SecurityContext.runAsNonRoot: true, let container can't run as root 
 
-  SecurityContext.privileged: true, let pod hs privaleged permission on node 
+  SecurityContext.privileged: true, let pod has privaleged permission on node 
 
   SecurityContext.capabilities, can add/drop linux capabilities, like time, CHOWN 
 
@@ -971,10 +971,26 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   PodSecurityPolicy is cluster level 
 
-  PodSecurityPolicy, can set hostIPC, hostPID, hostNetwork, hostPorts, privileged, readOnlyRootFilesystem, runAsUser, fsGroup, supplementalGroups, seLinux, volumes 
+  PodSecurityPolicy can do:
+  - Whether a pod can use the host’s IPC, PID, or Network namespaces
+  - Which host ports a pod can bind to
+  - What user IDs a container can run as
+  - Whether a pod with privileged containers can be created
+  - Which kernel capabilities are allowed, which are added by default and which are always dropped
+  - What SELinux labels a container can use
+  - Whether a container can use a writable root filesystem or not
+  - Which filesystem groups the container can run as
+  - Which volume types a pod can use
+  
+  psp only work when create new pod, because it work on api admission controll phase
 
-  can create multiple psp, and use clusterrole to bind to psp, then use clusterrolebinding to bind to user/group/serviceaaount 
+  psp set must run as user, will denied if you declare run as in pod not match, will pass container define other user but will change to allow user when start
 
+  can create multiple psp, and use clusterrole to bind to psp, then use clusterrolebinding to bind to user/group/serviceaaount, after this when create pod will use matched psp
+
+  kubectl create clusterrole <name> --verb=use --resource=podsecuritypolicies --resource-name=<psp name> create clusterrole use psp
+  
+  
 * etcd
 
   k8s supoort etc 2 and etc 3, but version 3 is recommended 
