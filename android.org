@@ -161,6 +161,31 @@
    java.text.NumberFormat.getCurrencyInstance(), format/parse currency use user choose locale
 
    Locale.getDefault(), get user selected locale
+** Accessibility
+   TalkBack is android buil-in screen reader
+** Dynamic request permission
+   Starting with Android 6.0 (API level 23), it's not always enough to include a permission statement in the manifest. For "dangerous" permissions, you also have to request permission programmatically, at runtime.
+
+   ActivityCompat.checkSelfPermission(activity, permission) to check permission
+
+   ActivityCompat.requestPermissions(activity, permissions) to request permission
+
+   override onREquestPermissionsResult to receive get permission result
+** Device Location
+   FusedLocationProviderClient, depend on Google Play service
+
+   fix 64k method problem:
+   [[https://developer.android.com/studio/build/multidex]]
+
+   add permission ACCESS_COARSE_LOCATION/ACCESS_FINE_LOCATION in AndroidManifest
+
+   LocationService.getFusedLocationProviderClient, get FusedLocationProviderClient
+
+   fusedLocationProvider.getLastLocation() get last known location
+
+   Geocoder.getFromLocation, reverse goecoding lat/lng to address
+
+   fusedLocationProvider.requestLocationUpdates(request, callback, lopper) start request location update
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
