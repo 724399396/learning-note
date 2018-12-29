@@ -990,7 +990,6 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   kubectl create clusterrole <name> --verb=use --resource=podsecuritypolicies --resource-name=<psp name> create clusterrole use psp
   
-  
 * etcd
 
   k8s supoort etc 2 and etc 3, but version 3 is recommended 
@@ -1026,40 +1025,68 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml 
 
 * Resources limit
+  requests is for pod needed, limits is max usage. They're specified for each container individually
 
-  1 cpu core = 1000 m(millicores) 
+  Pod.spec.containers.resources.requests set request, Pod.spec.containers.resources.limits set limit
+  
+  pod always see node memory/cpu resource, top on pod show cpu/memory is based on node, not based on container it self
 
-  requests is for pod needed 
-
-  limits is max usage 
-
-  requests will affect pod scheduler, current usage will sum by all scheduler pod on this node, even thought it consule less than it required, if unused(calculate) less than require, this pod can't be scheduler on this node 
+  requests will affect pod scheduler, current usage will sum by all scheduler pod on this node, even thought it consume less than it required, if unused(calculate) less than require, this pod can't be scheduler on this node 
 
   scheduler will filter pod wihout limit not required, there a two prioritization function, one is LeastRequestPriority, which first match fewer requested resource(greater amont of unallocated resource), another one is MostRequestPriority, with lower left resource 
 
-  cpu=1m, means us 1 milicores, 1 cpu = 1000 milicores Cpu=1, means use 1 core Unsed cpu will assign to pod use request ratio Can set custom resource on node, and use same name on pod resource to refine use resource If resource request is overcommite node (capacity – allocated) resource , it will be pending Resource limit is not same as request, it can more than 100%, k8s decide which container to be kill 
+  cpu=1m, means 1 milicores, 1 cpu = 1000 milicores,cpu=1 means use 1 core
 
-  cpu exceeding will do nothing, memory exceeding will kill this pod then if this pod restart always, then it restart, if failed very frequence will be CrashLoopBackOff 
+  resource judge is happen on scheduler phase, so pod metadata will saved in k8s first, then scheduler to choose node, if no node match requirement, will be pending
 
-  pod always see node memory/cpu resource 
+  cpu request not only affect node scheduler, also affect cpu time sharing, Unsed cpu will assign to pod use request ratio
 
-  some app decide how much memory and thread start by query system resource, there be problem when you setting resource limit, so need get this resource info 
+  resource limit sum can more than 100%, if actual usage over 100%, k8s decide which container to be kill 
 
-  from /sys/fs/cgroup/cpu/cpu.cfs_quota_us 
+  k8s support custom resources, known as Opaque Integer Resources
 
-  qoS(Quality of Service), decide which pod killed when resource not enough, there are 3 class: (1) BestEffort(request and limit both not set, both cpu and memory), allow no cpu and first one killed when no resource and it will no meory limit, (2) Guarenteed(request below on limit), request/limit must be set for cpu and memory, and it must equal, need for each container (3) Burstable (request and limist is equal, both cpu and memroy) 
+  cpu exceeding will do nothing, memory exceeding will kill this pod then if this pod restart is always or OnFailure, then it restart, if failed very frequence, every time restart delay will increase final will be CrashLoopBackOff 
+
+  some app decide how much memory and thread start by query system resource, there be problem when you setting resource limit, so need get this resource info from /sys/fs/cgroup/cpu/cpu.cfs_quota_us 
+
+  QoS(Quality of Service), decide which pod killed when resource not enough, there are 3 class:
+  1. BestEffort(don't have any requests or limits set), worst case get no cpu and be killed first, but if resource available if can use what you want
+  2. Burstable (any container request not equal to limit)
+  3. Guarenteed(requests are equal to the limits for all resources):
+    * Requests and limits need to be set for both CPU and memory.
+    * They need to be set for each container.
+    * They need to be equal (the limit needs to match the request for each resource in each container).
 
   if container is different QoS, then pod is Burstable 
 
-  when node overcommited, kill order is BestEffort -> Burstable -> Guarenteed, in same class, memory usage percent(align request) is used, more usage will be kill first 
+| CPU requests vs. limits | Memory requests vs. limits | Container QoS class | 
+| None set                | None set                   | BestEffort          | 
+| None set                | Requests < Limits          | Burstable           | 
+| None set                | Requests = Limits          | Burstable           | 
+| Requests < Limits       | None set                   | Burstable           | 
+| Requests < Limits       | Requests < Limits          | Burstable           | 
+| Requests < Limits       | Requests = Limits          | Burstable           | 
+| Requests = Limits       | Requests = Limits          | Guaranteed          | 
 
-  limitRange is a resouce type, it set pod min and max resource usage will commit pod to api server, and also define a default value, it for every pod and container 
+  when node overcommited, kill order is BestEffort -> Burstable -> Guarenteed
+  
+  in same class, higher OOM score will be kill first, OOM score calculated from two things: percent of available memory and fxied OOM score adjustment(base on Qos class and request memory)
 
-  resourceQuota, is for contraint whole namespace resource usage, it also apply on admission plugin 
+  LimitRange is a resouce type, it set pod min and max resource usage will commit pod to api server, and also define a default value, it for every pod and container 
 
-  if y ou define ResourceQuota, new commit pod need define request/limit 
+  LimitRange resource are used by LimitRanger Admission Controll plugin
 
-  resourceQuota can set scope, it only effect on set scope, 4 scope(can use together, pod all match will be constraint by resoucequota): BestEffort, NonBestEffort, Terminating, NontTerminating 
+  ResourceQuota, is for constraint whole namespace resource usage(cpu memory storage k8sResources), it apply on admission plugin 
+
+  if you define ResourceQuota, new commit pod need define request/limit(or set by LimitRange)
+
+  kubectl describe quota, show resource used/hard status
+
+  resourceQuota can set scope, it only effect on scope pod, 4 scope(can use together, pod all match will be constraint by resoucequota)
+  - BestEffort
+  - NonBestEffort
+  - Terminating
+  - NontTerminating 
 
   heapster, collection all pod memory/cpu info by cAdvisor, use kubectl top to get resource usage 
 
