@@ -146,3 +146,8 @@
 
 
 
+* Syntax
+  A.run {}, in block this will refer to A, block result will be run result (transformation function)
+  A.let {a -> }, in block a will be A, block result will be let reult (transformation function)
+  A.apply {}, in block this will refer to A(mutation function)
+  A.also {a -> }, in block a will be A(mutation function)
