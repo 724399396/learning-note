@@ -186,6 +186,18 @@
    Geocoder.getFromLocation, reverse goecoding lat/lng to address
 
    fusedLocationProvider.requestLocationUpdates(request, callback, lopper) start request location update
+*** Places API
+    register on google developer console, use package name and SHA1 key create a api key
+
+    import  com.google.android.gms:play-services-places
+** Google Maps
+    register on google developer console, use package name and SHA1 key create a api key
+    
+    create from android studio select google map activity
+    
+    google_maps_api.xml, this file hold API key
+
+    acitivty_maps.xml, single fragment fill entrie screen
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
