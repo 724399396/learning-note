@@ -1,0 +1,9 @@
+* Book
+  Deep Learning with Python
+  Hands-On Machine Learning
+  Introduction to Applied Algebra
+  Introduction to Linear Algebra
+  https://arxiv.org/abs/1502.05767
+  An introduction to Statistical Learning
+  Deep Learning
+  The Elements of Statistical Learning
