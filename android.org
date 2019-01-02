@@ -198,6 +198,32 @@
     google_maps_api.xml, this file hold API key
 
     acitivty_maps.xml, single fragment fill entrie screen
+** Custom View
+   extend from already exist View, then extend all constructors
+   
+   in layout file use full package name reference custom view
+
+   - To create a custom view of any size and shape, add a new class that extends View.
+   - Override View methods such as onDraw() to define the view's shape and basic appearance.
+   - Use invalidate() to force a draw or redraw of the view.
+   - To optimize performance, assign any required values for drawing and painting before using them in onDraw(), such as in the constructor or the init() helper method.
+   - Add listeners such as View.OnClickListener to the custom view to define the view's interactive behavior.
+   - Add the custom view to an XML layout file with attributes to define its appearance, as you would with other UI elements.
+   - Create the attrs.xml file in the values folder to define custom attributes. You can then use the custom attributes for the custom view in the XML layout file.
+** Canvas
+   - To draw on the display of a mobile device with Android you need a View, a Canvas, a Paint , and a Bitmap object.
+   - The Bitmap is the physical drawing surface. The Canvas provides an API to draw on the bitmap, the Paint is for styling what you draw, and the View displays the Bitmap.
+   - You create a Bitmap, associate it with a View, create a Canvas with a Paint object for the Bitmap, and then you can draw.
+   - You must invalidate() the view when your are done drawing, so that the Android System redraws the display.
+   - All drawing happens on the UI thread, so performance matters.
+   - A common pattern for working with a canvas is to create a custom view and override the onDraw() and onSizeChanged() methods.
+   - Override the onTouchEvent() method to capture user touches and respond to them by drawing things.
+   - The Context of an activity maintains a state that preserves transformations and clipping regions for the Canvas.
+   - Use canvas.save() and canvas.restore() to draw and return to the original state of your canvas.
+   - To draw multiple shapes on a canvas, you can either calculate their location, or you can move (translate) the origin of your drawing surface. The latter can make it easier to create utility methods for repeated draw sequences.
+   - Clipping regions can be any shape, combination of shapes or path.
+   - You can add, subtract, and intersect clipping regions to get exactly the region you need.
+   - You can apply transformations to text.
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
