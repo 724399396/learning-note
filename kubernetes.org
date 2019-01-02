@@ -1088,7 +1088,13 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   - Terminating
   - NontTerminating 
 
-  heapster, collection all pod memory/cpu info by cAdvisor, use kubectl top to get resource usage 
+  kubelet already contain a agent cAdvisor to collect node/container memory/cpu usage, but need heapster to collect it to api server
+
+  heapster let you can run kubectl top command to show resource usage
+
+  kubectl top node, show node memory/cpu usage
+
+  kubectl top pod, show each pod memory/cpu usage, -- containers show container in pod usage
 
   influxDB and Grafana, used to store and analyzing resouce usage, deploy by https://github.com/kubernetes/heapster/tree/master/deploy/kube-config/influxdb 
 
@@ -1096,23 +1102,42 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   HorizontalPodAutoscaler(HPA) is a resource type, this controller period check pod metric and diff with target mertic then auto scaling 
 
-  HPA via cAdvisor to get pod metric 
+  HPA get pod metric by query Heapster REST api(after kubernetes 1.11, heapster is deprecated, use metric api instead)
 
-  cpu mertic, base on you set request cpu resource, 
+  target replica count = sum of every pod metric / target metric
+
+  hpa allow to adjust replicas of Deployments/ReplicaSets/ReplicationController/StatefulSet
+
+  cpu mertic, base on you set request cpu resource,
 
   kubectl autoscale deployment <name> --cpu-percent=30 –min=1 –max=5, create a HPA 
 
-  autoscaler every scale can max incress/decress this number pod, is double or 4 
+  autoscaler scale has a incress/decress limit in single step, is double current number or 4 
 
   scale-up min period is 3min, scala-down min period is 5 min 
 
   change hpa at runtime is acceptable 
 
-  kubectl cordon <node>, let node unscheduler 
+  hpa can work on custom metrics
+
+  hpa metric type:
+  - Resource
+  - Pods, pod releated metric, e.g QPS
+  - Object, based on other object, e.g. ingress controller
+  
+  clsuter autoscaler, when need more nodes, k8s require cloud infrastructure to auto add/release node, [[https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler]]
+
+  when cluster autoscaler notice pod unschduled, then it found is any node group in cloud match require, if match it scale up selected node group node, then this node register it self by kube api
+
+  when node cpu/memory usage is under 50%, and no system pod(exclude deamon set deployed), no storage, no not monitored pod run this node, this node then mark as unschedulable when evicted all pods
+
+  kubectl cordon <node>, let node unscheduler
 
   kubectl drain <node> let node unscheduler and evicts all pod 
 
-  podDistributionBudget,  is a resource type, it work with autoscaler cluster, ensure this pod will not less than minAvailable 
+  kubectl uncordon <node>, let node schdulable 
+
+  PodDistributionBudget,  is a resource type, it work with autoscaler cluster, ensure this pod will not less than minAvailable 
 
 * Advanced Scheduler  
 
