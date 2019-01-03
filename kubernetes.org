@@ -1144,16 +1144,23 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   Tainted and Toleration: node can set tainted, only pod can toleration node tainted then it can schedule to this node, e.g. api-server to master node 
 
   Tained format is <key>=<value>:<effect> 
+  
+  taint effect:
+  - NoSchedule , which means pods won’t be scheduled to the node if they don’t tolerate the taint.
+  - PreferNoSchedule is a soft version of NoSchedule , meaning the scheduler will try to avoid scheduling the pod to the node, but will schedule it to the node if it can’t schedule it somewhere else.
+  - NoExecute , unlike NoSchedule and PreferNoSchedule that only affect scheduling, also affects pods already running on the node. If you add a NoExecute taint to a node, pods that are already running on that node and don’t tolerate the NoExecute taint will be evicted from the node.
 
   if toleration match all tained, it can be scheduler to this node 
-
-  effect: (1) NoScheduler, if pod not toleration node tainted, will not schdule to this node (2) PreferNoSchuler, will try avoid to schuler this node if not toleration the node tainted, but finally if no where match will scheduler to this node (3) NotExecute, pod can't schuler to this node if not tolerate, then if pod already run this node, if not match will be evicted to other  
-
+  
   kubectl taint node <node name> <key>=<value>:<effect>, create a taint on node 
 
   tolerationSeconds, can used to adjust pod reschdule to other node wait time 
 
+  node.kubernetes.io/not-ready:NoExecute for 300s and node.kubernetes.io/unreachable:NoExecute for 300s is auto added to pod
+
   node affinity is used to instead of node selector, node affinity can set pod scheduler to node priority 
+
+  pod affinity set multiple affinity and every affinitiy has a weight, node priority is sum with all affinity weight
 
   pod affinity, used let pod scheduler to same node, use different topologyKey to implement different pod affinity 
 
