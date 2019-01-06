@@ -129,9 +129,9 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   pod will create a pause container, this container is another user cntainer in this pod infrastructure, other container share namespace and network 
 
-  init Container run before Controller, only it finish, then main container start 
+  Pod.spec.initCOntainers declare init container, init Container run before main container, only it finish, then main container start 
 
-  init Container can be multiple 
+  init Container can be multiple, it execute one by one
 
   lifecycle.postStart, can execut command/http after pod created, if it faile will cause pod failed 
 
@@ -223,6 +223,7 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   delete namespace will delete all resource under it 
 
 * ReplicationController/ReplicationSet 
+  they only care about pod number, even then pod container is continue crash, they don't delete pod and replace new one
 
 ** ReplicationController
 
