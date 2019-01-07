@@ -1161,9 +1161,13 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   node affinity is used to instead of node selector, node affinity can set pod scheduler to node priority 
 
-  pod affinity set multiple affinity and every affinitiy has a weight, node priority is sum with all affinity weight
+  node affinity set multiple affinity and every affinitiy has a weight, node priority is sum with all affinity weight
 
   pod affinity, used let pod scheduler to same node, use different topologyKey to implement different pod affinity 
+
+  custom topologyKey work in this way: first labelSelector(or other samilar) found the pod, then use topologyKey found this node label value with topologyKey, then whoese pod will deploy to node has <topologyKey>=<label value> node
+
+  if pod which affinity other pod already deploy, then the be affinitied pod deleted, the pod won't be scheduler to other node, then deleted pod reschdule will first choose it ever run on node
 
   podAntAffinity is opposite with podAfiinity 
 
