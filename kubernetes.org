@@ -33,6 +33,8 @@
   - kubectl apply, modifi object by applying full yaml or json file
   - kubectl replace, replace the object with new yaml/json file, in contrast to the apply command, this command require object exist
   - kubectl set image, change container image define
+  
+  dont use latest tag in production, and modify imagePullPolicy in production
 * cli
   --v 6, show kubectl communication with api server
   #+BEGIN_SRC bash
@@ -133,10 +135,6 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   init Container can be multiple, it execute one by one
 
-  lifecycle.postStart, can execut command/http after pod created, if it faile will cause pod failed 
-
-  lifecycle.preStop, execute when container is terminated 
-
   delete pod is by set deletionTimestamp, then kubele notice that and stop container, then use (grace period time) to wait container stop, terminate event order; (1) preStop hook (2) send SIGTERM to main process (3) wait container stop (4) use SIGKILL force stop container 
 
   spec.terminatonGracePeriod, set wait container stop time 
@@ -174,6 +172,43 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
   - valueFrom, get value from ConfigMapKeyRef/fieldRef/resourceFieldRef/SecretKeyRef
   
   Pod.spec.automountServiceAccountToken, set to false disable default-token secret auto mount
+
+  /dev/termination-log, write content to this file will show in pod status when pod terminate, path can change by spec.terminationMessagePath
+** lifecycle hook
+   there are two hooks for each container: pre-start post-start
+
+   hook can execute command/http request
+
+   lifecycle.postStart, execute immediately after container main process is start, it run parrallel with main process, before it finish, container state will be Waiting and pod status will be Pending, if hook execute failed the main container will be killed
+
+   lifecycle.preStop, execute immediately before container is terminated, execute failed not prevent container terminating
+
+   localhost in lifecycle httpGet host means node localhost
+
+*** Pod shutdown
+    pod delete is trigger by HTTP DELETE request to api server, then api server set deletionTimestamp field on pod metadata, then kubelet notice this field,
+    then terminate started, run follow step:
+    1. run pre-stop hook, wait it finish
+    2. Send SIGTERM signal to container main process
+    3. wait until container shut down or until termination grace period runs out
+    4. forcibly kill the process with SIGKILL, if it hasn't terminated gracefully yet.
+    then kubelet notify api server to delete pod resource
+  
+    termination grace period configured by spec.terminationGracePeriodSeconds, default is 30
+    
+    SIGTERM signal is send by k8s to container, for ensure signal is reach app process, use ENTRYPOINT ["cmd"] instead of ENTRYPOINT cmd
+
+    don't reply on app shutdown procedure will complete, if it is import, best practice is hacing a dedicated, constantly runnning pod to handle this
+** Handle client request
+   define readiness probe avoid not ready pod be connected by client
+
+   pod delete is more complicated, when pod delete, terminate and ip-tables modified is parrallel, and change iptable don't affect existing connection
+
+   To recap—properly shutting down an application includes these steps:
+   - Wait for a few seconds, then stop accepting new connections.
+   - Close all keep-alive connections not in the middle of a request.
+   - Wait for all active requests to finish.
+   - Then shut down completely.
 * label
 
   kubectl label <type> <name> <label-key>=<label-value>, add or update label, update need –overwrite 

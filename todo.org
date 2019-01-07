@@ -7,6 +7,7 @@
 * DONE Android Fundamental
 * TODO refactor train configMap to Secret
 * TODO add PodSecurityPolicy/NetworkPolicy in trainplatform
+* TODO tag trainplatform image without latest and set imagePullPolicy
 * TODO CI/CD
 * TODO Android Advanced
 * TODO Kubernetes in Action
