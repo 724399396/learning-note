@@ -1232,7 +1232,15 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   from kubernetes 1.8, api server can back end with batch of api server aggerage, you can define you custom api server 
 
-  service Catalog, CusterServiceBroker, describe system can provision services, ClusterServiceClass, ServiceInstance, system instance has provisioned, ServiceBinding, Service Instance bind with client 
+  service Catalog, is a catelog of services, user can through catelog create service without deal with pods, serviecs, configmaps and other
+
+  Service Catalog:
+  - CusterServiceBroker, which describes an (external) system that can provision
+services
+  - ClusterServiceClass, which describes a type of service that can be provisioned
+  - ServiceInstance, which is one instance of a service that has been provisioned
+  - ServiceBinding, which represents a binding between a set of clients (pods)
+and a ServiceInstance
 
   serviceBroker need implment OpenServiceBroker api 
 
