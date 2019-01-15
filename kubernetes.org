@@ -1210,11 +1210,13 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   CustomerResourceDefinition object(CRD), is a custom resource type in k8s, you first create CRD, then you can post this kind resource to k8s, it define how control like pod, deployment, configmap 
 
-  spec.group is correspond to apiVersion 
+  CustomResourceDefinition.spec.group/CustomResourceDefinition.spec.version is correspond to apiVersion 
 
   spec.names.kind use correspond to kind 
 
   just CRD do nothing, it store data to api server, need work with correspond controller 
+
+  from kubernetes 1.8, use CustomResourceValidation feature validate custom object post json/yaml file
 
   from kubernetes 1.8, api server can back end with batch of api server aggerage, you can define you custom api server 
 
