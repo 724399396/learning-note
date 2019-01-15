@@ -1206,6 +1206,18 @@ alias kcd='kubectl config set-context $(kubectl config current-context) --namesp
 
   podAntAffinity is opposite with podAfiinity 
 
+* Best practice
+** Centralize log
+   use KEF(Kibana ElasticSearch FluentD) to as centralized log solution
+** minikube
+   use minikube mount to mount your local files into minikube vm
+   use minikube inside docker daemon build docker, avoid network fetch
+   docker save <image> | (eval $(minikube docker-env) && docker load), load local image to minikube
+** CD
+   [[https://github.com/box/kube-applier]] deploy from vcs
+   [[http://fabric8.io]] full CI/CD pipeline for DevOps
+** json/yaml
+   use ksonnet/jsonnet to create manifest file
 * Extension Kubernetes 
 
   CustomerResourceDefinition object(CRD), is a custom resource type in k8s, you first create CRD, then you can post this kind resource to k8s, it define how control like pod, deployment, configmap 
