@@ -1247,11 +1247,8 @@ and a ServiceInstance
   OpenShift 3 is base on k8s, support: 
 
   - user&group manager 
-
   - Application Template, set a template, then suppor parameter to replcae template to create resource 
-
   - BuildConfig, build image and deploy from git source 
-
   - DeploymentConfig, auto deployment when source change, work with image stream 
 
   Deis workflow, can deploy into k8s, workflow also provide a source to deployment solution, need helm CLI to work on deis workflow 
