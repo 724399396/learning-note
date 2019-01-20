@@ -29,6 +29,7 @@
   
   LayoutInflater convert a xml definition to View class
 
+  onSizeChanged is called when view size change
 ** Notification
    Starting with Android 8.0 (API level 26), your code can assign each of your app's notifications to a user-customizable notification channel
 
@@ -224,6 +225,19 @@
    - Clipping regions can be any shape, combination of shapes or path.
    - You can add, subtract, and intersect clipping regions to get exactly the region you need.
    - You can apply transformations to text.
+** Surfaceview
+   allow drawing on different threads
+   - To offload drawing to a different thread, create a custom view that extends SurfaceView and implements Runnable. The SurfaceView is part of your view hierarchy but has a drawing Surface that is separate from the rest of the view hierarchy.
+   - Create an instance of your custom view and set it as the content view of your activity.
+   - Add pause() and resume() methods to the SurfaceView that stop and start a thread.
+   - Override onPause() and onResume() in the activity to call the pause() and resume() methods of the SurfaceView.
+   - If appropriate, handle touch events, for example, by overriding onTouchEvent().
+   - Add code to update your data.
+   - In the SurfaceView, implement the run() method to:
+   - Check whether a Surface is available.
+   - Lock the canvas.
+   - Draw.
+   - Unlock the canvas and post to the Surface.
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
