@@ -7,3 +7,18 @@
   An introduction to Statistical Learning
   Deep Learning
   The Elements of Statistical Learning
+* Basic
+  Artificial Intelligence include Machine learning, Machine learning include deep learing
+  symbolic AI is programmer handcraft a sufficiently large set of exlicit rules
+  symbolic AI: data + rule -> result, machine learning: data + result -> rule
+  machine learning need 3 things:
+  1. input data points
+  2. examples of the expected output
+  3. a way to measure whether the algorithm is doing a good job
+  machine larning is searching for useful representations of some input data, within a predefined space of possibilities, using guidance from a feedback signal.
+  deep learning "deep" is on successive layer of representations
+  deep learning almost always learned via models called neural networks
+  deep learning is adjust every layer weight(parameter)
+  loss function(objective function) is used to measure how for output is from what expected
+  use loss function adjust weight is called optimizer, implement by Backpropagation algorithm
+* Keras
