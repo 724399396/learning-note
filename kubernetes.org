@@ -1249,11 +1249,18 @@ and a ServiceInstance
   - user&group manager 
   - Application Template, set a template, then suppor parameter to replcae template to create resource 
   - BuildConfig, build image and deploy from git source 
-  - DeploymentConfig, auto deployment when source change, work with image stream 
+  - DeploymentConfig, auto deployment when source change, work with image stream
+  - ImageStream
+  - Routes, pre Ingress Controller
+  - others
 
-  Deis workflow, can deploy into k8s, workflow also provide a source to deployment solution, need helm CLI to work on deis workflow 
+  Deis workflow is a PaaS, workflow also provide a source to deployment solution, need helm CLI to work on deis workflow 
 
-  Helm can work without workflow, Tiller server is a pod run on k8s, Helm application package named as charts 
+  can deploy Deis workflow to any existing Kubernetes cluster, when run workflow, it create a set of Service and ReplicationController
+
+  Helm is a package manager for kubernetes, can work without workflow
+  
+  Tiller server is a pod run on k8s, Helm application package named as charts 
 
   Charts + config = Release 
 
