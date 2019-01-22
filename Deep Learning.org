@@ -21,4 +21,80 @@
   deep learning is adjust every layer weight(parameter)
   loss function(objective function) is used to measure how for output is from what expected
   use loss function adjust weight is called optimizer, implement by Backpropagation algorithm
+  logreg(logistic regression) is "hello world" in machine learning, it is a classification algorithm
+** SVM
+   SVM(support vector machine) aim at solving classification problems by finding good decision boundaries
+   - The data is mapped to a new high-dimensional representation where the decision boundary can be expressed as a hyperplane 
+   - A good decision boundary (a separation hyperplane) is computed by trying to maximize the distance between the hyperplane and the closest data points from each class, a step called maximizing the margin. This allows the boundary to gen- eralize well to new samples outside of the training dataset.
+   SVM hart to sclae to large dataset and need feature enginerring which is difficult and brittle
+   Decision trees, classifiy input data by flowchart-like structure
+   Rnadom Forest building a large number of decision trees and then ensembling their output, it applicable to a wide range of problems, is's second-best algorithm for any shallow machine-learning task
+   Gradient boostring machines, like random forest, based on ensembling weak prediction models. best algorithm for shallow machine-learning
+   successful in applied machine learning today:
+   - gradient boostring machines(XGBoost), for shallow learning problems
+   - deep learning(Keras), forr perceputual problems
+   MNIST(National Institute of STandards And Technology) is a machine larning database
+** Tensor
+   ternsors are a generalization of matrices to an arbitrary number of dimensions
+*** Scalars(0D tensors)
+    A ternsor contains only one number, in numpy float32 and float64 is scalar tensor, ndim attribute in numpy is number of axes
+*** Vector(1D tensors)
+    A array of number is called vector or 1D tensor, has exactly one axis, one axe can has any number dimension(for vector, it means vector length)
+*** Matrices (2D tensors)
+    A array of vectors is a matrix
+    A tensor is defiend by three key attributes:
+    - Number of axes(rank), called ndim in numpy
+    - Shape, every axes dimensions number tuple, called shape in numpy, e.g scalrs is (), vector is (length,)
+    - Date type, called dtype in numpy
+    numpy support tensor operation, [start:end] slice a tensor from start to end(exclude), if omit start will start from 0, if omit end will to length, for above 1D tensor, use [<some>:<some>, <other>:<other>] to set every axe slice
+    general, first axis is named as samples axis(sometime is samples dimension), when consider batch process, the first axis alled batch axis(or batch dimension)
+    Flow machine-learning framework, from Google, places the color-depth axis at the end: (samples, height, width, color_depth) . Meanwhile, Theano places the color depth axis right after the batch axis: (samples, color_depth, height, width)
+    tensor operation is element-wise, delegate to a BLAS(Basic Linear Algebra Subprograms), BLAS is low-level, highly parrallel, efficient
+    when operation on different rank tensor, broadcasting will happen, this operation is virutal level, algorithm will use origin tensor and handle this in algorithmic level rather than memory level:
+    - axes are added to smaller tensor to match large tensor
+    - smaller tensor is repeated alongside these new axes to match the full shape of the larger tensor
+    Tensor dot, also called tensor produce(it is not element-wise product, in numpy element-wise product is *), in numpy and keras use dot, for vector dot operation is means dot(x, y) = sum(x[i] * y[i])
+    dot rule:
+    - (a, b, c, d) . (d,) -> (a, b, c)
+    - (a, b, c, d) . (d, e) -> (a, b, c, e)
+    for different rank dot:
+    #+BEGIN_SRC python
+import numpy as np
+def naive_matrix_vector_dot(x, y):
+  assert len(x.shape) == 2
+  assert len(y.shape) == 1
+  assert x.shape[1] == y.shape[0]
+  z = np.zeros(x.shape[0])
+  for i in range(x.shape[0]):
+    for j in range(x.shape[1]):
+      z[i] += x[i, j] * y[j]
+  return z
+
+def naive_matrix_dot(x, y):
+  assert len(x.shape) == 2
+  assert len(y.shape) == 2
+  assert x.shape[1] = y.shape[0]
+
+  z = np.zeros((x.shape[0], y.shape[1]))
+  for i in range(x.shape[0]):
+    for j in range(y.shape[1]):
+      row_x = x[i, :]
+      column_y = y[:, j]
+      z[i, j] = = naive_vector_dot(row_x, column_y)
+  return z
+    #+END_SRC
+    reshaping tensor means change it shape, but should has same total number, e.g. reshape (3,2) to (6,1)
+    transpose is a tensor reshaping, it swap matrix row/column
+    deep learning first layer is relu(dot(W, input) + b), W and b is random initialized, and W/b is weight or trainable paramters, it will change via feedback signal
+    gradient is derivativeof a tensor operation
+** SGD
+    deep learning with mini-batch stochastic gradient descent(SGD) step:
+    1. draw a batch of training samples x and corresponding targets y.
+    2. Run the network on x to obtain predicitions y_pred
+    3. Compute the loss of the network on the batch, a measure of the mismatch between y_pred and y
+    4. compute the gradient of the loss with regard to the network's parameters
+    5. move the parameters a little in the oppsite direction from the gradient, reducing the loss on the batch a bit
+    every time step is import, if too small it will consume many time to get result and maybe stuck in a local minimum, if too large, maybe stop on any random location
+    use momentum to avoid stuck on local minimum, momentum is implemented by moving mot only based on current slope value but alson on the current velocity
+  chain rule: f(g(x)) = f'(g(x)) * g'(x), applying this rule to get a algorithm called Backpropagation
 * Keras
