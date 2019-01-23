@@ -213,3 +213,10 @@
   sudo apt-get install libgnome-keyring-dev
   sudo make --directory=/usr/share/doc/git/contrib/credential/gnome-keyring
   git config --global credential.helper /usr/share/doc/git/contrib/credential/gnome-keyring/git-credential-gnome-keyring
+* gitlab
+  edit /etc/gitlab/gitlab.rb  external_url to change clone url
+  sudo gitlab-ctl reconfigure
+  sudo gitlab-ctl restart
+  sudo gitlab-rake gitlab:import:repos, used to reimport repo from data dir
+  sudo gitlab-rake gitlab:check, used check repo and component status
+  sudo gitlab-rake cache:clear, used to clear git repo cache

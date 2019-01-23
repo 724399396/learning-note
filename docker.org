@@ -111,6 +111,8 @@
 * ADD vs COPY
   ADD can add file from url, file location, and when file can extract, it will extract, it too magic under hood, so now use COPY to instead 
 * proxy 
+  hub-mirror.c.163.com
+
   edit file /etc/system.d/system/docker.service.d/http-proxy.conf  add
   #+BEGIN_SRC 
 [Service] 
