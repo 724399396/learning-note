@@ -98,6 +98,8 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   xargs # split long args
   lsblk # show all connect disk, include not mount
   blkid # show disk uuid
+  find . -type f -name "*.java" -exec sed -i -e 's//' {} \; # find in file and replace
+
   #+END_SRC
 * User
   #+BEGIN_SRC bash
