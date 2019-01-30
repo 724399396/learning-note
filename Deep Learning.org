@@ -88,13 +88,81 @@ def naive_matrix_dot(x, y):
     deep learning first layer is relu(dot(W, input) + b), W and b is random initialized, and W/b is weight or trainable paramters, it will change via feedback signal
     gradient is derivativeof a tensor operation
 ** SGD
-    deep learning with mini-batch stochastic gradient descent(SGD) step:
-    1. draw a batch of training samples x and corresponding targets y.
-    2. Run the network on x to obtain predicitions y_pred
-    3. Compute the loss of the network on the batch, a measure of the mismatch between y_pred and y
-    4. compute the gradient of the loss with regard to the network's parameters
-    5. move the parameters a little in the oppsite direction from the gradient, reducing the loss on the batch a bit
-    every time step is import, if too small it will consume many time to get result and maybe stuck in a local minimum, if too large, maybe stop on any random location
-    use momentum to avoid stuck on local minimum, momentum is implemented by moving mot only based on current slope value but alson on the current velocity
-  chain rule: f(g(x)) = f'(g(x)) * g'(x), applying this rule to get a algorithm called Backpropagation
+   deep learning with mini-batch stochastic gradient descent(SGD) step:
+   1. draw a batch of training samples x and corresponding targets y.
+   2. Run the network on x to obtain predicitions y_pred
+   3. Compute the loss of the network on the batch, a measure of the mismatch between y_pred and y
+   4. compute the gradient of the loss with regard to the network's parameters
+   5. move the parameters a little in the oppsite direction from the gradient, reducing the loss on the batch a bit
+      every time step is import, if too small it will consume many time to get result and maybe stuck in a local minimum, if too large, maybe stop on any random location
+      use momentum to avoid stuck on local minimum, momentum is implemented by moving mot only based on current slope value but alson on the current velocity
+   chain rule: f(g(x)) = f'(g(x)) * g'(x), applying this rule to get a algorithm called Backpropagation
+* neural network
+  for 2D tensors of shape(samples, features), is often processsed by densely connected layer(also called fully connected layer)
+  for 3D tensors of shape(samples, timesteps, features) is typically processed by recurrrent layers such as LSTM layers
+  for 4D tensors of shape(image), is usually processed by 2D convolution layers
+  network of layers common include:
+  - Two-branch networks
+  - Multihead networks
+  - Inception blocks
+  network structure decide hypothesis space
+  loss function- the quantity that will be minimized during training
+  optimizer- Determines how the network will be updated based on the loss function
+  objective function is important, approciate objective function let shortcut to minimize the loss
+  densely network need a hidden unit argument, this argument is means argument space range, large number will means complex problem, but too large maybe let overfit
+  stack of dense layers with rule activitaitons can solve wild range problems
+  rmsprop optimizer is generally a good choice
+  on small dataset, use K-fold cross validation to help decide epcho
+** Binary classfication
+   for binary classification, last layer should be Dense layer with sigmoid activation
+   use binary_crossentropy as lost function
+   monitor on train_data and valdiation_data, don't let it overfit to training data
+** Multiclass classification
+   for multiclass classification, Dense layer hidden unit should increase bigger than category number
+   if try classify data to N class, lat layer should be Dense with size N
+   for single-label, multiple classification,  use softmax as activation function
+   use categorical_crossentropy as lost function
+   there are two ways handle lebls in multiclass classification:
+   - encoding lable via categorical encoding(one-hot encoding) and using categorical_crossentropy as loss function
+   - encoding label as integer and using the sparse_categorical_crossentropy
+** Regression
+   last layer is linear(without activation)
+   use mse(mean squared error) as loss function
+   mae(mean absolute error)
 * Keras
+  keras is model-level library, can work with TensorFlow/Theano/CNTK as backend
+  kears auto match layer input/output tensor
+* TensorFlow
+  Eigen is library for tensor operation on CPU
+  NVIDIA CUDA Deep Neural Network library(cuDNN) is libdrary for ternsor opration on GPU
+* Activation function
+** relu(rectified linear unit)
+   [[./rule.png]]
+** sigmoid
+   [[./sigmoid.png]]
+* Machine Learning
+** types
+   1. Supervised learning
+      - classification
+      - regression
+      - sequence generation, given a picture, predict a caption describing it
+      - Syntax tree prediction, given a sentence, predict its decomposition into a syntax tree
+      - Object detection, given a picture, draw a bounding box around centain objects inside the picture
+      - Image segmentation, given a picture, draw a pixel-level mask on a specific object
+   2. Unsupervised learning
+      for help supervised learning. e.g. Dimensionality reduction and clsutering
+   3. Self-supervised learning
+      label data get form non human
+   4. Reinforcement learning
+      Google DeepMind
+      agent receive information about its environment and learns to choose action that will maximize some reward
+** modle
+   general split data into three sets: training, validation and test:
+*** Hold-out validation 
+    shuffle data then split all data into two sets(traning and test), this method suffer from small dataset
+*** K-Fold Validation
+    shuffle data then split data into K partitions of equal size, For each partition, training use other (K - 1) dataset, then validation on this partition. Final score is mean of all iteration
+*** Iterated K-Fold Validation
+    mutliple time K-Fold Validation whit different shuffle
+  for normal data, should shuffle avoid same data be only in train/test dataset
+  for time sensitive data, should keep order, and let test data posterior train data
