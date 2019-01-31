@@ -166,3 +166,15 @@ def naive_matrix_dot(x, y):
     mutliple time K-Fold Validation whit different shuffle
   for normal data, should shuffle avoid same data be only in train/test dataset
   for time sensitive data, should keep order, and let test data posterior train data
+** Data processing
+   let data amenable with nerual network
+*** Vectorization
+    convert data to tensors of floating-point data
+*** Value Normalization
+    rerange value to reasonable range
+    good data for nerual network:
+    - Take small values- typically, most value should be in the 0-1 range
+    - Be homogenous - all features should take values in roughly the same range
+    - best case, mean of 0 and standard deviation of 1
+*** Handling missing values
+** Feature engineering
