@@ -129,6 +129,11 @@ def naive_matrix_dot(x, y):
    last layer is linear(without activation)
    use mse(mean squared error) as loss function
    mae(mean absolute error)
+** Avoid overfit
+   get more training data.
+   reduce network size
+   weight regularization
+   adding dropout
 * Keras
   keras is model-level library, can work with TensorFlow/Theano/CNTK as backend
   kears auto match layer input/output tensor
