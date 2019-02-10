@@ -129,11 +129,23 @@ def naive_matrix_dot(x, y):
    last layer is linear(without activation)
    use mse(mean squared error) as loss function
    mae(mean absolute error)
+   [[./MAE.png]]
+   RMSE(Root Mean Sqaure Error):
+   [[./RMSE.png]]
 ** Avoid overfit
    get more training data.
    reduce network size
    weight regularization
    adding dropout
+** Computer Vision
+   convolution neural network(convnet), two properties:
+   - the ptterns they learn are translation invariant
+   - they can learn spatial hierarcies of patterns
+   in Conv2D layer, you can add paddinng let window work, "valid" means only get valid input, "same" means add padding let output same as input
+   stride is means window distance, default is 1
+   max pooling half tensor
+   data augmentation is for solve overfit on computer vision
+   use pretrained model to solve overfit
 * Keras
   keras is model-level library, can work with TensorFlow/Theano/CNTK as backend
   kears auto match layer input/output tensor
@@ -146,21 +158,43 @@ def naive_matrix_dot(x, y):
 ** sigmoid
    [[./sigmoid.png]]
 * Machine Learning
-** types
+** Supervised/Unsupervised learning
    1. Supervised learning
       - classification
-      - regression
       - sequence generation, given a picture, predict a caption describing it
       - Syntax tree prediction, given a sentence, predict its decomposition into a syntax tree
       - Object detection, given a picture, draw a bounding box around centain objects inside the picture
       - Image segmentation, given a picture, draw a pixel-level mask on a specific object
+      - K-Nearest Neighbors
+      - Linear regression
+      - Logistic Regression
+      - Support Vector Machines(SVMs)
+      - Decision Trees and Random Forests
+      - Neural networks
    2. Unsupervised learning
       for help supervised learning. e.g. Dimensionality reduction and clsutering
-   3. Self-supervised learning
+      - Clustering
+        + k-Means
+        + Hierarchical Cluster Analysis(HCA)
+        + Expectation Maximization
+      - Visualization and dimensionality reduction
+        + Principal Component Analysis(PCA)
+        + Kernel PCA
+        + Locally-Linear Embedding(LLE)
+        + t-distributed Stochastic Neighbor Embedding(t-SNE)
+      - Association rule learning
+        + Apriori
+        + Eclat
+   3. Self-supervised learning(Semisupervised learning)
       label data get form non human
    4. Reinforcement learning
       Google DeepMind
       agent receive information about its environment and learns to choose action that will maximize some reward
+** Batch and Online Learning
+*** Batch learning
+    system is incapable of learning incrementally
+*** Online learning
+    train system incrementally by feeding it data
 ** modle
    general split data into three sets: training, validation and test:
 *** Hold-out validation 
@@ -183,3 +217,10 @@ def naive_matrix_dot(x, y):
     - best case, mean of 0 and standard deviation of 1
 *** Handling missing values
 ** Feature engineering
+** Main Challenges
+   - Insuficient Quantity of Training data
+   - Nonrepresentative Training data
+   - Poor-Quality Data
+   - Irrelevant Features
+   - Overfitting the Training data
+   - Underfitting the Training data
