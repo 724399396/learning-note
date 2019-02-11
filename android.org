@@ -238,6 +238,15 @@
    - Lock the canvas.
    - Draw.
    - Unlock the canvas and post to the Surface.
+** Property animations
+   allow you change object property with duration 
+   animator change property need meet below require:
+   - class has a setter method
+   - setter name must be set<PropertyName>(), when you create animator, pass <PropertyName> to constructor
+   - when property change, call invalidate()
+** VideoView
+   VideoView is for play video
+   MediaController as UI to control
 * 4 fundamental components:
   - Activity, for UI
   - Service, run on background
