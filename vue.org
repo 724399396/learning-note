@@ -6,7 +6,7 @@
   array element/ object is not watched by vue, can use Vue.$set to modify those filed
 
 * Lifecycle
-  [[./vue-lifecycle.png]]
+  [[./images/vue-lifecycle.png]]
 
 * Instance
 ** argument

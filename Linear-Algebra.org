@@ -1,0 +1,3 @@
+* Inverse matrix
+[[./images/matrix-inverse-2x2.svg]]
+computation complexity is about O(n^2.4) to O(n^3)

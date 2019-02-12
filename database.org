@@ -54,7 +54,7 @@
   - Serializable: means can't read uncommited data, any query data by this transaction can't be update by another transaction, if insert data will affect this transaction query also be blocked.(hold read, write, range-read lock) 
   - Repeatable Read: means can't read uncommited data and any query data by this transaction can't be update by another transaction. (hold read, write lock) 
   - Read Commited: means can read commited data when other transaction commit. (hold write lock)
-  [[./transaction-isolation-level.png]]
+  [[./images/transaction-isolation-level.png]]
 * Mysql
   load data infile <path> into table <table>, import csv data to table
 

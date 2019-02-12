@@ -446,8 +446,7 @@
   ar rcs <outputfile> <input files> use input file(object file) output a static library, when reference by gcc, only copy reference part to executable file
 
 * Compile work flow
-
-  [[./compile-work-flow.png]]
+  [[./images/compile-work-flow.png]]
 
 ** Preprocessor
 
@@ -485,7 +484,7 @@
 
 * Operation system
 
-  [[./stack.png]]
+  [[./images/stack.png]]
 
   any computer file is binary, what it is depende on context
 
@@ -627,7 +626,7 @@
 
 * IEEE float point number
 
-  [[./ieee754.png]]
+  [[./images/ieee754.png]]
 
   float: s=1, k=8, n=23, s is sign, k is exponent, n is fraction
 

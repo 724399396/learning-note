@@ -1,12 +1,322 @@
+* Book
+  Deep Learning with Python
+  Hands-On Machine Learning
+  Introduction to Applied Algebra
+  Introduction to Linear Algebra
+  https://arxiv.org/abs/1502.05767
+  An introduction to Statistical Learning
+  Deep Learning
+  The Elements of Statistical Learning
 * Basic
   Anocanda is machine learning tools suite for python
-
   IPython NoteBook, visiual python dev tool
-
   ML has 2 class:
   - supervised learning:
     * classification, e.g recoginize hands write
     * regression, e.g predicate fish age
   - unsupervised learning(cluster)
-  
   scikit-learn is python ml package, include dateset and trained model
+  Artificial Intelligence include Machine learning, Machine learning include deep learing
+  symbolic AI is programmer handcraft a sufficiently large set of exlicit rules
+  symbolic AI: data + rule -> result, machine learning: data + result -> rule
+  machine learning need 3 things:
+  1. input data points
+  2. examples of the expected output
+  3. a way to measure whether the algorithm is doing a good job
+  machine larning is searching for useful representations of some input data, within a predefined space of possibilities, using guidance from a feedback signal.
+  deep learning "deep" is on successive layer of representations
+  deep learning almost always learned via models called neural networks
+  deep learning is adjust every layer weight(parameter)
+  loss function(objective function) is used to measure how for output is from what expected
+  use loss function adjust weight is called optimizer, implement by Backpropagation algorithm
+  logreg(logistic regression) is "hello world" in machine learning, it is a classification algorithm
+** SVM
+   SVM(support vector machine) aim at solving classification problems by finding good decision boundaries
+   - The data is mapped to a new high-dimensional representation where the decision boundary can be expressed as a hyperplane 
+   - A good decision boundary (a separation hyperplane) is computed by trying to maximize the distance between the hyperplane and the closest data points from each class, a step called maximizing the margin. This allows the boundary to gen- eralize well to new samples outside of the training dataset.
+   SVM hart to sclae to large dataset and need feature enginerring which is difficult and brittle
+   Decision trees, classifiy input data by flowchart-like structure
+   Rnadom Forest building a large number of decision trees and then ensembling their output, it applicable to a wide range of problems, is's second-best algorithm for any shallow machine-learning task
+   Gradient boostring machines, like random forest, based on ensembling weak prediction models. best algorithm for shallow machine-learning
+   successful in applied machine learning today:
+   - gradient boostring machines(XGBoost), for shallow learning problems
+   - deep learning(Keras), forr perceputual problems
+   MNIST(National Institute of STandards And Technology) is a machine larning database
+** Tensor
+   ternsors are a generalization of matrices to an arbitrary number of dimensions
+*** Scalars(0D tensors)
+    A ternsor contains only one number, in numpy float32 and float64 is scalar tensor, ndim attribute in numpy is number of axes
+*** Vector(1D tensors)
+    A array of number is called vector or 1D tensor, has exactly one axis, one axe can has any number dimension(for vector, it means vector length)
+*** Matrices (2D tensors)
+    A array of vectors is a matrix
+    A tensor is defiend by three key attributes:
+    - Number of axes(rank), called ndim in numpy
+    - Shape, every axes dimensions number tuple, called shape in numpy, e.g scalrs is (), vector is (length,)
+    - Date type, called dtype in numpy
+    numpy support tensor operation, [start:end] slice a tensor from start to end(exclude), if omit start will start from 0, if omit end will to length, for above 1D tensor, use [<some>:<some>, <other>:<other>] to set every axe slice
+    general, first axis is named as samples axis(sometime is samples dimension), when consider batch process, the first axis alled batch axis(or batch dimension)
+    Flow machine-learning framework, from Google, places the color-depth axis at the end: (samples, height, width, color_depth) . Meanwhile, Theano places the color depth axis right after the batch axis: (samples, color_depth, height, width)
+    tensor operation is element-wise, delegate to a BLAS(Basic Linear Algebra Subprograms), BLAS is low-level, highly parrallel, efficient
+    when operation on different rank tensor, broadcasting will happen, this operation is virutal level, algorithm will use origin tensor and handle this in algorithmic level rather than memory level:
+    - axes are added to smaller tensor to match large tensor
+    - smaller tensor is repeated alongside these new axes to match the full shape of the larger tensor
+    Tensor dot, also called tensor produce(it is not element-wise product, in numpy element-wise product is *), in numpy and keras use dot, for vector dot operation is means dot(x, y) = sum(x[i] * y[i])
+    dot rule:
+    - (a, b, c, d) . (d,) -> (a, b, c)
+    - (a, b, c, d) . (d, e) -> (a, b, c, e)
+    for different rank dot:
+    #+BEGIN_SRC python
+import numpy as np
+def naive_matrix_vector_dot(x, y):
+  assert len(x.shape) == 2
+  assert len(y.shape) == 1
+  assert x.shape[1] == y.shape[0]
+  z = np.zeros(x.shape[0])
+  for i in range(x.shape[0]):
+    for j in range(x.shape[1]):
+      z[i] += x[i, j] * y[j]
+  return z
+
+def naive_matrix_dot(x, y):
+  assert len(x.shape) == 2
+  assert len(y.shape) == 2
+  assert x.shape[1] = y.shape[0]
+
+  z = np.zeros((x.shape[0], y.shape[1]))
+  for i in range(x.shape[0]):
+    for j in range(y.shape[1]):
+      row_x = x[i, :]
+      column_y = y[:, j]
+      z[i, j] = = naive_vector_dot(row_x, column_y)
+  return z
+    #+END_SRC
+    reshaping tensor means change it shape, but should has same total number, e.g. reshape (3,2) to (6,1)
+    transpose is a tensor reshaping, it swap matrix row/column
+    deep learning first layer is relu(dot(W, input) + b), W and b is random initialized, and W/b is weight or trainable paramters, it will change via feedback signal
+    gradient is derivativeof a tensor operation
+** SGD
+   deep learning with mini-batch stochastic gradient descent(SGD) step:
+   1. draw a batch of training samples x and corresponding targets y.
+   2. Run the network on x to obtain predicitions y_pred
+   3. Compute the loss of the network on the batch, a measure of the mismatch between y_pred and y
+   4. compute the gradient of the loss with regard to the network's parameters
+   5. move the parameters a little in the oppsite direction from the gradient, reducing the loss on the batch a bit
+      every time step is import, if too small it will consume many time to get result and maybe stuck in a local minimum, if too large, maybe stop on any random location
+      use momentum to avoid stuck on local minimum, momentum is implemented by moving mot only based on current slope value but alson on the current velocity
+   chain rule: f(g(x)) = f'(g(x)) * g'(x), applying this rule to get a algorithm called Backpropagation
+* neural network
+  for 2D tensors of shape(samples, features), is often processsed by densely connected layer(also called fully connected layer)
+  for 3D tensors of shape(samples, timesteps, features) is typically processed by recurrrent layers such as LSTM layers
+  for 4D tensors of shape(image), is usually processed by 2D convolution layers
+  network of layers common include:
+  - Two-branch networks
+  - Multihead networks
+  - Inception blocks
+  network structure decide hypothesis space
+  loss function- the quantity that will be minimized during training
+  optimizer- Determines how the network will be updated based on the loss function
+  objective function is important, approciate objective function let shortcut to minimize the loss
+  densely network need a hidden unit argument, this argument is means argument space range, large number will means complex problem, but too large maybe let overfit
+  stack of dense layers with rule activitaitons can solve wild range problems
+  rmsprop optimizer is generally a good choice
+  on small dataset, use K-fold cross validation to help decide epcho
+** Binary classfication
+   for binary classification, last layer should be Dense layer with sigmoid activation
+   use binary_crossentropy as lost function
+   monitor on train_data and valdiation_data, don't let it overfit to training data
+** Multiclass classification
+   for multiclass classification, Dense layer hidden unit should increase bigger than category number
+   if try classify data to N class, lat layer should be Dense with size N
+   for single-label, multiple classification,  use softmax as activation function
+   use categorical_crossentropy as lost function
+   there are two ways handle lebls in multiclass classification:
+   - encoding lable via categorical encoding(one-hot encoding) and using categorical_crossentropy as loss function
+   - encoding label as integer and using the sparse_categorical_crossentropy
+** Regression
+   last layer is linear(without activation)
+   use mse(mean squared error) as loss function
+** Avoid overfit
+   get more training data.
+   reduce network size
+   weight regularization
+   adding dropout
+** Computer Vision
+   convolution neural network(convnet), two properties:
+   - the ptterns they learn are translation invariant
+   - they can learn spatial hierarcies of patterns
+   in Conv2D layer, you can add paddinng let window work, "valid" means only get valid input, "same" means add padding let output same as input
+   stride is means window distance, default is 1
+   max pooling half tensor
+   data augmentation is for solve overfit on computer vision
+   use pretrained model to solve overfit
+* Keras
+  keras is model-level library, can work with TensorFlow/Theano/CNTK as backend
+  kears auto match layer input/output tensor
+* TensorFlow
+  Eigen is library for tensor operation on CPU
+  NVIDIA CUDA Deep Neural Network library(cuDNN) is libdrary for ternsor opration on GPU
+* Activation function
+** relu(rectified linear unit)
+   [[./images/rule.png]]
+** sigmoid
+   [[./images/sigmoid.png]]
+* Machine Learning
+** Supervised/Unsupervised learning
+   1. Supervised learning
+      - classification
+      - sequence generation, given a picture, predict a caption describing it
+      - Syntax tree prediction, given a sentence, predict its decomposition into a syntax tree
+      - Object detection, given a picture, draw a bounding box around centain objects inside the picture
+      - Image segmentation, given a picture, draw a pixel-level mask on a specific object
+      - K-Nearest Neighbors
+      - Linear regression
+      - Logistic Regression
+      - Support Vector Machines(SVMs)
+      - Decision Trees and Random Forests
+      - Neural networks
+   2. Unsupervised learning
+      for help supervised learning. e.g. Dimensionality reduction and clsutering
+      - Clustering
+        + k-Means
+        + Hierarchical Cluster Analysis(HCA)
+        + Expectation Maximization
+      - Visualization and dimensionality reduction
+        + Principal Component Analysis(PCA)
+        + Kernel PCA
+        + Locally-Linear Embedding(LLE)
+        + t-distributed Stochastic Neighbor Embedding(t-SNE)
+      - Association rule learning
+        + Apriori
+        + Eclat
+   3. Self-supervised learning(Semisupervised learning)
+      label data get form non human
+   4. Reinforcement learning
+      Google DeepMind
+      agent receive information about its environment and learns to choose action that will maximize some reward
+** Batch and Online Learning
+*** Batch learning
+    system is incapable of learning incrementally
+*** Online learning
+    train system incrementally by feeding it data
+** modle
+   general split data into three sets: training, validation and test:
+*** Hold-out validation 
+    shuffle data then split all data into two sets(traning and test), this method suffer from small dataset
+*** K-Fold Validation
+    shuffle data then split data into K partitions of equal size, For each partition, training use other (K - 1) dataset, then validation on this partition. Final score is mean of all iteration
+*** Iterated K-Fold Validation
+    mutliple time K-Fold Validation whit different shuffle
+  for normal data, should shuffle avoid same data be only in train/test dataset
+  for time sensitive data, should keep order, and let test data posterior train data
+** Data processing
+   let data amenable with nerual network
+*** Vectorization
+    convert data to tensors of floating-point data
+*** Value Normalization
+    rerange value to reasonable range
+    good data for nerual network:
+    - Take small values- typically, most value should be in the 0-1 range
+    - Be homogenous - all features should take values in roughly the same range
+    - best case, mean of 0 and standard deviation of 1
+*** Handling missing values
+** Feature engineering
+** Main Challenges
+   - Insuficient Quantity of Training data
+   - Nonrepresentative Training data
+   - Poor-Quality Data
+   - Irrelevant Features
+   - Overfitting the Training data
+   - Underfitting the Training data
+* Scikit-Learn
+** base
+*** BaseEstimator
+    has function fit(self, X, y)
+*** TransformerMixin
+    has function transform(self, X)
+** pipeline
+*** Pipeline
+*** FeatureUnion
+    union pipeline
+** preprocessing
+*** StandardScaler
+*** Imputer
+** svm
+*** SVC
+** linear_model
+*** LogisticRegerssion
+** metrics
+*** confusion_matrix
+    confusion_matrix(<expected>, <actual>)
+    row means actual value, column is predict value
+    for binary classifier get a Array(Array):
+    - first row first column is true negative, means correct split non target element here
+    - first row second column is false positive, means wrong classified as target
+    - second row first column is false negative, means wrong classified as non target
+    - second row second column is true positive, means correct split target element
+*** precision_score, recall_score, f1_score
+    calculate classified task precision, recall, f1 score
+*** precision_recall_curve
+    calculate precisions, recalls, threasholds base on expect label and predict score
+*** roc_curve
+    calculate fpr, tpr, thresholds base on expect label and predict score
+*** roc_auc_score
+    calculate roc auc base on expect label and predict score
+** ensemble
+*** RandomForestClassifier
+** multiclass
+*** OneVsOneClassifier
+*** OneVsRestClassifier
+** neighbors
+*** KNeighborsClassifier
+* Classification
+** Binary classfification
+*** formular
+    TP is numer of true positive, FP is number of false positive
+    precision = TP / (TP + FP) 
+    recall(sensitivity or true positive rate) = TP / (TP + FN)
+    F1 = 2 / ((1/precision) + (1/recall))
+    [[./images/confusion_matrix.png]]
+  recall and precision is tradeoff, increase one will decrese another one
+  roc is true positive rate against false positive rate
+  roc auc(area under the curve) is one way compare classfier, perfect classifier will has roc auc euqal to 1, random classfier will equal to 0.5
+** Multiclass Classification
+   OvA(one-versus-all) startegy, for N classification task, train N classifier, when class get all score from each classifier, use high score as result 
+   OvO(one-versus-one) startegy, for N classfification task, train N * (N-1) / 2 classifier
+   RandomForestClassifier can directly work on multiple classfy task wihtout OvA or OvO strategy
+** Multilabel Classificiation
+** Multioutput-multiclass Classification
+* Training Models
+** Linear Regression
+*** formular
+    [[./images/Linear-Regression.png]]
+    [[./images/Linear-Regression-vector-form.png]]
+    \begin{equation}
+      \hat{y} = \Theta_0 + \Theta_1 x_1 + \Theta_2 x_2 + ... + \Theta_n x_n
+    \end{equation}
+    \begin{equation}
+      \hat{y} = h_\Theta(X) = \Theta^T \cdot X
+    \end{equation}
+    \begin{equation}
+       θ is the model’s parameter vector, containing the bias term θ 0 and the feature weights θ_1 to θ_n .
+    \end{equation}
+    \begin{equation}
+       \Theta^T is the transpose of θ (a row vector instead of a column vector).
+    \end{equation}
+    \begin{equation}
+       X is the instance’s feature vector, containing x_0 to x_n , with x_0 always equal to 1.
+    \end{equation}
+    \begin{equation}
+       \Theta^T · x is the dot product of θ^T and x.
+    \end{equation}
+    \begin{equation}
+       h_\Theta is the hypothesis function, using the model parameters θ.
+    \end{equation}
+    MAE(mean absolute error)
+    [[./images/MAE.png]]
+    RMSE(Root Mean Sqaure Error):
+    [[./images/RMSE.png]]
+    MSE(Mean Square Error):
+    [[./images/MSE.png]]
+    Normal Equation:
+    [[./images/Normal-Equation.png]]

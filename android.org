@@ -83,7 +83,7 @@
     JobScheduler not ensure call when condition match, can set a DeadLine force it execute ignore condition
     >>>>>>> android
 ** Recommended Architecture Components
-   [[./android_archeticture_component.png]]
+   [[./images/android_archeticture_component.png]]
 
    - Entity: In the context of Architecture Components, the entity is an annotated class that describes a database table.
    - SQLite database: On the device, data is stored in an SQLite database. The Room persistence library creates and maintains this database for you.
@@ -254,7 +254,7 @@
   - ContentProvider, store share data across application
 ** Activity
 *** Lifecycle
-    [[./activity_lifecycle.png]] 
+    [[./images/activity_lifecycle.png]] 
    
 
     onRetianNonConfigurationInstance(), used to calculate time consuming value, called on onStop/onDestory, getLastNonConfigurationInstance() get privouse calculate value, called on OnCreate
