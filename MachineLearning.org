@@ -207,8 +207,8 @@ def naive_matrix_dot(x, y):
     shuffle data then split data into K partitions of equal size, For each partition, training use other (K - 1) dataset, then validation on this partition. Final score is mean of all iteration
 *** Iterated K-Fold Validation
     mutliple time K-Fold Validation whit different shuffle
-  for normal data, should shuffle avoid same data be only in train/test dataset
-  for time sensitive data, should keep order, and let test data posterior train data
+    for normal data, should shuffle avoid same data be only in train/test dataset
+    for time sensitive data, should keep order, and let test data posterior train data
 ** Data processing
    let data amenable with nerual network
 *** Vectorization
@@ -241,10 +241,22 @@ def naive_matrix_dot(x, y):
 ** preprocessing
 *** StandardScaler
 *** Imputer
+*** PolynomialFeatures
+    convert feature to multiple features match polynomial, accept a degree, e.g. degree=3 will add a^2 a^3 b^2 b^3 ab a^2b ab^2 and so on
 ** svm
 *** SVC
 ** linear_model
+*** LinearRegression
+*** SGDRegressor
+    argument penalty is regularization parameter, l1 is lasso regularization, l2 is Ridge regularization
 *** LogisticRegerssion
+    when work on multiclass, default use one-versus-all startegy, set multi_class to "multinomial" to switch to Softmax Regression
+*** Ridge
+    Ridge Regression
+*** Lasso
+    Lasso Regression
+*** ElasticNet
+*** LogisticRegression
 ** metrics
 *** confusion_matrix
     confusion_matrix(<expected>, <actual>)
@@ -277,9 +289,9 @@ def naive_matrix_dot(x, y):
     recall(sensitivity or true positive rate) = TP / (TP + FN)
     F1 = 2 / ((1/precision) + (1/recall))
     [[./images/confusion_matrix.png]]
-  recall and precision is tradeoff, increase one will decrese another one
-  roc is true positive rate against false positive rate
-  roc auc(area under the curve) is one way compare classfier, perfect classifier will has roc auc euqal to 1, random classfier will equal to 0.5
+    recall and precision is tradeoff, increase one will decrese another one
+    roc is true positive rate against false positive rate
+    roc auc(area under the curve) is one way compare classfier, perfect classifier will has roc auc euqal to 1, random classfier will equal to 0.5
 ** Multiclass Classification
    OvA(one-versus-all) startegy, for N classification task, train N classifier, when class get all score from each classifier, use high score as result 
    OvO(one-versus-one) startegy, for N classfification task, train N * (N-1) / 2 classifier
@@ -288,35 +300,89 @@ def naive_matrix_dot(x, y):
 ** Multioutput-multiclass Classification
 * Training Models
 ** Linear Regression
-*** formular
-    [[./images/Linear-Regression.png]]
-    [[./images/Linear-Regression-vector-form.png]]
-    \begin{equation}
-      \hat{y} = \Theta_0 + \Theta_1 x_1 + \Theta_2 x_2 + ... + \Theta_n x_n
-    \end{equation}
-    \begin{equation}
-      \hat{y} = h_\Theta(X) = \Theta^T \cdot X
-    \end{equation}
-    \begin{equation}
-       θ is the model’s parameter vector, containing the bias term θ 0 and the feature weights θ_1 to θ_n .
-    \end{equation}
-    \begin{equation}
-       \Theta^T is the transpose of θ (a row vector instead of a column vector).
-    \end{equation}
-    \begin{equation}
-       X is the instance’s feature vector, containing x_0 to x_n , with x_0 always equal to 1.
-    \end{equation}
-    \begin{equation}
-       \Theta^T · x is the dot product of θ^T and x.
-    \end{equation}
-    \begin{equation}
-       h_\Theta is the hypothesis function, using the model parameters θ.
-    \end{equation}
-    MAE(mean absolute error)
-    [[./images/MAE.png]]
-    RMSE(Root Mean Sqaure Error):
-    [[./images/RMSE.png]]
-    MSE(Mean Square Error):
-    [[./images/MSE.png]]
-    Normal Equation:
-    [[./images/Normal-Equation.png]]
+  | Algorithm       | Large m(Train set num) | Out-of-core support | Large n(feature number) | Hyperparams | Scaling Required | Sickit-Learn     |
+  | Normal Equation | Fast                   | No                  | Slow                    | 0           | No               | LinearRegression |
+  | Batch GD        | Slow                   | No                  | Fast                    | 2           | Yes              | n/a              |
+  | Stochastic GD   | Fast                   | Yes                 | Fast                    | ≥2          | Yes              | SGDRegressor     |
+  | Mini-batch GD   | Fast                   | Yes                 | Fast                    | ≥2          | Yes              | n/a              |
+*** Normal Equation
+**** formular
+     [[./images/Linear-Regression.png]]
+     [[./images/Linear-Regression-vector-form.png]]
+     \begin{equation}
+       \hat{y} = \Theta_0 + \Theta_1 x_1 + \Theta_2 x_2 + ... + \Theta_n x_n
+     \end{equation}
+     \begin{equation}
+       \hat{y} = h_\Theta(X) = \Theta^T \cdot X
+     \end{equation}
+     \begin{equation}
+        θ is the model’s parameter vector, containing the bias term θ 0 and the feature weights θ_1 to θ_n .
+     \end{equation}
+     \begin{equation}
+        \Theta^T is the transpose of θ (a row vector instead of a column vector).
+     \end{equation}
+     \begin{equation}
+        X is the instance’s feature vector, containing x_0 to x_n , with x_0 always equal to 1.
+     \end{equation}
+     \begin{equation}
+        \Theta^T · x is the dot product of θ^T and x.
+     \end{equation}
+     \begin{equation}
+        h_\Theta is the hypothesis function, using the model parameters θ.
+     \end{equation}
+     MAE(mean absolute error)
+     [[./images/MAE.png]]
+     RMSE(Root Mean Sqaure Error):
+     [[./images/RMSE.png]]
+     MSE(Mean Square Error):
+     [[./images/MSE.png]]
+     Normal Equation, computation complexity is about O(n^2.4) to O(n^3):
+     [[./images/Normal-Equation.png]]
+*** Gradient Descent
+    start filling θ with random values, then descrese cost function by moving to descending gradient, until to minimum
+    if step small, will take too much step to finish, if step to large, maybe make algorithm diverge
+    Local minimum and Plateau is two main challenges
+    ensure all features have similar scale can let it quick reach minimum
+    for Linear Regression, the cost function is convex, which means you found minimum is global minimum
+**** Batch Gradient Descent
+     [[./images/partial-derivative-mse.png]]
+     [[./images/gradient-vector-of-mse.png]]
+**** Stochastic Gradient Descent
+     Batch Gradient Descent use whole train set to evaluate gradient, is slow on large dataset, Stochastic Gradient Descent pick random instance in train set at every step
+     SGD has better chance found global minimum than BGD on irregular cost function
+     SGD can never settle at the minimum, one solution is gradually reduce the learning rate
+**** Mini-batch Gradient Descent
+     every epcho use random select a set from train set, can use parrallel performance on GPU
+     this algorithm is more stable than SGD
+** Polynomial Regression
+   use PolynomialFeatures add feature then use linear regression to train
+ Bias/Varaiance Tradeoff: Increasing a model’s complexity will typically increase its variance and reduce its bias. Conversely, reducing a model’s complexity increases its bias and reduces its variance
+** Regularized Linear Models
+   for linear model, regularization is typically achieved by constraining the weights of model
+*** Ridge Regression
+    force learning algorithm not only fit data but also keep model weights as small as possible
+    scale data before performing Ridge Regression
+    it is l2 norm
+    [[./images/Ridge-Regression.png]]
+    [[./images/Ridge-Regression-closed-form.png]]
+*** Lasso Regression
+    also called Least Absolute Shrinkage and Selection Operator Regression
+    it is l1 norm
+    important characteristic is it tends to completely eliminate of least import feature(set them to zero)
+    [[./images/Lasso-Regression.png]]
+*** Elastic Net
+    Elastic Net is middle ground between Ridge Regression and Lasso Regression
+    control by mix ratio r, r = 0 is equal to Ridge Regression, r = 1 is equal to Lasso Regression
+    [[./images/Elastic-Net.png]]
+
+** Logistic Regression
+   some regression algorithms can be used for classification as well (and vice versa)
+   [[./images/Logistic-Regression-model-estimated-probability.png]]
+   [[./images/Logistic-function.png]]
+   [[./images/Logistic-Regression-cost-function.png]]  
+** Softmax Regression
+   Logistic Regression can support multiple class without to combine multiple binary classifiers, called Softmax Regression(Multinomial Logistic Regression)
+   [[./images/Softmax-score.png]]
+   [[./images/Softmax-function.png]]
+   [[./images/Cross-entropy-cost-function.png]]
+   [[./images/Cross-entropy-gradient-vector.png]]
