@@ -244,7 +244,28 @@ def naive_matrix_dot(x, y):
 *** PolynomialFeatures
     convert feature to multiple features match polynomial, accept a degree, e.g. degree=3 will add a^2 a^3 b^2 b^3 ab a^2b ab^2 and so on
 ** svm
+   | Class         | Time complexity          | Out-of-core support | Scaling Required | Kernel trick |
+   |---------------+--------------------------+---------------------+------------------+--------------|
+   | LinearSVC     | O(m * n)                 | No                  | Yes              | No           |
+   | SGDClassifier | O(m * n)                 | Yes                 | Yes              | No           |
+   | SVC           | O(m^2 * n) to O(m^3 * n) | No                  | Yes              | Yes          |
 *** SVC
+    based on libsvm library, support kernel trick
+    computation complexity bettwen O(m^2 * n) and O(m^3 * n)
+    kernel:
+    - linear, same as LinearSVC but slower
+    - poly, polynomial support
+    - rbf, Gaussian RBF, similar features
+*** LinearSVC
+    based on liblinear library, implement an optimized algorithm for lienar SVM
+    parameter "C" controller soft margin classification balance, smaller C leads wider street but more margin violations
+    parameter "tol" controlle tolerance in classification
+    computation complexity is O(m * n)
+*** LinearSVR
+    parameter "epsilon" controller street width in regression
+*** SVR
+    parameter "epsilon" controller street width in regression
+    parameter "C" controller regularization, smaller C leads more regularization
 ** linear_model
 *** LinearRegression
 *** SGDRegressor
@@ -386,3 +407,10 @@ def naive_matrix_dot(x, y):
    [[./images/Softmax-function.png]]
    [[./images/Cross-entropy-cost-function.png]]
    [[./images/Cross-entropy-gradient-vector.png]]
+* Support Vector Machines
+  SVMs are sensitive to feature scales, so do standard scaler before train
+  find a good balance between keeping the streat as large as possible and limit the margin violations called soft margin classification
+  kernel trick make it possible to obtain similar result if your add many polynomial degree or similarity features
+  SVM directly support polynomial with poly kernal
+  [[./images/Gaussian-RBF.png]]
+  SVM support regression, tries to fit as many instances as possible on the street while limiting margin violations
