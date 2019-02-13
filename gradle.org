@@ -12,7 +12,8 @@ gradle <task> --scan # generate task scan result
 * Multiple project
   on root directory contain two file:
   - settings.gralde, tell gradle how the project and subproject are structured
-  - build.gradle
+  - build.gradle, every project will include this configuration
   use gradle <project-path>:tasks to get subproject available tasks
   subproject build file can name different with build.gradle
+  kotlin dsl use include("<directory name>") to include sub project
   
