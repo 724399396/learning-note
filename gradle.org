@@ -1,0 +1,18 @@
+* Cli
+  #+BEGIN_SRC bash
+gralde init #generate simple project
+gradle wrapper # create wrapper
+gradle tasks # show available task with description
+gralde projects # show project
+gradle properties # show available properties
+gradle <task> --scan # generate task scan result
+  #+END_SRC
+* Basic
+  it recommen use init generate wrapper file, then use wrapper file execute command
+* Multiple project
+  on root directory contain two file:
+  - settings.gralde, tell gradle how the project and subproject are structured
+  - build.gradle
+  use gradle <project-path>:tasks to get subproject available tasks
+  subproject build file can name different with build.gradle
+  

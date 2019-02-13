@@ -258,14 +258,15 @@ def naive_matrix_dot(x, y):
     - rbf, Gaussian RBF, similar features
 *** LinearSVC
     based on liblinear library, implement an optimized algorithm for lienar SVM
-    parameter "C" controller soft margin classification balance, smaller C leads wider street but more margin violations
-    parameter "tol" controlle tolerance in classification
+    parameter "C" control soft margin classification balance, smaller C leads wider street but more margin violations
+    parameter "tol" control tolerance in classification
     computation complexity is O(m * n)
 *** LinearSVR
     parameter "epsilon" controller street width in regression
 *** SVR
-    parameter "epsilon" controller street width in regression
-    parameter "C" controller regularization, smaller C leads more regularization
+    parameter "epsilon" control street width in regression
+    parameter "C" control regularization, smaller C leads more regularization
+    parameter "gamma" control rbf parameter
 ** linear_model
 *** LinearRegression
 *** SGDRegressor
@@ -295,6 +296,7 @@ def naive_matrix_dot(x, y):
     calculate fpr, tpr, thresholds base on expect label and predict score
 *** roc_auc_score
     calculate roc auc base on expect label and predict score
+*** accuracy_score
 ** ensemble
 *** RandomForestClassifier
 ** multiclass
@@ -302,6 +304,10 @@ def naive_matrix_dot(x, y):
 *** OneVsRestClassifier
 ** neighbors
 *** KNeighborsClassifier
+** model_selection
+*** GridSearchCV
+*** RandomizedSearchCV
+*** train_test_split
 * Classification
 ** Binary classfification
 *** formular
