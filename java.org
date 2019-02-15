@@ -495,4 +495,7 @@ IoC is let container maintain object lifecycle
   java 9, java.lang.ref.Reference.reachabilityFence(Object ref), assure ref is reachable on this location
 
   
-
+* keytool
+  #+BEGIN_SRC bash
+keytool -genkey -alias <name> -keyalg RAS -keystore <filename.jks> -keysize 2048 -validity 360 -dnma CN=<domain> -keypass <password> -sotrepass <password> # generate jks file
+  #+END_SRC
