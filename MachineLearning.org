@@ -308,6 +308,23 @@ def naive_matrix_dot(x, y):
 *** GridSearchCV
 *** RandomizedSearchCV
 *** train_test_split
+*** ShuffleSplit
+** tree
+*** DecisionTreeClassifier
+    class is this node representation cateogry
+    samples is how many train sample on this node category
+    values is how many traning instance of each class this node applies
+    gini is purity, means training instance applly belong to the same class, 0 means all is same class
+    parameter "ctriterion" set to "entropy" switch gini to entropy
+    parameter "max_depth" control tree max depth
+    parameter "min_samples_split", the minimum number of samples a node must have before it can be split
+    parameter "min_samples_leaf", the minimum number of samples a left node must have
+    parameter "min_weight_fraction_leaf", same as min_sample_leaft but is as fraction format
+    parameter "max_leaf_nodes", maximum number of leaf nodes
+    parameter "max_features"
+*** DecisionTreeRegressor
+*** export_graphviz
+    output a graph definition <name>.dot used to visualize
 * Classification
 ** Binary classfification
 *** formular
@@ -420,3 +437,15 @@ def naive_matrix_dot(x, y):
   SVM directly support polynomial with poly kernal
   [[./images/Gaussian-RBF.png]]
   SVM support regression, tries to fit as many instances as possible on the street while limiting margin violations
+* Decision Trees
+  like svm, desition tree can perform both classification and regression task
+  [[./images/Gini-impurity.png]]
+  Classification And Regression Tree(CART) is a algorithm to train Decision Trees, it always generate binary tree
+  [[./images/CART-cost-function-for-classification.png]]
+  make prediction Computational Comlexity is O(log_2(m)), training complexity is O(n * m * log(m))
+  [[./images/Entropy.png]]
+  when used on classification, CART try minimizes impurity
+  when used on regression, CART try minimizes MSE
+  [[./images/CART-cost-function-for-regression.png]]
+  decision tree will overfitting if you do not any regularization
+  Decision Tree is sensitivity to training set rotation(bad)

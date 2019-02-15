@@ -16,4 +16,5 @@ gradle <task> --scan # generate task scan result
   use gradle <project-path>:tasks to get subproject available tasks
   subproject build file can name different with build.gradle
   kotlin dsl use include("<directory name>") to include sub project
+  if need reference other project, on dependencies add compile(project(":<project directory name>"))
   
