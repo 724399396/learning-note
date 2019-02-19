@@ -64,3 +64,119 @@
 
 ** get column type
    SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = '' AND COLUMN_TYPE= '';
+* Postgresql
+  grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
+** default super login
+   sudo -u postgres psql postgres
+** command
+   arguments:
+   - -h, the host connect to
+   - -U, user
+   - -p, port
+   
+   #+BEGIN_SRC sql
+   CREATE USER <name> WITH PASSWORD '<password>'; -- create user
+   CREATE DATABASE <name>; -- create database
+   GRANT ALL PRIVILEGES ON DATABASE <db name> to <user name>; -- grant access
+   ALTER ROLE <user name> <role name>; -- change user role
+   CREATE OR REPLACE VIEW <name> AS <sql>; -- create or update view
+   SELECT <c1>, <c2>... rank() OVER( PARTITION BY <cN> ORDER BY <cM>) FROM <table> -- use window function
+   CREATE INDEX <name> ON <table>(<column>); -- create index
+   CREATE INDEX CONCURRENTLY <name> ON <table>(<columns>); -- create index without lock table
+   CREATE UNIQUE INDEX <name> on <table (<columns>); -- create unique index
+   \copy <sql> TO '<file.tsv>' -- extract data to tab delimited file
+   \copy <sql> TO '<file.csv>' WITH (FORMAT CSV) -- extract data to csv delimited file
+   \copy <sql> TO '<file.dat>' WITH (FORMAT "Binary") -- extract data to binary file
+   \copy <table> FROM '<file.tsv>'
+   \copy <table> FROM '<file.csv>' WITH CSV
+   \copy <table> FROM '<file.data>' WITH BINARY
+   \l -- list all databases
+   \l+ -- list all databases with addtional information
+   \d [table name] -- show schemas, table name is optional, if omit is show database schema 
+   \d+  -- list all table with additional information
+   \du -- show user and roles
+   \dn -- list all schemas
+   \df -- list all functions
+   \c <dbname> -- connect to another database
+   \q -- quit from shell
+   \e -- text editor insider psql, will open your default editor
+   \? -- show help
+   SELECT pg_size_pretty(pg_database_size('<database>')); -- measuring database size
+   SELECT pg_size_pretty(pg_relation_size('<table>')); -- measuring table size
+   SELECT pg_size_pretty(pg_relation_size('<index>')); -- measuring index size
+   SELECT pg_size_pretty(pg_total_relation_size('<table>')); -- measuring table with index size
+   EXPLAIN <sql>;  -- explian sql generic form
+   EXPLAIN ANALYZE <sql; -- explian sql analyze form
+   SELECT sum(heap_blks_read) as heap_read, sum(heap_blks_hit) as heap_hit, (sum(heap_blks_hit) - sum(heap_blks_read)) / sum(heap_blks_hit) as ratio FROM pg_statio_user_tables; -- show cache hit
+   SELECT relname, 100 * idx_scan / (seq_scan + idx_scan) percent_of_times_index_used, n_live_tup rows_in_table FROM pg_stat_user_tables WHERE (seq_scan + idx_scan) > 0 ORDER BY n_live_tup DESC; -- show index usage
+   SELECT t.typname, e.enumlabel FROM pg_type t, pg_enum e WHERE t.oid = e.enumtypid; -- show avialable enums
+   #+END_SRC
+** function
+   a window function is similar to group, but it keep row separate, so you can use other column not in group
+** Utilities
+   pd_dump is utility for back up your database
+   #+BEGIN_SRC bash
+   pg_dump <dbname> > <file.sql> # create plaintext dump
+   pg_dump -Fc <dbname> > <file.back> # create compressed binary format
+   pg_dump -Ft <dbname> > <file.tar> # tarball
+   #+END_SRC
+   pg_restore is utility for restore from backup
+   #+BEGIN_SRC bash
+   pg_restore -Fc <file.bak> # restore from compressed binary format, if db exists
+   pg_restore -Ft <file.tar> # restore from tarball, if db exists
+   pg_restore -Fc -C <file.bak> #restore from compressed binary format, if db not exist
+   pg_restore -Ft -C <file.tar> # restore from tarball, if db exists, if db not exist
+   #+END_SRC
+   copy is utility for copy data into and out of tables, it support 3 format: 
+   1. binary
+   2. tab delimited
+   3. csv delimited
+
+** Datetypes
+   - Date - Date only(2012-04-25)
+   - Time - Time only(13:00:00.00)
+   - Timestamp - Date and Time (2012-04-25 13:00:00.00)
+   - Time with Timezone - Time only(13:00:00.00 PST)
+   - Timestamp with TimeZone (2012-04-25 13:00:00.00 PST)
+   - Interval - A span of time(4 days)
+   interval can used in sql to calculate time, e.g. SELECT * FROM users WHERE created_at >= (now() - interval '1 month');
+
+     
+** HStore 
+   HSore is a key value store with Postgres, but after 9.4 should use JSONB instead
+   #+BEGIN_SRC sql 
+   CREATE EXTENSION hstore; -- enable hstore
+   CREATE TABLE <name> ( <other columns> attributes hstore); -- create hstore column
+   SELECT <attributes>->'<field name>' FROM <table>; -- query from hstore
+   #+END_SRC 
+** Array
+   column defined as arrays of variable length, array can be inbuilt typ or user-defined type or an enumerated type
+   #+BEGIN_SRC sql 
+   CREATE TABLE <table> ( <name> <type>[]); -- create array type column
+   INSERT INTO <table> VALUES ('{"value1","value2"}'); -- insert array
+   INSERT INTO <table> VALUES (ARRAY['value1','value2']); -- insert array
+   SELECT <filed>[<index>] FROM <table>; -- select array element
+   SELECT <filed>[<from>:<to>] FROM <table>; -- select array element
+   UPDATE rock_band set members[2] = 'Waters' where name = 'Pink Floyd'; -- modify array
+   UPDATE rock_band set members = '{"Mason", "Wright", "Gilmour"}' where name = 'Pink Floyd'; -- modify array
+   select name from rock_band where 'Mason' = ANY(members); -- searching in array
+   #+END_SRC 
+** Enumerated Data Types
+   #+BEGIN_SRC sql
+   CREATE TYPE <name> AS ENUM ('value1', 'value2'); -- create enum type
+   CREATE TABLE <name> (<column name> <previous created enum type name>); -- create table use enum type
+   ALTER TYPE <name> ADD VALUE 'newvalue' AFTER '<value>'; -- add value to enum
+   #+END_SRC
+** CTEs(Common Table Expressions)
+   #+BEGIN_SRC sql
+   WITH <name> AS (<sql>); -- create cte
+   #+END_SRC
+** JSONB
+   GIN INDEX will index every single column and key within JSONB document
+   #+BEGIN_SRC sql
+   CREATE TABLE <name> (<column name> JSONB); -- create table with column jsonb type
+   CREATE INDEX <name> ON <table> USING GIN (<column>); -- create a GIN index on JSONB column
+   SELECT <column>->'<key>' FROM <table>; -- extracting an attribute
+   SELECT <column>->>'<key>' FROM <table>; -- extracting an attribute as text
+   SELECT <column>->>'<key>' FROM <table> WHERE <column>->'key' ? 'value'; -- filter by key holds value
+   #+END_SRC
