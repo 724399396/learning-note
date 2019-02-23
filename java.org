@@ -510,3 +510,187 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
 keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret -keyalg EC -keysize 256 -alias ES512 -keypass secret -sigalg SHA512withECDSA -dname "CN=,OU=,O=,L=,ST=,C=" -validity 360
 
   #+END_SRC
+* shiro  
+  SecurityManager is authentication/authorization entry point
+  SecurityManager contain multiple realms
+  Realm extend AuthorizingRealm then override doGetAuthrizationInfo()  doGetAuthenticationInfo()
+  SecureRandomNumberGenerator() used to generate salt
+  SimpleHash(algorithm, password, salt, times) generate encrypt password
+** ini config
+*** config file format
+   [users]
+   <username> = <password>, <role>
+   [roles]
+   <role> = <permission1>, <permission2>
+*** use config file
+    #+BEGIN_SRC java
+    Factory<SecurityManager> factory = new IniSecurityManagerFactor("init config file");
+    SecurityManager sm = factory.getInstance();
+    SecurityUtils.setSecurityManager(sm);
+    Subject subject = SecurityUtils.getSubject();
+    UsernamePasswordToken token = new UsernamePassword(user.getName(), user.getPassword());
+    try {
+        subject.login(token);
+    } catch (AuthenticationException e) {
+        // login failed
+    }
+    subject.hasRole("some role");
+    subject.isPermitted("some permission");
+    subject.isAUthenticated(); // is user authentication
+    subject.logout();
+    #+END_SRC
+** database config
+*** cofnig file format
+    [main]
+    databaseRealm=<realm class full name>
+    securityManager.realms=$databaseRealm
+*** config code
+**** doGetAuthenticationInfo
+     if success, return SimpleAUthenticationInfo
+     if error, throw AuthenticationException()
+**** doGetAuthrizationInfo
+     if success, set SimpleAuthorizationInfo permissions and roles
+** encrypt password   
+*** config file format
+    [main]
+    credentialsMatcher=org.apache.shiro.authc.credential.HashedCredentialsMatcher
+    credentialsMatcher.hashAlgorithmName=<algorithm>
+    credentialsMatcher.hashIterations=<iteration>
+    credentialsMatcher.storedCredentialsHexEncoded=true
+
+    databaseRealm=<realm calss full name>
+    securityManager.realms=$databaseRealm
+*** config code
+    return SimpleAuthenticationInfo(userName,passwordInDB,ByteSource.Util.bytes(salt),getName())
+** servlet
+*** config file format
+    [main]  
+    databaseRealm=com.how2java.DatabaseRealm
+    securityManager.realms=$databaseRealm
+    # if not authenticate, will direct this page
+    authc.loginUrl=/login.jsp
+    # no role
+    roles.unauthorizedUrl=/noRoles.jsp
+    # no perms
+    perms.unauthorizedUrl=/noPerms.jsp
+    [urls]  
+    /doLogout=logout
+    # allow anonymous access url
+    /login.jsp=anon
+    /noroles.jsp=anon
+    /noperms.jsp=anon
+    # need role/permission url
+    /listProduct.jsp=authc  
+    /deleteProduct.jsp=authc,roles[productManager]  
+    /deleteOrder.jsp=authc,perms["deleteOrder"]   
+
+
+*** web.xml
+    #+BEGIN_SRC xml
+<web-app>
+    <listener>
+        <listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>shiroEnvironmentClass</param-name>
+        <param-value>org.apache.shiro.web.env.IniWebEnvironment</param-value><!-- 默认先从/WEB-INF/shiro.ini，如果没有找classpath:shiro.ini -->
+    </context-param>
+    <context-param>
+        <param-name>shiroConfigLocations</param-name>
+        <param-value>classpath:shiro.ini</param-value>
+    </context-param>
+    <filter>
+        <filter-name>shiroFilter</filter-name>
+        <filter-class>org.apache.shiro.web.servlet.ShiroFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>shiroFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+</web-app>
+    #+END_SRC
+** Spring MVC
+*** web.xml
+  #+BEGIN_SRC xml
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+		<init-param>
+			<param-name>targetFilterLifecycle</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>	
+  #+END_SRC
+*** applicationContext-shiro.xml
+  #+BEGIN_SRC xml
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login" />
+		<property name="unauthorizedUrl" value="/unauthorized" />
+		<property name="filters">
+			<util:map>
+				<entry key="logout" value-ref="logoutFilter" />
+			</util:map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				/login=anon
+				/index=anon
+				/static/**=anon
+				/doLogout=logout
+				/** = authc
+			</value>
+		</property>
+	</bean>
+	<bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">
+		<property name="redirectUrl" value="/index" />
+	</bean>
+
+	<bean id="sessionIdGenerator"
+		class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg value="sid" />
+		<property name="httpOnly" value="true" />
+		<property name="maxAge" value="-1" />
+	</bean>
+	<bean id="sessionDAO"
+		class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+		<property name="sessionIdGenerator" ref="sessionIdGenerator" />
+	</bean>
+	<bean name="sessionValidationScheduler"
+		class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
+		<property name="interval" value="1800000" />
+		<property name="sessionManager" ref="sessionManager" />
+	</bean>
+	<bean id="sessionManager"
+		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="globalSessionTimeout" value="1800000" />
+		<property name="deleteInvalidSessions" value="true" />
+		<property name="sessionValidationSchedulerEnabled" value="true" />
+		<property name="sessionValidationScheduler" ref="sessionValidationScheduler" />
+		<property name="sessionDAO" ref="sessionDAO" />
+		<property name="sessionIdCookieEnabled" value="true" />
+		<property name="sessionIdCookie" ref="sessionIdCookie" />
+	</bean>
+
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="databaseRealm" />
+		<property name="sessionManager" ref="sessionManager" />
+	</bean>
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="org.apache.shiro.SecurityUtils.setSecurityManager" />
+		<property name="arguments" ref="securityManager" />
+	</bean>
+
+	<bean id="databaseRealm" class="com.how2java.realm.DatabaseRealm">
+    </bean>
+    
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+  #+END_SRC 
+
