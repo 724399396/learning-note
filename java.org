@@ -248,10 +248,12 @@ IoC is let container maintain object lifecycle
 
    <aop: scoped-proxy proxy-target-class="false"> set base on interface proxy
 
-   @Around to implement aop
+   @Around to implement aop, method accept a ProceedingJoinPoint return method execute result
+   @Around("@annotation(<annotation name>)") around cut on which method has annotation
+
+   @Aspect enable annotation based aop
 
 ** Spring mvc
-
    two container:
 
      - tomcat ContextLoaderListener, this class will initialize WebAppicationContext,
@@ -282,14 +284,21 @@ IoC is let container maintain object lifecycle
 
    extend HandlerExceptionResolver then implement resolveExcpeiton then register in container to handle global exception
 
-   @ExceptionHandler set non global exception handler
-
    HandlerInterceptor intercept request before handle, after handle then after view resolve
 
    <welcome-file-list> set 404 error page
 
+   @ControllerAdvice use HandlerInterceptor to handle all controller exception, then use @ExceptionHandler set handle Exception method
    
+   server.error.whitelabel.enabled=false disable whiteabel page, let tomcat return 404
 
+   @Controller then implement ErrorController override getErrorPath to return custom 404 page
+
+   @ModelAttribute, execute before RequestMapping, general used on common property for model
+
+*** HandlerInterceptor vs Filter
+    HandlerInterceptor is basically similar to a Servlet 2.3 Filter, but in contrast to the latter it just allows custom pre-processing with the option of prohibiting the execution of the handler itself, and custom post-processing. Filters are more powerful, for example they allow for exchanging the request and response objects that are handed down the chain. Note that a filter gets configured in web.xml, a HandlerInterceptor in the application context.
+    As a basic guideline, fine-grained handler-related preprocessing tasks are candidates for HandlerInterceptor implementations, especially factored-out common handler code and authorization checks. On the other hand, a Filter is well-suited for request content and view content handling, like multipart forms and GZIP compression. This typically shows when one needs to map the filter to certain content types (e.g. images), or to all requests.
 ** configuration
 
    legacy way is xml config file
@@ -694,3 +703,5 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
 	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
   #+END_SRC 
 
+** Spring boot
+   enable @Configuration then provide a Realm Bean and a ShiroFilterChainDefinition Bean

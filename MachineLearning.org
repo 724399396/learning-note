@@ -201,7 +201,7 @@ def naive_matrix_dot(x, y):
     train system incrementally by feeding it data
 ** modle
    general split data into three sets: training, validation and test:
-*** Hold-out validation 
+*** Fold-out validation 
     shuffle data then split all data into two sets(traning and test), this method suffer from small dataset
 *** K-Fold Validation
     shuffle data then split data into K partitions of equal size, For each partition, training use other (K - 1) dataset, then validation on this partition. Final score is mean of all iteration
