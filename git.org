@@ -179,6 +179,16 @@
   Git  count-objects show git use space  
 
   Git rev-list show all object, 
+** Submodule
+   git clone with submodule will not clone submodule content by default, need git submodule init -> git submodule update
+   #+BEGIN_SRC bash
+   git submodule add <address> # add submodule, will add .gitmodules file 
+   git diff --submodule # show submodule diff
+   git submodule init # when clone, use this command to init submodule local configuration file(no content update)
+   git submodule update # clone submodule contente
+   git clone --recurse-submodules # clone project with submodules content
+   git submodule update --remote <submodule name> # fetch and merge submodule with remote
+   #+END_SRC
 * Cli
   #+BEGIN_SRC bash
   git status # show current status
