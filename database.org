@@ -110,6 +110,7 @@
    SELECT sum(heap_blks_read) as heap_read, sum(heap_blks_hit) as heap_hit, (sum(heap_blks_hit) - sum(heap_blks_read)) / sum(heap_blks_hit) as ratio FROM pg_statio_user_tables; -- show cache hit
    SELECT relname, 100 * idx_scan / (seq_scan + idx_scan) percent_of_times_index_used, n_live_tup rows_in_table FROM pg_stat_user_tables WHERE (seq_scan + idx_scan) > 0 ORDER BY n_live_tup DESC; -- show index usage
    SELECT t.typname, e.enumlabel FROM pg_type t, pg_enum e WHERE t.oid = e.enumtypid; -- show avialable enums
+   SELECT schemaname,relname,n_live_tup FROM pg_stat_user_tables ORDER BY n_live_tup DESC; -- count all tables row
    #+END_SRC
 ** function
    a window function is similar to group, but it keep row separate, so you can use other column not in group
