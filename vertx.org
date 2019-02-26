@@ -1,3 +1,12 @@
+* Maven plugin
+  [[https://reactiverse.io/vertx-maven-plugin/]]
+** Maven Goals
+*** vertx:setup
+    #+BEGIN_SRC bash
+   mvn io.reactiverse:vertx-maven-plugin:1.0.18:setup # add mevn plugin to pom
+   mvn io.reactiverse:vertx-maven-plugin:1.0.18:setup -DprojectGroudId=<group> -DprojectArtifactId=<project> \
+     -DprojectVersion=<version> -Dverticle=<verticle> -Ddependencies=web,jmx,mongo # initiliaze a maven project
+    #+END_SRC
 * Vert.x Cluster Configuration
   start vertx with --cluster -Djava.net.preferIPv4Stack=true, start vertx as cluster with multicast network support
   By default, the Vert.x cluster manager based on Infinispan uses multicast. If your network does not support multicast, you can configure Infinispan to use another discovery protocol such as unicast.
