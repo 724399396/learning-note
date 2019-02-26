@@ -1,4 +1,5 @@
 * Vert.x Cluster Configuration
+  start vertx with --cluster -Djava.net.preferIPv4Stack=true, start vertx as cluster with multicast network support
   By default, the Vert.x cluster manager based on Infinispan uses multicast. If your network does not support multicast, you can configure Infinispan to use another discovery protocol such as unicast.
   Infinispan is based on JGroups, and to configure the discovery, you must provide a `jgroups.xml` file in the application `CLASSPATH`.
   The `jgroups.xml` file available in this directory is configured to use unicast on 127.0.0.1. You will only discover applications running on the same machine. To use this configuration, just copy the file to the 
@@ -56,5 +57,15 @@
 </config>
 
    #+END_SRC
+** Service Discover
+   Client-side service discover is client require real address from register, then use this address, should handle service withdraw
+   Server-side servie discover is client get a virtual address , a load balancer/proxy will handle this virtual address to real address
+   vertx use ServiceDiscover to Publish/retrive service
+** Circual breaker
+   when service is not healthy, circual breaker change to open state, after some time it become half-open to try is service health, if it is change back to close state, otherwise change to close state
+   most well-known circuit breaker implementation in java is Hystrix
+   vertx built in circuit breaker, use CircuitBreaker to build
+** Health check and Failover
+   vertx use HealthCheckhandler to register health check
         
         
