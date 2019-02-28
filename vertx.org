@@ -7,6 +7,21 @@
    mvn io.reactiverse:vertx-maven-plugin:1.0.18:setup -DprojectGroudId=<group> -DprojectArtifactId=<project> \
      -DprojectVersion=<version> -Dverticle=<verticle> -Ddependencies=web,jmx,mongo # initiliaze a maven project
     #+END_SRC
+*** vertx:initialize
+    copy js dependencies to the webroot directory
+    unpack webjars dependencies to the webroot directory
+    initilize the recording of the build used of the redeployment
+*** vertx:package
+    package a vert.x application as a fat jar
+*** vertx:run
+    allow run Vert.x application as part of maven build
+*** vertx:debug
+    allow to debug vert.x application
+*** vertx:start
+    allow to start the vert.x application as a background process for maven build
+*** vertx:stop
+* Gradle plugin
+  [[https://plugins.gradle.org/plugin/io.vertx.vertx-plugin]]
 * Vert.x Cluster Configuration
   start vertx with --cluster -Djava.net.preferIPv4Stack=true, start vertx as cluster with multicast network support
   By default, the Vert.x cluster manager based on Infinispan uses multicast. If your network does not support multicast, you can configure Infinispan to use another discovery protocol such as unicast.
@@ -78,3 +93,11 @@
    vertx use HealthCheckhandler to register health check
         
         
+* Core
+  vertx core is Vertx instance, it is control center
+  vertx api is fluent
+  don't block event loop
+  nodejs is reactor execute model, vertx is Multi-reactor execute model, there are mutliple event loop, in most case vertx instance will execute in same event loop
+  vertx will show wanring when you code block event loop time excceed setting time
+  use vertx.executeBlocking(future -> { <some code then call future>}, res -> }) to execute block code in event loop
+  
