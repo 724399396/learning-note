@@ -99,5 +99,13 @@
   don't block event loop
   nodejs is reactor execute model, vertx is Multi-reactor execute model, there are mutliple event loop, in most case vertx instance will execute in same event loop
   vertx will show wanring when you code block event loop time excceed setting time
-  use vertx.executeBlocking(future -> { <some code then call future>}, res -> }) to execute block code in event loop
+  use vertx.createSharedWorkerExecutor().executeBlocking(future -> { <some code then call future>}, res -> }) to execute block code in event loop, then the worker need clode when it not be need
+  several wokers used same name will share same pool, when all worker shared same pool destoryed, the pool destoryed
+  CompositeFuture.all used to combine several future execute result, same like RxJava.zip
+  CompositeFuture.any, if any future sueccess, it will success
+  CompositeFuture.join, wait all future complete, success if all succeed, failed if all complete and at least one failed
+  compise use to chain future, same like flatMap
+** Verticle
+  Verticles is a simple, scalable, actor-like deployment and concurrency model, vertx not force you use this model
+  different verticle communicated with send message to event bus
   

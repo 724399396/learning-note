@@ -299,6 +299,33 @@ def naive_matrix_dot(x, y):
 *** accuracy_score
 ** ensemble
 *** RandomForestClassifier
+    param:
+    * n_estimators, tranning model number(decision tree)
+    * max_leaf_nodes, decision tree maximum nodes number
+    * n_jobs
+    future importance can get from feature_importances_ property, is depend on future on tree depth
+*** VotingClassifier
+    parameter estimators is include classifier
+    voting:
+    - hard, use every classfier final result to get final result
+    - soft, use every classfier class probabilities to get final result(general better than hard)
+*** BaggingClassifier
+    when classifier support probalities, auto use soft vote
+    parameter:
+    * n_estirmators, tranning model number
+    * max_samples, each model tranning use sample number
+    * bootstrap, True for Bagging, False for Pasting
+    * n_jobs, set parallel run number
+    * oob_score, True for calculate out-of-bag(oob) result
+*** ExtraTreesClassifier
+*** AdaBoostClassifier
+    parameter:
+    * n_estirmators, tranning model number
+    * algorithm, "SAMME" or "SAMME.R", last one is used when support probabilities
+    * learning_rate
+*** GradientBoostingRegressor
+    parameter:
+    * learning_rate, control each predictor contribute to final model weight
 ** multiclass
 *** OneVsOneClassifier
 *** OneVsRestClassifier
@@ -400,7 +427,7 @@ def naive_matrix_dot(x, y):
      this algorithm is more stable than SGD
 ** Polynomial Regression
    use PolynomialFeatures add feature then use linear regression to train
- Bias/Varaiance Tradeoff: Increasing a model’s complexity will typically increase its variance and reduce its bias. Conversely, reducing a model’s complexity increases its bias and reduces its variance
+   Bias/Varaiance Tradeoff: Increasing a model’s complexity will typically increase its variance and reduce its bias. Conversely, reducing a model’s complexity increases its bias and reduces its variance
 ** Regularized Linear Models
    for linear model, regularization is typically achieved by constraining the weights of model
 *** Ridge Regression
@@ -449,3 +476,19 @@ def naive_matrix_dot(x, y):
   [[./images/CART-cost-function-for-regression.png]]
   decision tree will overfitting if you do not any regularization
   Decision Tree is sensitivity to training set rotation(bad)
+* Ensemble Learning and Random Forest
+  Random Forest is combine from multiple Decision tree, then use aggregate result as final result
+** Bagging and Pasting
+   use same trainning algorithm but different trainning set is called bagging(shot for bootstrap aggregating), when sampling is performed without replacement called pasting
+   Bagging and Pasting trainning and predict can run parallel
+** Random Patches and Random Subspaces
+   Sampling bothe trainning instances and features is called Random Patches method
+   Keepping all tranning instance but sampling features is called Random Subspaces method
+** Boosting
+   Boosting(originally called hypothesis boosting) refers to any Ensemble method that can combine servral weak learners into a strong learner
+   pay a bit more attention on the instance that predecessor underfitted, this method called Boosting
+   AdaBoost is traning many model, each traning realy on previous one, and adjust each model weight
+   Gradient Boosting is same like Ada, but instead of adjust weigh, it try to fit the new predictor to the residual errors made by previous predictor
+   GradientBoostingRegressor support early stop, use staged_predict to output each iteration error, then find min error is best estimator set
+** Stacking
+   train a model to do ensemble job
