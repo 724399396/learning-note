@@ -108,4 +108,6 @@
 ** Verticle
   Verticles is a simple, scalable, actor-like deployment and concurrency model, vertx not force you use this model
   different verticle communicated with send message to event bus
-  
+  when deploy vertx from program, it support depoloy different type language write verticle, there are 3 rule, if start with language name and colon, it will try deploy whit language verticle,
+  if not start with language name and colon, will try use suffix to recgonize language, otherwise will assume this name is full java class name
+  verticle isolation groups used to isolate classpath file, e.g. deploy different version of verticle with same name, same library with different version
