@@ -134,3 +134,9 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
 ** GRUB
 
   This will not cover GRUB, however you can easily reinstall it by following this guide here. You only need to do steps Three and Four.
+* RSA
+  #+BEGIN_SRC bash
+  openssl genrsa -des3 -out private.pem 2048
+  openssl rsa -in private.pem -outform PEM -pubout -out public.pem
+  openssl rsa -in private.pem -outform PEM -out private_unenvrypted.pem 
+  #+END_SRC

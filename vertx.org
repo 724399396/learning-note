@@ -92,7 +92,6 @@
 ** Health check and Failover
    vertx use HealthCheckhandler to register health check
         
-        
 * Core
   vertx core is Vertx instance, it is control center
   vertx api is fluent
@@ -111,3 +110,14 @@
   when deploy vertx from program, it support depoloy different type language write verticle, there are 3 rule, if start with language name and colon, it will try deploy whit language verticle,
   if not start with language name and colon, will try use suffix to recgonize language, otherwise will assume this name is full java class name
   verticle isolation groups used to isolate classpath file, e.g. deploy different version of verticle with same name, same library with different version
+  three different type of verticles:
+*** Standard Verticle 
+    most common and useful type, they always executed using an event loop thread
+    standard verticle are assign an event loop when created, call any method take a handler on core api will always run on same event loop
+*** Worker Verticle 
+    run using a thread from woker pool. An instance is nerver executed concurrently by more than one thread
+*** Multi-threaded worker verticles 
+    these run using a threaded from the work pool, An instance can be ececuted concurrently by more than one threaded
+  
+
+>>>>>>> ras vertx
