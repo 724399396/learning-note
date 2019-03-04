@@ -126,3 +126,10 @@
     these run using a threaded from the work pool, An instance can be ececuted concurrently by more than one threaded
 ** Event Bus
    there is a single event bus instance for every Vert.x instance 
+   message are send to an address, any string is a valid address
+   one handler can register to many different address, one address can register many different handler
+   support publish/subscribe message mode, use event.publish
+   support point-to-point and request-response message mode, use event.send
+   message receiver can use  reply callback to notify sender
+   sender can set timeout in DeliverOptions, if timeout result handle will be failed
+   register a codec then set on DeliverOptions can send custom object to event bus
