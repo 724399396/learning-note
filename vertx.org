@@ -133,3 +133,6 @@
    message receiver can use  reply callback to notify sender
    sender can set timeout in DeliverOptions, if timeout result handle will be failed
    register a codec then set on DeliverOptions can send custom object to event bus
+   vertx support first class json
+   JsonObject, pass string to constructor, or pass map to constructor
+   
