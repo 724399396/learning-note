@@ -133,6 +133,51 @@
    message receiver can use  reply callback to notify sender
    sender can set timeout in DeliverOptions, if timeout result handle will be failed
    register a codec then set on DeliverOptions can send custom object to event bus
+** Json
    vertx support first class json
-   JsonObject, pass string to constructor, or pass map to constructor
-   
+   JsonObject, pass string to constructor, or pass map to constructor, use put(<key>, <value>) to add key/value, use getXXX to get value from JsonObject
+   to mapTo/mapFrom to convert between java object and JsonObject
+   JsonObject behind is Jackson, require field is public(or has public getter/setter), has default constructor
+   Referenced object will be transitively serialized/deserilized to/from nested json object as the object graph is acyclic
+   JsonArray, pass string to constructor, use add to add value, getXXX to get value by index(0 based)
+** Buffers
+   most data is shuffed around inside Vert.x using buffers
+   Buffer is a smart byte array
+   Buffer.buffer static method constructor a Buffer
+   two ways to write to a buffer: appending and random access. buffer will always expand automatically to encompass the bytes. it's not possible to get an IndexOutOfBoundsException
+   use appendXXX to append, setXXX(<index>, <value>) to set value, getXXX(<index>) to get value
+   buffer support unsignedValue, use setUnsignedXXX and getUnsignedXXX
+   use length to obtain length of buffer, use copy to copy buffer, use slice to create a new buffer backs on to the original buffer
+   after writing buffer to sock or similar place, they cannot be re-used
+** TCP server and client
+*** TCP Server
+    vertx.createNetServer(), create a TCP server with default options
+    use NetServerOptions to config tcp server when create
+    listen() start server listening
+    host 0.0.0.0 means bind on all network interface. port 0 means let server to find a not used port
+    connectHander(socket -> {}) when connection is made call this callback
+    set handler on socket to read data
+    use write to writing data to socket
+    closeHandler to close a socket
+    socket.sendFile(<file>) efficient send file to socket
+    server.close(res -> {}) close tcp server
+    if create tcp server and client in verticle, when undeployed verticle will be auto clean-up 
+    when deploy mutliple server on same port, vertx only create one core, and incoming connection will round-robin to any connect handler
+    NetServerOptions().setLogActivity(true), enable log for debug
+*** TCP Client
+    vertx.createNetClient9), create a TCP client with default options
+    client.connect(<port>, <host>, res -> {}), making a connection
+    NetClientOptions().setLogActivity(true), enable log for debug
+    SelfSignedCertificate is used for testing and development purposes
+    Cipher suite, TLS protocol version, SSL engine, SNI(Service Name Indication), ALPN(Application-Layer Protocol Negotiation), Proxy can config for client and server
+** HTTP servers and clients
+*** HTTP Server
+    vertx.createHttpServer() create a http server
+    vertx support HTTP/2 overt TLS h2 and over TCP h2c, most browser won't support h2c
+    server.listen(<port>, <host>)
+    server.requestHandler(request -> {}), request is available when request header has been fully read. body will arrive after some time
+    request available variable: version method uri path query headers host params remoteAddress
+    when need read multipart/form-data, first call request.setExpectMultipart(true), then call request.fromAttributes()
+    when handle file upload, first call request.setExpectMultipart(true), then call request.uploadHandler(upload -> {upload.handler(chunk -> {}});
+    request.response().setStatuseCode  set response status code
+    request.response().write write response body
