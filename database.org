@@ -61,7 +61,10 @@
   select <columns> into outfile <path> from <Table>, export csv data to file
 
   mysqldump -u <user> <database> [<table>] > <path>, backup database/table
-
+ 
+  #+BEING_SRC mysql
+  UPDATE swap_test SET x=(@temp:=x), x = y, y = @temp; #used to swap column value
+  #+END_SRC
 ** get column type
    SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = '' AND COLUMN_TYPE= '';
 * Postgresql
