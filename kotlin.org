@@ -145,9 +145,55 @@
   | a >= b         | a.compareTo(b) >= 0          |
 
 
-
 * Syntax
   A.run {}, in block this will refer to A, block result will be run result (transformation function)
   A.let {a -> }, in block a will be A, block result will be let reult (transformation function)
   A.apply {}, in block this will refer to A(mutation function)
   A.also {a -> }, in block a will be A(mutation function)
+* Coroutines
+  GlobalScope.launch{ CoroutineScope -> }, create a Global Coroutine call, code in block will run in coroutine context
+  GlobalScope.launch is a daemon thread, it will not prevent jvm exit
+  GlobalScope.launch return a job object, job.join will block until launch code execute finish(coroutine block, not normal block)
+  runBlocking{CoroutineScope -> }, execute code in coroutine context, it will block until inner code execute finish
+  delay is a non blocking sleep, only can exist on coroutine execute context, it will block runBlocking
+  launch {}, execute coroutine in current Coroutine context
+  coroutineScope {CoroutineScope -> }, create a new routine scope and does not complete until all launched children complete
+  suspend is a key word modifier a method can run in coroutineScope, can call delay
+  launch {} also return a job object, job.cancel() cancel job, job.join() wait job finish, job.cancelAndJoin() cancel job and wait it finish
+  all suspending function in kotlinx.coroutines are cancellable
+  computation code is not cancellable, there a two ways make it cancellable:
+  1. periodically invoke a suspending function to check cancellation, e.g yield
+  2. explicity check cancellation status isActive
+  cancellation will throw CancellationException, it auto handle by runBlocking, you can use try finally in launch code block
+  attempt use suspending function in finally block on launch will cause CancellationException, if need suspending function in finally block, use withContext(NonCancellable) {}
+  withTimeout(time) {}, run in runBlocking, will cancel code in second argument when exceed time by throw TimeoutCancellationException
+  withTimeoutOrNull, not throw exception but return null when timeout
+  Deferred value is a convenient way to transfer value bewtten corountines
+  Channels provice a way to transfer a stream of value, send is suspending set value, receive is suspending get value
+  channel can be close, receive side use for to get all value, when close for exist
+  produce {}, easy to generate a channel produce side, then use consumeEach in consume side
+  pipeline use to combiner channel, can handle infinit channel
+  buildIterator also can build pipeline, buildIterator {}, yield replace send, next replace receive
+  fan-out: if one channel pipe to multiple channel, the produce channel gnerate value will only consume by one channel in for loop, in consumeEach always consumes(cancels) the underlying channel
+  fan-in: one channel can receive multiple send 
+  default channel is no buffer, send is suspend until has receive, receive suspend until has send, channel and produce accept a capacity arugment to set buffer size
+  Ticker channels, use ticker() to create a time based producer, delayMillis control two value get minim duration, initialDelayMillis controll first value delay
+  async is like launch, but it run concurrently and return a Deferred, by set start = CoroutineStart.LAZY let code in async lazy calculate
+  deffer value await(), same as delay block get deffer value, need in runBlocking
+  don't split async execute, if any exception outside CoroutineContext, the async will continue run, let all async operation in CoroutineScope, any exception will cancel whole CoroutineScope execute, this cancellation will propagated to child context
+  CoroutineContext contain a croutine dispatcher that determines waht thread or threads to execute coroutine code
+  launch and async accept a argument set CoroutineDispatcher
+  Unconfined is a special dispatcher, it will default use current context dispacher, but after delay, it will switch to DefaultExecutor
+  -Dkotlinx.coroutines.debug  used for debug, when pass this argument to vm, Thread.currentThread().name will append a coroutine info
+  withContext will siwtch execute context
+  xx.use execute code then close xx
+  launch will extend parent CoroutineContext to a new child CoroutineContext, when parent cancellation it also cancellation. GlobalScope.launch not affect by outside CoroutineContext cancellation
+  launch will auto waiting all child finish work, no need explicity call join on child
+  CoroutineName can change corountine name info
+  by extend oroutineScope then prodive a coroutineContext implement, this implmement return a Distatchers.Default + job, when start create a job, when stop cancel job, then you can use any coroutine in this class, all corountine will cancel when job cancel
+  ThreadLocal and asContextElement let you use threadLocal value in coroutine context
+  Coroutine builder come in two flavors: propagateing exceptions automatically(launch and actor), exposing them to users(async and produce)
+  CoroutineExceptionHandler is used as generic catch block of coroutine, it is invoked  only on exceptions which are not expected to be handled by user
+  Cancelling wihout cause ia a mechanism for parent to cancel its children without cancelling itself
+  if coroutine encouter exception other than CancellationException, it cancles its parent with that exception, this behaviour cannot be overriden
+  exception handler work when all child coroutine terminate
