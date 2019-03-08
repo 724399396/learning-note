@@ -197,3 +197,14 @@
   Cancelling wihout cause ia a mechanism for parent to cancel its children without cancelling itself
   if coroutine encouter exception other than CancellationException, it cancles its parent with that exception, this behaviour cannot be overriden
   exception handler work when all child coroutine terminate
+  when multiple chindren of a coroutine throw an exception, general rule is the first exception win
+  SupervisorJob is similar to regular job with only exception that cancellation is propagated only downwards
+  supervisorScope can used instead of coroutineScope
+  select expression can select value from multiple suspending function
+  use onReceiveOrNull to handle maybe close channel from select
+  select and onSend used to choose channel to send value
+  select and onWait used to choose deferred value
+  share data on coroutine:
+  1. use thread safe data structure
+  2. Thread confinement, use withContext confinement varaible in single thread
+  3. Mutual execlusion, use mutex.withLock. mutex.lock is non-blocking try lock function
