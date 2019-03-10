@@ -23,3 +23,6 @@ Header include Request header, Response Header, Response Entity
 - 3xx Redirection
 - 4xx Client Error
 - 5xx Server Error
+* CORS
+  CORS(Cross Origin Resource Share)
+  standard GET request no need prefight, other request browser will send a option prefight request to server
