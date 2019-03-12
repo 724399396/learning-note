@@ -380,6 +380,7 @@
   - sms
   - network
   #+END_SRC
+  adb exec-out run-as debuggable.app.package.name cat databases/file > file , pull database out
 ** DDM(Dalvik Device monitor)
    DDM contain kinds of debug tool
    - logcat, show log info
