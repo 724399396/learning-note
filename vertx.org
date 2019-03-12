@@ -181,3 +181,7 @@
     when handle file upload, first call request.setExpectMultipart(true), then call request.uploadHandler(upload -> {upload.handler(chunk -> {}});
     request.response().setStatuseCode  set response status code
     request.response().write write response body
+* Unit test
+  TestOptions to set reporter
+  TestSuite used to run vertex test
+  suite.before suite.after suite.test
