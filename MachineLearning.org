@@ -352,6 +352,20 @@ def naive_matrix_dot(x, y):
 *** DecisionTreeRegressor
 *** export_graphviz
     output a graph definition <name>.dot used to visualize
+** decomposition
+*** PCA
+    param n_components means down to how many dimensionality, or set a ratio of variance(e.g 0.95) to let pca auto select pc, time complexity: O(m * n^2) + O(n^3)
+    param svd_solver="randomized", perform a stochastic algorithm quick find an approximation first d principal components, time complexity: O(m * d^2) + O(d^3), d is required pc number
+    result components contains PCs as horizontal vectors
+    result explianed_variance_ration_ means every PC pxlained variance ratio
+    pca.inverse_trasform, can inverse from low dimension to origin dimension, but of coure this are lose information
+*** IncrementalPCA
+    param n_components means down to how many dimensionality, or set a ratio of variance(e.g 0.95) to let pca auto select pc
+*** KernelPCA
+    param kernel
+    param gamma
+** manifold
+*** LocallyLinearEmbedding
 * Classification
 ** Binary classfification
 *** formular
@@ -492,3 +506,13 @@ def naive_matrix_dot(x, y):
    GradientBoostingRegressor support early stop, use staged_predict to output each iteration error, then find min error is best estimator set
 ** Stacking
    train a model to do ensemble job
+* Dimensionality Reduction
+  Reducing dimensionality lose some information, but the information maybe is noise, can speed up traning(maybe improve result performance)
+** PCA
+   Principal Component Analysis(PCA) is by far the most popular dimensionality reduction algorithm, first it iddentifies the hyperplane that lies closest to the data, then it projects the data onto it
+   PCA need data centerlized, scikit-learn PCA auto handle centerlized
+** IPCA
+    Incremental PCA(IPCA) is useful for larget trainning set, you can feed mini-batches data to IPCA avoid load all of them same time
+** Kernal PCA
+** LLE
+   Locally Linear Embedding(LLE) ia another very powerful nonlinear dimensionality reduction technique, it try keep dataset point distance when map to low dimension
