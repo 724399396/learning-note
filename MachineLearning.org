@@ -516,3 +516,44 @@ def naive_matrix_dot(x, y):
 ** Kernal PCA
 ** LLE
    Locally Linear Embedding(LLE) ia another very powerful nonlinear dimensionality reduction technique, it try keep dataset point distance when map to low dimension
+* Tensorflow
+  tensorflow is lazy, you need open a session to initialize varaible and evaluate graph
+  tensorflow session take care of placing operation onto devices and run theme
+  InteractiveSession() set default session, need manual close
+  any node you create is automatically add to default graph
+  autodiff can automatically and efficiently compute the gradient
+  node will evaluate every time it need
+  TensorBoard is used to visualizing graph and tranning curve, it base on logs
+  tensorboard --logidr <log> start tensorboard
+  name scope used to group related nodes
+** API
+   #+BEGIN_SRC python
+   tf.Variable(3, name="x") # create a tensorflow varaible
+   tf.Session() # create a session
+   session.run(x.initializer) # initilize varaible
+   session.run(f) # run graph
+   
+   # shorter initlize and evaluate way
+   with tf.Session() as sess:
+     x.initializer.run()
+     y.initializer.run()
+     result = f.eval()
+
+   init = tf.global_variables_initializer() # prepare an init code
+   with tf.Session() as sess:
+     init.run() # actually initilize all the varaibles
+     result = f.eval()
+
+   tf.placeholder(tf.float32, shape=) # create a place holder node
+   .eval(feed_dict={A: [[1,2,3]]}) # set place holder node A value when run
+   tf.train.GradientDescentOptimizer
+   tf.train.Saver() # create a saver node
+   saver.save(sess, "/tmp/my_model.ckpt") # save a model to file
+   saver.restore(sess, "/tmp/my_model.ckpt") # restore a model
+   tf.summary.scalar('MSE', mse) #build a summary node
+   tf.summary.FileSWriter # summary save node
+   with tf.name_scope("loss") as scope: # varaible in scope will be name scopes
+   tf.get_variable() # create shared variable if it does not exist yet or reuse it if it already exist
+   tf.variable_scope("relu"): # varaible on this code block is under scope rule, get varaible exist will raise exception
+   tf.variable_scope("relu", reuse=True): # allow get already exist varaible, but raise exception if not exist
+   #+END_SRC
