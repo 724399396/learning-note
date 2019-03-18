@@ -8,7 +8,7 @@
 ** Siege
    Siege is a load testing and beanchmarking utils 
 
-   Apt-get install seige 
+   Apt-get install siege 
 ** Apache Bench
    Tools for beanchmark http request 
 
