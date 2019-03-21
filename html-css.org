@@ -1,0 +1,49 @@
+* html
+  <h1> to <h6> means headers, header auto switch to new line
+  <p> paragraphs, p auto switch to new line
+  <b> bold
+  <i> italic
+  <sup> superscript, let word on up location
+  <sub> subscript
+  html is white space collapsing, any number continue white space is tread as one
+  <br/> line breaks
+  <hr/> horizontal rules(line)
+** Semantic markup
+   only add extra info, not affect structure
+   <em> emphasis, normal show with italic
+   <blockquote> a block text with quotation
+   <strong> emphasis, normal show with bold
+   <abbr> abbreviation or acronyms
+   <cite> citation
+   <dfn> definition a new instance of a new term
+   <address>
+   <ins> insert
+   <del> delete
+** list
+*** Ordered list
+    <ol> ordered list
+    <li> list item
+*** UnOrdered list
+    <ul> unordered list
+    <li> 
+*** Definition list
+    <dl> definition list
+    <dt> definition term
+    <dd> definition
+** Link
+   <a href="http://www.imdb.com">IMDB</a>
+   href can be absoulte to other web site, e.g http://www.imdb.com, or be relative path to same site, e.g. index.html
+   href="mailto:" start up user email program
+   target="_blank" open in new window
+   href="#<id>" will refer to <id> element, can also link to other page id
+** Image
+   <src img="" alt="" title=""/> add image
+   property:
+   - src, image source 
+   - alt, description when can't see image
+   - title, when hover show
+   - height, image height
+   - width, image width
+   - align, left/right/top/middle/bottom
+   for kinds of different color, use jpeg format
+   for kinds of same color, use png/gif format

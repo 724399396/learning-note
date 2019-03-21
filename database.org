@@ -67,6 +67,15 @@
   #+END_SRC
 ** get column type
    SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = '' AND COLUMN_TYPE= '';
+** record sql
+*** For those blessed with MySQL >= 5.1.12, you can control this option globally at runtime:
+    SET GLOBAL log_output = 'TABLE';
+    SET GLOBAL general_log = 'ON';
+    Take a look at the table mysql.general_log
+*** If you prefer to output to a file instead of a table:
+    SET GLOBAL log_output = "FILE"; 
+    SET GLOBAL general_log_file = "/path/to/your/logfile.log";
+    SET GLOBAL general_log = 'ON';
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login

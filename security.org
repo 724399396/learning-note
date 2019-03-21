@@ -1,0 +1,7 @@
+* XSS
+** Persistent XSS 
+   where the malicious string originates from the website's database.
+** Reflected XSS 
+   where the malicious string originates from the victim's request.
+** DOM-based XSS 
+   where the vulnerability is in the client-side code rather than the server-side code.
