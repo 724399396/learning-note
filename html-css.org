@@ -47,3 +47,55 @@
    - align, left/right/top/middle/bottom
    for kinds of different color, use jpeg format
    for kinds of same color, use png/gif format
+   computer display image with 72 ppi(pixels per inch), higher resolution is not needed
+   vector image differ from bitmap image and resolution-independent
+   SVG(Scalab Vector Graphics) a new format to display vector image
+   html5 support <figure> <figcaption> tag
+** Table
+   <table> create a table
+   <tr> indicate a row
+   <td> indicate table data
+   <th> indicate table header(column or row)
+   use colspan="" to indicate th or td should strech to how many columns
+   use rowspan="" to indicate th or td should strech to how many rows
+   <thead> <tbody> <tfoot> used in large table, browser don't do any special thing, it for css to handle
+   should not use width callpadding cellspacing border background property
+** Form
+   - text input(single line)
+   - password input
+   - text area(multiple line)
+   - radio button
+   - checkbox
+   - dropdown box
+   - submit button
+   - image button
+   - upload file
+   <form> create a from, property:
+   - action, url address that server receive form submit
+   - method, post/get server receive from submit method
+   <input>, property:
+   - name, this property is used as key when submit to server
+   - width, should not use
+   - maxlength
+   - type:
+     + text, single line text input
+     + password
+     + radio
+     + checkbox
+     + file
+     + submit
+     + image
+     + hidden
+     + date
+     + email
+     + url
+     + search
+   <textarea>:
+   - rows
+   - cols
+   <select> and <option> used to set dropdown, select has property name, value is represent current select value, option has value and selected property
+   set <select> multiple property to multiple support multiple select, size property indicate how many option show on list
+   <button> 
+   <label> match with input, property for is used assoicate with element by id
+   <fieldset> group element together
+   <legend> is work with fieldset together, will a block sround with fieldset
