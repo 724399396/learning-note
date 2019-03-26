@@ -123,3 +123,19 @@
    - author
    - pragma, caching page
    - expires
+** Video
+   <video> h5 support video, attribute:
+   - src
+   - poster, show video image
+   - preload, preload video
+   - width, height
+   - none, dont preload video
+   - controls, show video control
+   - auto, download video when page load
+   - autoplay
+   - metadata
+   - loop
+   <source> add multiple source to video:
+   - src
+   - type
+   - codec
