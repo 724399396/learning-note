@@ -139,3 +139,35 @@
    - src
    - type
    - codec
+* CSS
+  css contain two parts: selector + declartion
+  declaration separated by ;
+  key value separated by :
+  <link href="css/example.css" type="text/css" rel="stylesheet"/> reference css file
+  <style type="text/css"></style> inline use css style
+** CSS Selector
+   | Selector                  | Meaning                                                                                                    | Example             |
+   | Universal Selector        | apply to all element in the document                                                                       | * {}                |
+   | Type selector             | match element type                                                                                         | h1, h2, h2 {}       |
+   | Class Selector            | match an element whose class attribute has value match                                                     | .note {} p .note {} |
+   | Id Selector               | match an element whose id attribute has a value that match                                                 | #introduction {}    |
+   | Child Selector            | Match an element that is a direct child of another                                                         | li>a {}             |
+   | Descendant Selector       | match an element that is a descendent of another specified element(not just a direct child of the element) | p a {}              |
+   | Adjacent Sibling Selector | Match an element that is the next sibling of another                                                       | h1+p {}             |
+   | General Sibling Selector  | Match an element that is a sibling of another                                                              | h1~p {}             |
+  if two or more rules apply to the same element, there are rule to folow:
+  - LAST RULE,latter one will win
+  - SPECIFICITY, specified rule will win
+  - IMPORTATNT, add !important after any property to indicate it should be consider
+  some property is inherited
+  css1 released in 1996, css2 released in 1998
+** Color
+   color,  special text color, four ways:
+   - RGB Value, e.g (100,100,90)
+   - HEX CODES, e.g #ee3e80
+   - COLOR Names, e.g DarkCyan
+   - HSLA(css3)
+   background-color, special background corlor, be default background is transparent
+   css3 support opacity property, the value is between 0.0 and 1.0
+   css3 support rgba
+   
