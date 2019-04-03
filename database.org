@@ -76,6 +76,10 @@
     SET GLOBAL log_output = "FILE"; 
     SET GLOBAL general_log_file = "/path/to/your/logfile.log";
     SET GLOBAL general_log = 'ON';
+** utf-8
+   SHOW VARIABLES LIKE 'character_set_%';
+   SHOW VARIABLES LIKE 'collation_%';
+   SET NAMES 'utf8';
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
@@ -193,3 +197,7 @@
    SELECT <column>->>'<key>' FROM <table>; -- extracting an attribute as text
    SELECT <column>->>'<key>' FROM <table> WHERE <column>->'key' ? 'value'; -- filter by key holds value
    #+END_SRC
+* sqlite3
+  #+BEGIN_SRC sql
+  VACUUM; # flush wal and shm file to db file
+  #+END_SRC
