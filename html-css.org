@@ -13,7 +13,7 @@
    <em> emphasis, normal show with italic
    <blockquote> a block text with quotation
    <strong> emphasis, normal show with bold
-   <abbr> abbrevi左手指月ation brokeror acronyms
+   <abbr> abbrevi左手指月ation http://localhost:10000/swagger-ui.htmlbrokeror acronyms
    <cite> citation
    <dfn> definition a new instance of a new term
    <address>
@@ -229,3 +229,25 @@
    border-image(css3)
    box-shadow(css3): <horizontal offset> <vertical offset> <blur distance> <spread of shadow>
    border-radius(css3)
+** List Table Form
+  list-style-type, control shape, order lists: decimal/decimal-learing-zero/lower-alpha/upper-alpha/lower-roman/upper-roman
+  list-style-image
+  list-style-position: outside/inside
+  list-style
+  table property: width padding text-transform letter-spacing font-size border-top border-bottom text-align background-color :hover
+  empty-cells: show/hide/inherit, controlle is show empty table cell
+  fieldsets used to group input form, legend is used to indicate what information is required in the fieldset
+  cursor: control mouse cursor
+** Position of element
+*** normal flow
+    position: static
+*** relative positioning
+    position: relative
+    move element to right/left/top/bootom where it would have beean palced. does not affect the position of surrounding elements
+*** absolute positioning 
+    When the position property is given a value of absolute , the box is taken out of normal flow and no longer affects the position of other elements on the page. (They act like it is not there.)
+*** fixed positioning
+    absolute positioning relation to the browser window, element fixed even user scroll up or down page
+*** floating element 
+    take element out of normal flow and position it to far left or right of a containing box
+   when move element out normal flow, element can overlap, use z-index property control which one on top
