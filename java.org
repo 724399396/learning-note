@@ -705,3 +705,30 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
 
 ** Spring boot
    enable @Configuration then provide a Realm Bean and a ShiroFilterChainDefinition Bean
+* java8
+** lambda
+  only a abstract method interface is function interface
+  lambda can pass to require function interface location
+  @FunctionalInterface is not required, but add it is a good practice, it will check is this interface is a functional interface
+  java8 add out-of-box functional interface
+  | functional interface | syntax schema     |
+  | Predicate<T>         | T -> boolean      |
+  | Consumer<T>          | T -> void         |
+  | Function<T,R>        | T -> R            |
+  | Supplier<T>          | () -> T           |
+  | UnaryOperator<T>     | T -> T            |
+  | BinaryOperator<T>    | (T, T) -> T       |
+  | BiPredicate<T, U>    | (T, U) -> boolean |
+  | BiConsumer<T, U>     | (T, U) -> void    |
+  | BiFunction<T, U, R>  | (T, U) -> R       |
+  java8 add like IntPredicate to avoid boxing/unboxing
+  lambda body return void is a special case handle by language specification
+  method reference, use :: syntax to reference exist method as lambda
+  java8 interface support default method, java8 functional interface include some help method to build function,
+  comparator: reversed(), comparing, then compare
+  predicate: negate() and() or()
+  function: andThen() compose()
+** stream
+   intermidiate opration return another stream, don't perform any processing until a terminal opreation(lazy), it's good for optimization, e.g filter map limit sorted distinct
+   terminal operation, e.g collect reduce forEach count
+   stream can only traversed once
