@@ -18,7 +18,9 @@
    <dfn> definition a new instance of a new term
    <address>
    <ins> insert
-   <del> delete
+   <d
+￼
+el> delete
 ** list
 *** Ordered list
     <ol> ordered list
@@ -250,4 +252,33 @@
     absolute positioning relation to the browser window, element fixed even user scroll up or down page
 *** floating element 
     take element out of normal flow and position it to far left or right of a containing box
-   when move element out normal flow, element can overlap, use z-index property control which one on top
+    element height will affect element location
+    clear property allow you to say that no element should touch the left or right hand side of a box:
+    - left, the left-hand side of the box should not touch any other elements apprearing in the same containing element
+    - right
+    - both, neither the left nor right-hand sides of the box will touch element appearing in the same containing element
+    - none, element can touch either side
+    if all element is float, then it parent height will be 0, to fixe this problem, add two proeprty to parent element: overflow:auto width:100%
+  when move element out normal flow, element can overlap, use z-index property control which one on top
+  fixed-width layout vs liquid-width layout
+  in css use @import url('xx.css') reference other css file
+** Control image
+   use width and height control image size
+   align image center 2 way: (1) set text-align property of image parent container (2) auto image display to block and margin-left and margin-right to auto
+   background-image, set a image as container background
+   background-repeat:
+   - repeat, image is repeated both horizontally and vertically
+   - repeat-x, horizontally only
+   - repeat-y, vertically only
+   - no-repeat
+   background-attachment:
+   - fixed, stay in same position on the page
+   - scroll, move up and down as the user scrolls up and down the page
+   background-position: left top/ left center/ left bottom/ center top/ center center/ center bootom/ right top/ right center/ right boot/ or percent distance from left top to right bottom
+   background, shorthand for all the background: 1. color 2. image 3. repeat, 4. attachment 5. position
+   sprite, when a signle image is used for serveral different parts of a interface, it is known as a sprite, work with background-position together
+   css3 introduce the ability to specify a gradient
+   
+
+** HTML5
+   html5 introduce new element <header> <nav> <article> <aside> <footer> <section> <hgroup>
