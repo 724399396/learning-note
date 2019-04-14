@@ -754,4 +754,7 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
    - averagingInt
    - summarizingInt
    - join
+   - groupingBy
+   - mapping
+   - flatMapping
    
