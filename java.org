@@ -503,7 +503,6 @@ IoC is let container maintain object lifecycle
 
   java 9, java.lang.ref.Reference.reachabilityFence(Object ref), assure ref is reachable on this location
 
-  
 * keytool
   #+BEGIN_SRC bash
 keytool -genkey -alias <name> -keyalg RAS -keystore <filename.jks> -keysize 2048 -validity 360 -dnma CN=<domain> -keypass <password> -sotrepass <password> # generate jks file
@@ -732,3 +731,27 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
    intermidiate opration return another stream, don't perform any processing until a terminal opreation(lazy), it's good for optimization, e.g filter map limit sorted distinct
    terminal operation, e.g collect reduce forEach count
    stream can only traversed once
+   there are IntStream DoubleStream LongStream for avoid boxing/unboxing, mapToInt mapToDouble mapToLong
+   boxed() convert a primative stream to a boxed stream
+   IntStream.rangeClosed() IntStream.range() generate int stream
+   Stream.of() create stream from element, Stream.empty() create empty stream, Stream.ofNullable() create stream and ignore null element
+   Arrays.stream() create stream from array
+   java8 nio support create stream from file
+   Stream.iterate, generate infinite stream by a start value and a iterate function
+   Stream.generate, generate infinite stream by Supplier<T>
+*** operator
+    - filter
+    - takeWhile(java9) dropWhile(java9) limit skip
+    - map flatMap
+    - allMatch anyMatch noneMatch findFirst findAny
+    - reduce count sorted forEach collect
+    - mapToInt mapToDouble mapToLong mapToObj
+*** Collector
+   Collector is more generate reduce
+   - counting
+   - maxBy
+   - summingInt summingDouble summingLong
+   - averagingInt
+   - summarizingInt
+   - join
+   
