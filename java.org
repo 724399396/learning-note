@@ -749,12 +749,18 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
 *** Collector
    Collector is more generate reduce
    - counting
-   - maxBy
+   - maxBy minBy
    - summingInt summingDouble summingLong
    - averagingInt
    - summarizingInt
    - join
+   - reducing
    - groupingBy
    - mapping
    - flatMapping
+   - collectingAndThen
+   - partitioningBy
+   - toList
+   - toSet
+   - toCollection
    
