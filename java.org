@@ -763,4 +763,14 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
    - toList
    - toSet
    - toCollection
+*** parallel
+    parallelStream create parallel stream from collection
+    parrallel() change a stream to parallel stream
+    sequential() change a parallel stream into a sequential stream
+    Parallel stream internally use default ForkJoinPool to execute, default has as many threads as you have processors
+    Spliterator is add from java 8
+    StreamSupport.stream(splitor, true) create stream from customer Spliterator
    
+* Library
+** Java Microbeanchmark Harness(JMH) 
+   is a toolkit that helps to create, in a simple, annotation-based way, reliable microbenchmarks for Java programs and for any other language targeting the Java Virtual Machine (JVM)
