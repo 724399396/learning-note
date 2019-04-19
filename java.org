@@ -704,7 +704,7 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
 
 ** Spring boot
    enable @Configuration then provide a Realm Bean and a ShiroFilterChainDefinition Bean
-* java8
+* java 8 9 11
 ** lambda
   only a abstract method interface is function interface
   lambda can pass to require function interface location
@@ -771,6 +771,21 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
     Spliterator is add from java 8
     StreamSupport.stream(splitor, true) create stream from customer Spliterator
    
+** Collecttion
+*** List Set
+   List.of create immutable list
+   Set.of create immutable set, if element duplicate throw IllegalArgumentException
+   removeIf, work on Set and List, pass a lambda to modify collection 
+   replaceAll, work on List, pass a lambda to replace element
+*** Map
+   Map.of(k1,v1 ...) create immutable map
+   Map.ofEntries(Map.entry(k,v) ...) create immutable map
+   forEach forEachOrdered
+   Entry.comparingByValue Entry.comparingByKey
+   getOrDefault
+   computeIfAbsent, if key not exist, will call second argument get result then put key and result to map
+   computeIfPresent, if key exist, compute new value replace, if new value is null the key is removed
+   compute
 * Library
 ** Java Microbeanchmark Harness(JMH) 
    is a toolkit that helps to create, in a simple, annotation-based way, reliable microbenchmarks for Java programs and for any other language targeting the Java Virtual Machine (JVM)
