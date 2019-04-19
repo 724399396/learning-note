@@ -786,6 +786,24 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
    computeIfAbsent, if key not exist, will call second argument get result then put key and result to map
    computeIfPresent, if key exist, compute new value replace, if new value is null the key is removed
    compute
+   remove(key,value), only key and value both match then remove
+   removeIf
+   replaceAll, replace each entry with apply a BiFunction
+   replace, replace a value if key is present
+   merge(k,v, bifunction) merge key/value to map with merge value function
+*** ConcurrentHashMap
+    forEach
+    reduce
+    search, applie function on each key/value until produce non-null result
+    mappingCount
+** Optional
+   Optional.empty() Optional.of() Optional.ofNullable() create Optional
+   map flatMap filter
+   stream() convert optional to stream
+   get() orElse(T) orElseGet(Supplier<? extends T>) or(Supplier <? extends Optinal<? extends T>>) orElseThrow ifPresent(Consumer)  ifPresentOrElse(Consumer, Runnbale)
+   avoid use OptionalInt OptionalLong OptionalDouble because these lack map flatMap and filter function
+** Date
+   package java.time include new design time related class
 * Library
 ** Java Microbeanchmark Harness(JMH) 
    is a toolkit that helps to create, in a simple, annotation-based way, reliable microbenchmarks for Java programs and for any other language targeting the Java Virtual Machine (JVM)
