@@ -1,26 +1,26 @@
 * Mybatis
 
-general usage:
+  general usage:
 
- - Blog blog = (Blog) session.SelectOne(<mapper name>, args)
+  - Blog blog = (Blog) session.SelectOne(<mapper name>, args)
 
- - BlogMapper mapper = session.getMapper(<mapper class>)
+  - BlogMapper mapper = session.getMapper(<mapper class>)
 
-   Blog blog = mapper.selectBlog(arg)
+    Blog blog = mapper.selectBlog(arg)
 
 
 
-namespace is used to distinct mapper file, good practice is keep same with java class full path
+  namespace is used to distinct mapper file, good practice is keep same with java class full path
 
-SqlSession is not thread safe
+  SqlSession is not thread safe
 
-SqlSessionFactory is best only create single instance
+  SqlSessionFactory is best only create single instance
 
 ** basic query
 
-    - (ExpectType) session.selectOne("<mapper file full name>", id)
+   - (ExpectType) session.selectOne("<mapper file full name>", id)
 
-    - session.getMapper(class).selectXX(id)
+   - session.getMapper(class).selectXX(id)
 
 ** page limit
 
@@ -28,29 +28,29 @@ SqlSessionFactory is best only create single instance
 
 ** mapper file 
 
-  - id
+   - id
 
-    set this column is id, useGeneratedKeys set this id is from database generated
+     set this column is id, useGeneratedKeys set this id is from database generated
 
-  - resultType
+   - resultType
 
-    this column return type
+     this column return type
 
-  - resultMap
+   - resultMap
 
-    custom type for this column return
+     custom type for this column return
 
-  - constructor
+   - constructor
 
-    set return type constructor, maybe argument <idArg> <arg>
+     set return type constructor, maybe argument <idArg> <arg>
 
-  - association
+   - association
 
-    complicate object
+     complicate object
 
-  - cache
+   - cache
 
-    define cache on/off, choose cache implementation
+     define cache on/off, choose cache implementation
 
 ** Dynamic sql
 
@@ -100,37 +100,37 @@ SqlSessionFactory is best only create single instance
 
 ** http api
 
-  - Get to query data
+   - Get to query data
 
-  - Put to insert data
+   - Put to insert data
 
-  - url patten is <index>/<type>/<id>
+   - url patten is <index>/<type>/<id>
 
-  - <location>/_search?q=<condition> or POST <location>/_search pass query condition to query data
+   - <location>/_search?q=<condition> or POST <location>/_search pass query condition to query data
 
-  - q=<value> means equal, q=-<value> means not equal 
+   - q=<value> means equal, q=-<value> means not equal 
 
-  - _shutdown, shutdown es
+   - _shutdown, shutdown es
 
-  - _plugin/<plugin name> access plugin
+   - _plugin/<plugin name> access plugin
 
-  - _cluster/health get cluster health info
+   - _cluster/health get cluster health info
 
-  - put /index 
+   - put /index 
 
-    {
+     {
 
-      "settings": {
+     "settings": {
 
-        "number_of_shards": <num>,
+     "number_of_shards": <num>,
 
-        "number_of_replicas":  <num>
+     "number_of_replicas":  <num>
 
-      }
+     }
 
-    }
+     }
 
-    change index shard setting
+     change index shard setting
 
 * Concurrency
 
@@ -154,9 +154,9 @@ SqlSessionFactory is best only create single instance
 
   volatile only suit those scenarios
 
-    1. write a variable not depend on current value
+  1. write a variable not depend on current value
 
-    2. only one thread to write this variable, this variable is not a part of ensure object is same
+  2. only one thread to write this variable, this variable is not a part of ensure object is same
 
   walk on a object can reach field means is public, pass a object to a method also means public this object, public a internal object means public it outside object
 
@@ -170,15 +170,15 @@ SqlSessionFactory is best only create single instance
 
   safe publish object way:
 
-    1) static field initial a object
+  1) static field initial a object
 
-    2) use volatile or AtomicReference
+  2) use volatile or AtomicReference
 
-    3) final field save initialed object
+  3) final field save initialed object
 
-    4) use lock to publish object
+  4) use lock to publish object
 
-    5) thread safe collection to publish
+  5) thread safe collection to publish
 
   static field publish object is easiest, jvm mechanism ensure this
 
@@ -200,49 +200,49 @@ SqlSessionFactory is best only create single instance
 
 * Spring
 
-spring core is IoC and AOP
+  spring core is IoC and AOP
 
-IoC is let container maintain object lifecycle
+  IoC is let container maintain object lifecycle
 
 ** IOC
 
    two initial way:
 
-     1. BeanFactory only IoC, initialize lazy
+   1. BeanFactory only IoC, initialize lazy
 
-     2. ApplicationContext, extend from BeanFactory, support AOP, egar initialize
+   2. ApplicationContext, extend from BeanFactory, support AOP, egar initialize
 
    bean initialize way:
 
-     1. default constructor
+   1. default constructor
 
-     2. factory-method set initialize method of this class static method
+   2. factory-method set initialize method of this class static method
 
-     3. set factory-bean and factory-method
+   3. set factory-bean and factory-method
 
-     4. <constructor-arg>, can set by type, by index or by name
+   4. <constructor-arg>, can set by type, by index or by name
 
    cycle depedency will throw BeanCurrentlyInCreationException
 
    constructor:
 
-      <null/> use to set null
+   <null/> use to set null
 
-      depende-on set the class will initialize after depende-on class
+   depende-on set the class will initialize after depende-on class
 
    @autowire inject by name or by type, if same type has multiple instance, throw exception
 
    lifecycle:
 
-      - singleton
+   - singleton
 
-      - prototype, multiple instance
+   - prototype, multiple instance
 
-      - request, one request one instance
+   - request, one request one instance
 
-      - session
+   - session
 
-      - application
+   - application
 
 ** AOP
 
@@ -256,31 +256,31 @@ IoC is let container maintain object lifecycle
 ** Spring mvc
    two container:
 
-     - tomcat ContextLoaderListener, this class will initialize WebAppicationContext,
+   - tomcat ContextLoaderListener, this class will initialize WebAppicationContext,
 
-       keep DAO and service, then register a DispatcherServlet, this class will read
+     keep DAO and service, then register a DispatcherServlet, this class will read
 
-       <servlet-name>-servlet.xml then construct the second container
+     <servlet-name>-servlet.xml then construct the second container
 
-     - the second container's parent is above container, so can read service and dao
+   - the second container's parent is above container, so can read service and dao
 
-       instance, incluse HanlderMapping(for http), HandlerAdapter, ModelAndView is
+     instance, incluse HanlderMapping(for http), HandlerAdapter, ModelAndView is
 
-       use to response, ViewResolver is to find view.
+     use to response, ViewResolver is to find view.
 
    three implement method:
 
-     - implement HttpRequestHandler then override handleRequest, then register on
+   - implement HttpRequestHandler then override handleRequest, then register on
 
-       second on container
+     second on container
 
-     - extend AbstractController, implement RequestInternal method, return ModelAndView
+   - extend AbstractController, implement RequestInternal method, return ModelAndView
 
-     - use @Controller on class, @RequestMapping on Method then return ModelAndView, @RequestParam bind
+   - use @Controller on class, @RequestMapping on Method then return ModelAndView, @RequestParam bind
 
-       parameter from request, @RequestHeader get Header value, @CookieValue get coockie, @RequestBody
+     parameter from request, @RequestHeader get Header value, @CookieValue get coockie, @RequestBody
 
-       @PathVariable get url path, @ResponseBody custom response format
+     @PathVariable get url path, @ResponseBody custom response format
 
    extend HandlerExceptionResolver then implement resolveExcpeiton then register in container to handle global exception
 
@@ -526,10 +526,10 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
   SimpleHash(algorithm, password, salt, times) generate encrypt password
 ** ini config
 *** config file format
-   [users]
-   <username> = <password>, <role>
-   [roles]
-   <role> = <permission1>, <permission2>
+    [users]
+    <username> = <password>, <role>
+    [roles]
+    <role> = <permission1>, <permission2>
 *** use config file
     #+BEGIN_SRC java
     Factory<SecurityManager> factory = new IniSecurityManagerFactor("init config file");
@@ -619,114 +619,114 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
     #+END_SRC
 ** Spring MVC
 *** web.xml
-  #+BEGIN_SRC xml
-	<filter>
-		<filter-name>shiroFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-		<init-param>
-			<param-name>targetFilterLifecycle</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>shiroFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>	
-  #+END_SRC
+    #+BEGIN_SRC xml
+  <filter>
+    <filter-name>shiroFilter</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    <init-param>
+      <param-name>targetFilterLifecycle</param-name>
+      <param-value>true</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>shiroFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>	
+    #+END_SRC
 *** applicationContext-shiro.xml
-  #+BEGIN_SRC xml
-	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
-		<property name="securityManager" ref="securityManager" />
-		<property name="loginUrl" value="/login" />
-		<property name="unauthorizedUrl" value="/unauthorized" />
-		<property name="filters">
-			<util:map>
-				<entry key="logout" value-ref="logoutFilter" />
-			</util:map>
-		</property>
-		<property name="filterChainDefinitions">
-			<value>
-				/login=anon
-				/index=anon
-				/static/**=anon
-				/doLogout=logout
-				/** = authc
-			</value>
-		</property>
-	</bean>
-	<bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">
-		<property name="redirectUrl" value="/index" />
-	</bean>
+    #+BEGIN_SRC xml
+  <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+    <property name="securityManager" ref="securityManager" />
+    <property name="loginUrl" value="/login" />
+    <property name="unauthorizedUrl" value="/unauthorized" />
+    <property name="filters">
+      <util:map>
+        <entry key="logout" value-ref="logoutFilter" />
+      </util:map>
+    </property>
+    <property name="filterChainDefinitions">
+      <value>
+        /login=anon
+        /index=anon
+        /static/**=anon
+        /doLogout=logout
+        /** = authc
+      </value>
+    </property>
+  </bean>
+  <bean id="logoutFilter" class="org.apache.shiro.web.filter.authc.LogoutFilter">
+    <property name="redirectUrl" value="/index" />
+  </bean>
 
-	<bean id="sessionIdGenerator"
-		class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
-	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
-		<constructor-arg value="sid" />
-		<property name="httpOnly" value="true" />
-		<property name="maxAge" value="-1" />
-	</bean>
-	<bean id="sessionDAO"
-		class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
-		<property name="sessionIdGenerator" ref="sessionIdGenerator" />
-	</bean>
-	<bean name="sessionValidationScheduler"
-		class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
-		<property name="interval" value="1800000" />
-		<property name="sessionManager" ref="sessionManager" />
-	</bean>
-	<bean id="sessionManager"
-		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
-		<property name="globalSessionTimeout" value="1800000" />
-		<property name="deleteInvalidSessions" value="true" />
-		<property name="sessionValidationSchedulerEnabled" value="true" />
-		<property name="sessionValidationScheduler" ref="sessionValidationScheduler" />
-		<property name="sessionDAO" ref="sessionDAO" />
-		<property name="sessionIdCookieEnabled" value="true" />
-		<property name="sessionIdCookie" ref="sessionIdCookie" />
-	</bean>
+  <bean id="sessionIdGenerator"
+    class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+  <bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+    <constructor-arg value="sid" />
+    <property name="httpOnly" value="true" />
+    <property name="maxAge" value="-1" />
+  </bean>
+  <bean id="sessionDAO"
+    class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+    <property name="sessionIdGenerator" ref="sessionIdGenerator" />
+  </bean>
+  <bean name="sessionValidationScheduler"
+    class="org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler">
+    <property name="interval" value="1800000" />
+    <property name="sessionManager" ref="sessionManager" />
+  </bean>
+  <bean id="sessionManager"
+    class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+    <property name="globalSessionTimeout" value="1800000" />
+    <property name="deleteInvalidSessions" value="true" />
+    <property name="sessionValidationSchedulerEnabled" value="true" />
+    <property name="sessionValidationScheduler" ref="sessionValidationScheduler" />
+    <property name="sessionDAO" ref="sessionDAO" />
+    <property name="sessionIdCookieEnabled" value="true" />
+    <property name="sessionIdCookie" ref="sessionIdCookie" />
+  </bean>
 
-	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-		<property name="realm" ref="databaseRealm" />
-		<property name="sessionManager" ref="sessionManager" />
-	</bean>
-	<bean
-		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="staticMethod"
-			value="org.apache.shiro.SecurityUtils.setSecurityManager" />
-		<property name="arguments" ref="securityManager" />
-	</bean>
+  <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+    <property name="realm" ref="databaseRealm" />
+    <property name="sessionManager" ref="sessionManager" />
+  </bean>
+  <bean
+    class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+    <property name="staticMethod"
+      value="org.apache.shiro.SecurityUtils.setSecurityManager" />
+    <property name="arguments" ref="securityManager" />
+  </bean>
 
-	<bean id="databaseRealm" class="com.how2java.realm.DatabaseRealm">
+  <bean id="databaseRealm" class="com.how2java.realm.DatabaseRealm">
     </bean>
     
-	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
-  #+END_SRC 
+  <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+    #+END_SRC 
 
 ** Spring boot
    enable @Configuration then provide a Realm Bean and a ShiroFilterChainDefinition Bean
 * java 8 9 11
 ** lambda
-  only a abstract method interface is function interface
-  lambda can pass to require function interface location
-  @FunctionalInterface is not required, but add it is a good practice, it will check is this interface is a functional interface
-  java8 add out-of-box functional interface
-  | functional interface | syntax schema     |
-  | Predicate<T>         | T -> boolean      |
-  | Consumer<T>          | T -> void         |
-  | Function<T,R>        | T -> R            |
-  | Supplier<T>          | () -> T           |
-  | UnaryOperator<T>     | T -> T            |
-  | BinaryOperator<T>    | (T, T) -> T       |
-  | BiPredicate<T, U>    | (T, U) -> boolean |
-  | BiConsumer<T, U>     | (T, U) -> void    |
-  | BiFunction<T, U, R>  | (T, U) -> R       |
-  java8 add like IntPredicate to avoid boxing/unboxing
-  lambda body return void is a special case handle by language specification
-  method reference, use :: syntax to reference exist method as lambda
-  java8 interface support default method, java8 functional interface include some help method to build function,
-  comparator: reversed(), comparing, then compare
-  predicate: negate() and() or()
-  function: andThen() compose()
+   only a abstract method interface is function interface
+   lambda can pass to require function interface location
+   @FunctionalInterface is not required, but add it is a good practice, it will check is this interface is a functional interface
+   java8 add out-of-box functional interface
+   | functional interface | syntax schema     |
+   | Predicate<T>         | T -> boolean      |
+   | Consumer<T>          | T -> void         |
+   | Function<T,R>        | T -> R            |
+   | Supplier<T>          | () -> T           |
+   | UnaryOperator<T>     | T -> T            |
+   | BinaryOperator<T>    | (T, T) -> T       |
+   | BiPredicate<T, U>    | (T, U) -> boolean |
+   | BiConsumer<T, U>     | (T, U) -> void    |
+   | BiFunction<T, U, R>  | (T, U) -> R       |
+   java8 add like IntPredicate to avoid boxing/unboxing
+   lambda body return void is a special case handle by language specification
+   method reference, use :: syntax to reference exist method as lambda
+   java8 interface support default method, java8 functional interface include some help method to build function,
+   comparator: reversed(), comparing, then compare
+   predicate: negate() and() or()
+   function: andThen() compose()
 ** stream
    intermidiate opration return another stream, don't perform any processing until a terminal opreation(lazy), it's good for optimization, e.g filter map limit sorted distinct
    terminal operation, e.g collect reduce forEach count
@@ -747,22 +747,22 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
     - reduce count sorted forEach collect
     - mapToInt mapToDouble mapToLong mapToObj
 *** Collector
-   Collector is more generate reduce
-   - counting
-   - maxBy minBy
-   - summingInt summingDouble summingLong
-   - averagingInt
-   - summarizingInt
-   - join
-   - reducing
-   - groupingBy
-   - mapping
-   - flatMapping
-   - collectingAndThen
-   - partitioningBy
-   - toList
-   - toSet
-   - toCollection
+    Collector is more generate reduce
+    - counting
+    - maxBy minBy
+    - summingInt summingDouble summingLong
+    - averagingInt
+    - summarizingInt
+    - join
+    - reducing
+    - groupingBy
+    - mapping
+    - flatMapping
+    - collectingAndThen
+    - partitioningBy
+    - toList
+    - toSet
+    - toCollection
 *** parallel
     parallelStream create parallel stream from collection
     parrallel() change a stream to parallel stream
@@ -773,24 +773,24 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
    
 ** Collecttion
 *** List Set
-   List.of create immutable list
-   Set.of create immutable set, if element duplicate throw IllegalArgumentException
-   removeIf, work on Set and List, pass a lambda to modify collection 
-   replaceAll, work on List, pass a lambda to replace element
+    List.of create immutable list
+    Set.of create immutable set, if element duplicate throw IllegalArgumentException
+    removeIf, work on Set and List, pass a lambda to modify collection 
+    replaceAll, work on List, pass a lambda to replace element
 *** Map
-   Map.of(k1,v1 ...) create immutable map
-   Map.ofEntries(Map.entry(k,v) ...) create immutable map
-   forEach forEachOrdered
-   Entry.comparingByValue Entry.comparingByKey
-   getOrDefault
-   computeIfAbsent, if key not exist, will call second argument get result then put key and result to map
-   computeIfPresent, if key exist, compute new value replace, if new value is null the key is removed
-   compute
-   remove(key,value), only key and value both match then remove
-   removeIf
-   replaceAll, replace each entry with apply a BiFunction
-   replace, replace a value if key is present
-   merge(k,v, bifunction) merge key/value to map with merge value function
+    Map.of(k1,v1 ...) create immutable map
+    Map.ofEntries(Map.entry(k,v) ...) create immutable map
+    forEach forEachOrdered
+    Entry.comparingByValue Entry.comparingByKey
+    getOrDefault
+    computeIfAbsent, if key not exist, will call second argument get result then put key and result to map
+    computeIfPresent, if key exist, compute new value replace, if new value is null the key is removed
+    compute
+    remove(key,value), only key and value both match then remove
+    removeIf
+    replaceAll, replace each entry with apply a BiFunction
+    replace, replace a value if key is present
+    merge(k,v, bifunction) merge key/value to map with merge value function
 *** ConcurrentHashMap
     forEach
     reduce
@@ -804,6 +804,83 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
    avoid use OptionalInt OptionalLong OptionalDouble because these lack map flatMap and filter function
 ** Date
    package java.time include new design time related class
+   LocalDate and LocalTime not care about timezone
+   java.time.temporal contain kinds of Temporal Field used on get method param
+*** LocalDate
+    LocalDate.of(year, month, day) create LocalDate
+    LocalDate.now()
+    LocalDate.parse()
+    getYear getMonth getDayOfMonth getDayOfWeek lengthOfMonth isLeapYear
+    withXX method create new LocalDate without mutable exist one
+    plusXX minusXX
+*** LocalTime
+    LocalTime.of(hour, minute, second)
+    LocalTime.now()
+    LocalTime.parse()
+    getHour getMinute getSecond
+*** LocalDateTime
+    LocalDateTime is combine LocalDate and LocalTime
+    LocalDateTime.of()
+    LocalDateTime.of(date, time)
+    date.atTime
+    time.atDate
+    toLocalDate toLocalTime
+*** Instant
+    instant is represent time from unix epoch time (1970,1,1 00:00:00 UTC)
+    Instant.ofEpochSecond(second, nanoSecond adjust)
+    Instant is used by machine, so it not support ge human readable time unit, like day of month
+*** Duration Period
+    Duration.between, create duration from two Temporal instance(LocalData, LocalTime... implement this interface)
+    Duration can't used with mix Instant and LocalXX
+    Duration is for get second/nano second, so not support LocalDate
+    Period.between, get day/month/year duration of to date
+    Duration and Period has other way create, e.g. Duration.ofMinutes
+*** TemporalAdjuster
+    advanced time adjust, e.g nextOrSame lastDayOfMonth
+    | method              | description                                                                                                                       |
+    | dayOfWeekInMonth    | Creates a new date in the same month with the ordinal day of week. (Neg- ative numbers count backward from the end of the month.) |
+    | firstDayOfMonth     | Creates a new date set to the first day of the current month.                                                                     |
+    | firstDayOfNextMonth | Creates a new date set to the first day of the next month.                                                                        |
+    | firstDayOfNextYear  | Creates a new date set to the first day of the next year.                                                                         |
+    | firstDayOfYear      | Creates a new date set to the first day of the current year.                                                                      |
+    | firstInMonth        | Creates a new date in the same month with the first matching day of the week.                                                     |
+    | lastDayOfMonth      | Creates a new date set to the last day of the current month.                                                                      |
+    | lastDayOfNextMonth  | Creates a new date set to the last day of the next month.                                                                         |
+    | lastDayOfNextYear   | Creates a new date set to the last day of the next year.                                                                          |
+    | lastDayOfYear       | Creates a new date set to the last day of the current year.                                                                       |
+    | lastInMonth         | Creates a new date in the same month with the last matching day of the week.                                                      |
+*** DateTimeFormatter
+    formatting and parsing time
+    xx(instance).format
+    xx(class).parse
+    DateTimeFormatter is thread safe
+    DateTimeFormatter.ofPattern create DateTimeFormatter from pattern
+*** TimeZone
+    java.time.ZoneId replace java.util.TimeZone
+    ZoneId.of get TimeZone
+    xx.atStartOfDay(ZoneId)  xx.atZone(Zone)
+    xx.toInstance(ZoneId) convert LocalDate/Time/DateTime to Instant
+    xx.ofInstant(Zone) convert Instant to LocalDate/Time/DateTime
+    ZoneOffset.of  create offset from UTC, then use OffsetDateTime.of create date from offset
+
+** Default method
+   from java8, interface method can has a implement body
+   from java8, interface can has static method
+   default is keyword
+   interface with default method is different with abstract class:
+   - interface can implement from multiple
+   - interface can't has a instance variable
+   default method conflict resolve rules:
+   1. classes always win
+   2. otherwise, subinnterfaces win
+   3. explicity select (use X.super.xx syntax)
+** Module System
+   Java9 add module system, from project Jigsaw
+   module-info.java is module info
+*** syntax
+    module <module-name>
+    exports <package-names>
+    requires <module-names>
 * Library
 ** Java Microbeanchmark Harness(JMH) 
    is a toolkit that helps to create, in a simple, annotation-based way, reliable microbenchmarks for Java programs and for any other language targeting the Java Virtual Machine (JVM)
