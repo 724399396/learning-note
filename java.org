@@ -877,10 +877,17 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
 ** Module System
    Java9 add module system, from project Jigsaw
    module-info.java is module info
+   any jar firl bot been module will auto be a module, automatic modules implicity export all their package, module name is jar name without version
 *** syntax
-    module <module-name>
-    exports <package-names>
-    requires <module-names>
+    module <module-name> {
+      requires <module-names>
+      exports <package-names>
+      requires transitive <module-name> // require module, then another module require this module will get require transitive module packages
+      exports <package> to <package>
+      opens-to <package> // allow reflection
+    }
+    open module <module-name>, has no effect on module visibility except for allowing reflective access
+    after java9, reflection is no longer allow by default, the open clause is allow this
 * Library
 ** Java Microbeanchmark Harness(JMH) 
    is a toolkit that helps to create, in a simple, annotation-based way, reliable microbenchmarks for Java programs and for any other language targeting the Java Virtual Machine (JVM)
