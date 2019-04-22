@@ -133,6 +133,9 @@
      change index shard setting
 
 * Concurrency
+  Thread = Cpu Number * Cpu target usage * (1 + (Wait time / compute Time))
+
+  daemon thread will not prevent program exit, non daemon thread will stop program exit until it execute done
 
   mutable is program misfunction root cause on concurrency program
 
@@ -197,6 +200,7 @@
   Queue is add after 5.0, purpose is improve performance when random access, BlockingQueue is good choice to implement producer/consumer strategy
 
   Executor object has kinds of method to create ExecutorSerivce, ExecutorService is kinds of strategy to re-use threads
+  ScheduleExectorService can schedule task after some delay
 
 * Spring
 
@@ -770,7 +774,6 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
     Parallel stream internally use default ForkJoinPool to execute, default has as many threads as you have processors
     Spliterator is add from java 8
     StreamSupport.stream(splitor, true) create stream from customer Spliterator
-   
 ** Collecttion
 *** List Set
     List.of create immutable list
@@ -888,6 +891,54 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
     }
     open module <module-name>, has no effect on module visibility except for allowing reflective access
     after java9, reflection is no longer allow by default, the open clause is allow this
+** CompletableFuture
+   Future is introduce on java 5, java 8 introduce CompletableFuture make it composable
+   CompletableFuture<V> thenCombine(CompletableFuture<U> other, BiFunction<T,U,V> fn)
+   CompletableFuture<U> thenApply(Function<T, U>fn)
+   CompletableFuture<U> thenCompose(Function<T, CompletionStage<U>> fn), execute fn use same thread with origin CompletableFuture
+   CompletableFuture<U> thenComposeAsync(Function<T, CompletionStage<U>> fn), execute fn use new thread
+   CompletableFuture<Void> thenAccept(Consumer<? super T> action)
+   <instance>.complete(<data>) <intance>.completeExceptionlly(<exception)
+   CompletableFuture.supplyAsync(Supplier<T>), is handy way combine complete and completeExceptionlly, default exectute in default ForkJoinPool
+   join is simalar with get, but join not throw checked exception, all exception convert to unchecked exception
+   CompletableFuture factory method support pass customer Executor
+   CompletableFuture.allOf(<future array>), create a CompletableFuture<Void> from all futures
+   CompletableFuture.anyOf(<future array>), create a CompletableFuture<Object> complete with first-to-complete rule
+   <instance>.orTimeOut(<time>, <unit>)
+   <instance>.completeOnTimeOut(<value>, <time>, <unit>)
+** Flow
+   added in java 9, under package java.util.concurrent.Flow, for stream like reactive programming, known as the publich-subscribe model
+   Flow use request implement backpressure, change model from push to pull
+   Flow implmement Reactive Streams(www.reactive-streams.org) required feature, akka Reactor RxJava Vert.x also share same specification
+   Flow cotnain 4 nested interface:
+   - Publisher
+   - Subscriber
+   - Subscription
+   - Processor
+   Subscriber event strictly following the sequence: onSubscribe onNext* (onError | onComplete)?
+   Flow is interface definition, java not prodide implmement, it should implmement by 3rd lib, e.g Akka RxJava
 * Library
 ** Java Microbeanchmark Harness(JMH) 
    is a toolkit that helps to create, in a simple, annotation-based way, reliable microbenchmarks for Java programs and for any other language targeting the Java Virtual Machine (JVM)
+* RxJava
+  <instance>.blockingSubscribe(Observer<T> ob) execute ob on current thread
+  support map, filter, merge, combine ... method
+** Observable
+   Observable, non backpressure version Flow
+   Observable.just(<elements>), create Observer then emit onNext* onComplete event
+   Observable.interval(<time>, <unit>) period generate event
+   Observable.create(ObservableOnSubscribe) create Observable from lambda
+** Flowable
+  Flowable, backpressure version Flow
+** Observer
+   #+BEGIN_SRC java
+   public interface Observer<T> {
+     void onSubscribe(Disposable d);
+     void onNext(T t);
+     void onError(Throwable t);
+     void onComplete();
+   }
+   #+END_SRC
+   define simalar as java Flow.Subscriber interface
+   
+  
