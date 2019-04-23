@@ -3,6 +3,7 @@
   dark is embedded in ${flutter path}/bin/cache/dart-sdk
 * Fluter cli
   #+BEGIN_SRC bash
+  flutter precache # precache development binaries needed
   flutter upgrade # upgrade flutter
   flutter doctor # check env setting
   flutter devices # show connected devices
@@ -17,22 +18,31 @@
 ** dependencies
    this section describe which package used by app, use <package>: <version> format
 * Widget
+  runApp(<Widget>), take widget and make widget as root
   Stateless wigets are immutable
   Stateful widgets maintain state that might change during the liftime of the widget
   implmement a Stateful widget need two classe:
   1. StatefulWidget, need provide State createState() implmement
   2. State, need provide Widget build(BuildContext context) implement
   setState((){<body>}) change stateful widget state
+  widget is inspiration from React, when state change it will determine the minimal changes need in the underlyring render tree
 ** Componenet
+   - Text, styled text
+   - Row/Column, create flexible alyout base on the web's flexbox layout model
+   - Statck, stack widgets on top of each other in paint order
+   - Positioned, children of Stack, control position relative to the top bootom left or right
+   - Container
+   - Expanded, it expands to fill any remaining available space that hasn't been consumed by the other children
    - MaterialApp
    - Scaffold
    - AppBar
    - Center
-   - Text
    - ListView
    - Divider
    - ListTile
    - Icon
+   - IconButton
+   - FloatingActionButton
 * Router
   Flutter Navigator manages a stack containing the app's routes
   Navigator.of(context).push, push page to stack
@@ -42,3 +52,5 @@
   <return type> <method name>(<Argument type> <argument> ...) {<body>}
   <return type> <method name>(<Argument type> <argument> ...) => <body>
   <Type>[], new a List with Type 
+  @override, declare method is override
+  <ClassName>({<field>}) is constructor, will initialize field
