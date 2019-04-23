@@ -917,6 +917,24 @@ keytool -genkeypair -keystore keystore.jceks -storetype jceks -storepass secret 
    - Processor
    Subscriber event strictly following the sequence: onSubscribe onNext* (onError | onComplete)?
    Flow is interface definition, java not prodide implmement, it should implmement by 3rd lib, e.g Akka RxJava
+** Annotation
+   annotation enchanved in java 8 by two ways:
+   - repeat annoations
+   - annotate any type uses
+   let annotation repeateable, first annoated annotate with @Repeatable, second provide a container e.g. @interface Author {} @interface Authors {Author[] value;}
+** Array
+   praalelSort setAll parallelSetAll parrallelPrefix
+** Number and Math
+   min max sum
+   compareUnsigned divideUnsigned remainderUnsigned toUnsignedString
+   parseUnsignedInt parseUnsignedLong
+   isFinite
+   logicalAnd logicalOr logicalXor
+   addExtra subtractExtract
+** Files
+   Files.list, produce a stream<Path>, isn't recusive
+   Files.walk, like Files.list but is recursive and can control depth level
+   Files.find, produce a Stream<path> from recursive traversing a directory to find entries that match given predicate
 * Library
 ** Java Microbeanchmark Harness(JMH) 
    is a toolkit that helps to create, in a simple, annotation-based way, reliable microbenchmarks for Java programs and for any other language targeting the Java Virtual Machine (JVM)
