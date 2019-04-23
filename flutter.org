@@ -1,0 +1,44 @@
+* Install
+  [[https://flutter.dev/docs/get-started/install/linux]]
+  dark is embedded in ${flutter path}/bin/cache/dart-sdk
+* Fluter cli
+  #+BEGIN_SRC bash
+  flutter upgrade # upgrade flutter
+  flutter doctor # check env setting
+  flutter devices # show connected devices
+  flutter create <name> # create a app
+  flutter run # run app, need in project directory, reply on pubspec.yaml
+  r # under run, hot reload appp
+  flutter format <filename>
+  flutter packages get # pull dependency in pubspec.yaml declare
+  #+END_SRC
+* pubspec.yaml
+  pubspec.lock ilist of all packaged pulled into the project
+** dependencies
+   this section describe which package used by app, use <package>: <version> format
+* Widget
+  Stateless wigets are immutable
+  Stateful widgets maintain state that might change during the liftime of the widget
+  implmement a Stateful widget need two classe:
+  1. StatefulWidget, need provide State createState() implmement
+  2. State, need provide Widget build(BuildContext context) implement
+  setState((){<body>}) change stateful widget state
+** Componenet
+   - MaterialApp
+   - Scaffold
+   - AppBar
+   - Center
+   - Text
+   - ListView
+   - Divider
+   - ListTile
+   - Icon
+* Router
+  Flutter Navigator manages a stack containing the app's routes
+  Navigator.of(context).push, push page to stack
+* Dart
+  prefixing an indentifier with an underscore(_) enforces privacy in dart language
+** Syntax
+  <return type> <method name>(<Argument type> <argument> ...) {<body>}
+  <return type> <method name>(<Argument type> <argument> ...) => <body>
+  <Type>[], new a List with Type 
