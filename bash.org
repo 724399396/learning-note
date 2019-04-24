@@ -46,6 +46,8 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
    #+BEGIN_SRC bash
    sed -i '1s/^\(\xef\xbb\xbf\)\?/\xef\xbb\xbf/' foo-*
    #+END_SRC
+** allow port forward work
+   GatewayPorts on
 * Bash
   #+BEGIN_SRC bash
   touch # create file

@@ -325,6 +325,7 @@
    - @Configuration, designates a class as a configuration class use java-based configuration
    - @ComponentScan, enables component-scanning so that web controller classed and other component automatically discovered and registered
    - @EnableAutoConfiguration, enable magic of spring boot auto-configuration
+   @ConfigurationProperties, inject property to this instance field with prefix
 ** Properties
    server.port, controll web application listen port
 ** Auto Configuration
@@ -342,8 +343,23 @@
    | @ConditionalOnResource          | the specified resource is availabel on the classpath                               |
    | @ConditionalOnWebApplication    | the application is a web application                                               |
    | @ConditionalOnNotWebApplication | the application is not a web application                                           |
-
-
+   spring boot is load application-level configuration before considering auto-configuration class
+   provide self config bean to override auto config
+   auto config support externalizing configuration to tweak partial config:
+   - Command-line arguments
+   - JNDI aatributes from java:comp/env
+   - JVM system properties
+   - Opreation SYstem environment variables
+   - Randomly generated values for peroperties prefixed with random.*
+   - An application.properties or application.yml file outsiw of the application
+   - An application.properties or application.yml packaged inside of the application
+   - Property sources specified by @PropertySource
+   - Default properties
+   property order of precendence:
+   1. Externally, in a /config subdirectory of the directory from which the application is run
+   2. Externally, in the directory from which the application is run
+   3. Internally, in a packaged named "config"
+   4. Internally, at the root of the classpath
 * Servlet
 
 ** Lifecycle
