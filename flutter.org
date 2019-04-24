@@ -43,6 +43,7 @@
    - Icon
    - IconButton
    - FloatingActionButton
+   - GestureDetector
 * Router
   Flutter Navigator manages a stack containing the app's routes
   Navigator.of(context).push, push page to stack
