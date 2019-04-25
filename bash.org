@@ -163,3 +163,13 @@ for DIR in `find /proc/ -maxdepth 1 -type d | egrep "^/proc/[0-9]"` ; do
 done
 echo "Overall swap used: $OVERALL"
   #+END_SRC
+* ClamAV
+  #+BEGIN_SRC bash
+  freshclam # update lib
+  clamscan -r /etc --max-dir-recursion=5 -l /root/etcclamav.log
+  clamscan -r /bin --max-dir-recursion=5 -l /root/binclamav.log
+  clamscan -r /usr --max-dir-recursion=5 -l /root/usrclamav.log
+  clamscan -r --remove /usr/bin/bsd-port
+  clamscan -r --remove /usr/bin/
+  grep -i "Found" /root/xx.log
+  #+END_SRC

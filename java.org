@@ -325,7 +325,7 @@
    - @Configuration, designates a class as a configuration class use java-based configuration
    - @ComponentScan, enables component-scanning so that web controller classed and other component automatically discovered and registered
    - @EnableAutoConfiguration, enable magic of spring boot auto-configuration
-   @ConfigurationProperties, inject property to this instance field with prefix
+   @ConfigurationProperties, inject property to this instance field with prefix( need has @EnableConfigurationProperties, but auto start lib has this annotation, generally you need add by self code)
 ** Properties
    server.port, controll web application listen port
 ** Auto Configuration
@@ -360,6 +360,49 @@
    2. Externally, in the directory from which the application is run
    3. Internally, in a packaged named "config"
    4. Internally, at the root of the classpath
+** Profile
+   @Profile, spring introduce profile based configuration in spring3.1
+   spring.profiles.active can set active profile
+   profile file name pattern is application-{profile}.[yml|properties] 
+** Test
+   @RunWith(SpringRunner.class) @SpringBootTest enable auto configuration test
+   @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT) let spring boot test start embedded server on random port, then use @LocalServerPort to inject port
+   @AutoConfigureMockMvc, Spring Mock MVC test, mock a servlet context run mvc test
+   for test spring security, import package org.springframework.security:spring-security-test, then build mocMvc with apply(springSecurity())
+   there are two way to perform authenticated reuqest:
+   - @WithMockUser, loads the security context with a UserDetails using the given username, password, and authorization
+   - @WithUserDetails, loads the security context by looking up a UserDetails object for given username
+** Groovy
+   @Grab @GrabMetadata @GrabResolver
+** Actuator
+   Actuator provide monitoring and metrics to spring boot application
+*** EndPoint
+    [[https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-endpoints-exposing-endpoints]]
+    Spring Boot 2 acutoactor endpoint start with /acuactor
+    Spring boot 2 only default enable health/health-component/health-component-instance/info/self endpoint
+    enable enpoint point by management.endpoint.<endpoint>.enabled=true
+**** Configuration
+     - /beans, return a json describe every single bean in application context
+     - /conditions, show auto configuration condition
+     - /env, show properties, password/security/key will be hidden with *, /env/<proeprty> get property value
+     - /configprops, show how @ConfigurationProperties been grouped
+     - /mappings, show controller endpoint
+**** Metrics
+     - /metrics, list available metrics
+     - /metrics/{name}, get special metrics
+     - /httptrace, show recently http request
+     - /threaddump
+     - /heapdump
+     - /health
+**** Miscellaneous
+     - /shutdown
+     - /info, return info from property start with info
+*** Customizing
+    - Reanming endpoints, endpoints.<id>.id = <new endpoint>
+    - Enabling and disabling endpoints
+    - Defining custom metrics and gauges
+    - Creating a custom repository for storing trace data
+    - Plugging in custom health indicators
 * Servlet
 
 ** Lifecycle
