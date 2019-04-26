@@ -380,7 +380,6 @@
     [[https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html#production-ready-endpoints-exposing-endpoints]]
     Spring Boot 2 acutoactor endpoint start with /acuactor
     Spring boot 2 only default enable health/health-component/health-component-instance/info/self endpoint
-    enable enpoint point by management.endpoint.<endpoint>.enabled=true
 **** Configuration
      - /beans, return a json describe every single bean in application context
      - /conditions, show auto configuration condition
@@ -399,10 +398,22 @@
      - /info, return info from property start with info
 *** Customizing
     - Reanming endpoints, endpoints.<id>.id = <new endpoint>
-    - Enabling and disabling endpoints
-    - Defining custom metrics and gauges
-    - Creating a custom repository for storing trace data
-    - Plugging in custom health indicators
+    - Enabling and disabling endpoints, enable enpoint point by management.endpoint.<endpoint>.enabled=true
+    - Defining custom metrics and gauges, use Metrics statis method or inject MeterRegistry, then new metrics will under /metrics endpoints
+    - Creating a custom repository for storing trace data, httptrace default store in memory, you can provide a self implement to store in db
+    - Plugging in custom health indicators, implememnt HealthIndicator then prodive a spring component
+** Deploy
+*** War
+    gradle, apply plugin 'war', maven <packaging>war</packaging>
+    extends SpringBootServletInitiliazer then override configure
+*** Migration
+    Flyway, sql format migration
+    Liquibase, yaml/xml/json format mgiration, hide different db detail
+** Devtools
+   - Automatic restart
+   - LiveReload support
+   - Remote development
+   - Development property defaults
 * Servlet
 
 ** Lifecycle
