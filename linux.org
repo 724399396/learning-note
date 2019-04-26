@@ -49,15 +49,83 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
 ** allow port forward work
    GatewayPorts on
 * Bash
+  * is wildcard, match any number character
+  ? match one character
+  Ctrl-shift-c copy
+  Ctrl-shift-v paste
+** ls
+   list file/dir
+   + -h humman readable
+   + -R recursive show subdirs and subfiles
+** pwd
+   present work directory
+** cd
+   change directory
+   cd without argument will go to login user home dir
+** cat
+   accessing content of text file
+   + -A show invisible character
+** less
+   display file contents
+** touch 
+   create empty file
+   touch exist file will update its time stamp wihtout making any change
+** stat
+   show file inode information
+** mkdir
+   create directory
+   + -p recursive create
+** rmdir
+   remove directory
+** rm
+   remove file/directory
+   + -r revursive remove
+   + -f no prompt
+** cp
+   copy file
+   + -r recursive copy
+** mv
+   permanently move an object from one place to another
+** sudo
+   execute command by root user
+   sudo su, drop in root shell
+** man
+   show program document manual
+** journalctl
+   access all system logs 
+** grep
+   filter content by keyword
+   + -r recursive
+   + -n line number
+   + -l ignroe binary
+   + -e posix extension,
+   + -P Perl regex
+   + -b binary include
+   + -l ignore case 
+   + -v reverse select
+** arch
+   get hardware is 64 or 32
+** scp
+   copy file between network computer by openssh
+** wget
+   download file from http
+** shasum
+   shasum calculate file sum
+** systemctl
+   systemd controll
   #+BEGIN_SRC bash
-  touch # create file
-  mkdir # create dir, -p recursive create
-  cp # copy, -r recursive
-  rm # remove file, -f no prompt, -r recursive
-  mv # move
+  systemctl status <name>
+  systemctl start <name>
+  systemctl stop <name>
+  systemctl enable <name> # enable auto start
+  systemctl disable <name> # disable auto start
+  #+END_SRC
+** ip
+   ip addr, get ip address for all network interface
+   
+  #+BEGIN_SRC bash
   rename # batch rename file by reg
-  cat/tac/nl # show file content
-  cat -A # show invisible character
+  tac/nl # show file content
   more/less/head/tail # show file progress
   echo $<var> # show environment varaible 
   set # show all environment
@@ -92,7 +160,6 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   man <command>
   corntab # -f start -e edit -l show -r delete
   $? # previous command exit code
-  grep # filter content, -r recursive, -n line number, -l ignroe binary, -e posix extension, -P Perl regex, -b binary include, -l ignore case -v reverse select
   tr # delete special character
   col # tab <-> space, -x tab -> space, -h space -> tab
   join # connect two file, -t splitor, -l ignore case, -1 file 1 filed, -2 filed 2 file
@@ -112,12 +179,30 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   usermod -G <group> <user> # add user to group
   su -l <user> # run as user
   #+END_SRC
-* Apt
+* Package manager
+** Apt
+  Advanced Package Tool
+  Debian / Ubtunut / Mint / Kail Linux
   #+BEGIN_SRC bash
+  apt update # update package from online repositories
   apt search # search package
+  apt show
   apt install -f # fix broken
   apt install -d # download only, not install
   #+END_SRC
+** RPM
+   Red Hat Enterprise Linux / CentOS / Fedora
+** YUM / DNF
+   Red Hat, DNF is new package manager
+  #+BEGIN_SRC bash
+  yum update # update package from online repositories
+  yum search # search package
+  yum info
+  apt install 
+  #+END_SRC
+** YaST
+   SUSE linux / OpenSUSE
+   
 * Dpkg
   #+BEGIN_SRC bash
   dpkg -i # install
@@ -173,3 +258,37 @@ echo "Overall swap used: $OVERALL"
   clamscan -r --remove /usr/bin/
   grep -i "Found" /root/xx.log
   #+END_SRC
+* File System
+  linux generate disk format is ext4
+  usally, tehre'll be exactly one inode for each file or directory
+  pseudo file, like /sys /proc is generate by system, not actually exist on disk
+  general directory
+  - /etc, program configuration files
+  - /var, frequently chaning content, e.g. log file
+  - /home, user account files
+  - /sbin, System binary file
+  - /bin, User binary file
+  - /lib, share library
+  - /usr, third-part binary
+  - /sys/block, disk info
+* Virtualbox
+** Cli
+   #+BEGIN_SRC bash
+   vboxmanage list vms
+   vboxmanage clonevm --register <template> --name <to>
+   vboxmanage export <name> -o xx.ova # export to Open Virtualization Format
+   vboxmanage import xx.ova # import vm
+   #+END_SRC
+* LXC
+  linux container
+  container file and config store in /var/lib/lxc
+** Install
+   apt install lxc
+   apt install lxc-templates
+** Cli
+   #+BEGIN_SRC bash
+   lxc-create -n <name> -t <template>
+   lxc-ls --fancy # list container
+   lxc-start # start container, -d detached -n <name>
+   lxc-attach -n <name> # attach to container
+   #+END_SRC
