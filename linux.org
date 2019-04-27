@@ -19,6 +19,21 @@ on CN(common name) input your address(not include port part)
 if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v3_ca] section
 
 * ssh
+  ssh host <command> execute command on target host without open full terminal
+  cat <pub> | ssh <host> "cat >> .ssh/authorized_keys", add pub to remote machine
+  ssh-copy-id, automatically copies the public key to the apporiate location on the remote host
+** scp
+   copy file between network computer by openssh
+** ui over ssh
+   change sshd_config X11Forwaring yes
+   chnage ssh_config ForwardX11 yes
+   ssh -X <host>, then execute gui like gnome-mines
+** Config
+   /etc/ssh/sshd_config, controll openssh as server behavior
+   /etc/ssh/ssh_config, controll openssh as client behavior
+   ~/.ssh/authorized_keys, ssh will use this file public key to check ssh private key login
+** Cli
+   + -i, set private key
 ** generate ssh key
   #+BEGIN_SRC bash
   ssh-keygen -t rsa -b 4096 -C 
@@ -27,7 +42,6 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   sudo apt-get install xclip 
   xclip -sel clip < ~/.ssh/id_rsa.pub
   #+END_SRC
-
 ** remove ssh key when host change
   #+BEGIN_SRC bash
   ssh-keygen -R <host>
@@ -41,10 +55,6 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
    #+BEGIN_SRC bash
    ssh -L <your port>:localhost:<remote port> <name>@<remote ip>
    ssh -p <your port> <name>@localhost
-   #+END_SRC
-** add utf bom header
-   #+BEGIN_SRC bash
-   sed -i '1s/^\(\xef\xbb\xbf\)\?/\xef\xbb\xbf/' foo-*
    #+END_SRC
 ** allow port forward work
    GatewayPorts on
@@ -105,8 +115,6 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
    + -v reverse select
 ** arch
    get hardware is 64 or 32
-** scp
-   copy file between network computer by openssh
 ** wget
    download file from http
 ** shasum
@@ -282,6 +290,7 @@ echo "Overall swap used: $OVERALL"
 * LXC
   linux container
   container file and config store in /var/lib/lxc
+  templates is under /usr/share/lxc/templates
 ** Install
    apt install lxc
    apt install lxc-templates
@@ -291,4 +300,8 @@ echo "Overall swap used: $OVERALL"
    lxc-ls --fancy # list container
    lxc-start # start container, -d detached -n <name>
    lxc-attach -n <name> # attach to container
+   #+END_SRC
+* add utf bom header
+   #+BEGIN_SRC bash
+   sed -i '1s/^\(\xef\xbb\xbf\)\?/\xef\xbb\xbf/' foo-*
    #+END_SRC
