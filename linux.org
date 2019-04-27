@@ -130,7 +130,15 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   #+END_SRC
 ** ip
    ip addr, get ip address for all network interface
-   
+** ps
+   show system process
+   + -e, show process from all parent shells
+   <user> <pid> <parent pid> 
+** pstree
+   show process tree
+   + -p, show pid
+** file
+   show file detail
   #+BEGIN_SRC bash
   rename # batch rename file by reg
   tac/nl # show file content
@@ -178,6 +186,7 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   find . -type f -name "*.java" -exec sed -i -e 's//' {} \; # find in file and replace
 
   #+END_SRC
+
 * User
   #+BEGIN_SRC bash
   whoami # show current log in user
@@ -305,3 +314,5 @@ echo "Overall swap used: $OVERALL"
    #+BEGIN_SRC bash
    sed -i '1s/^\(\xef\xbb\xbf\)\?/\xef\xbb\xbf/' foo-*
    #+END_SRC
+* System
+  /sbin/init is first process ubuntu start
