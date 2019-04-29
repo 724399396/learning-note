@@ -1,6 +1,6 @@
 * Self sign ssl key
 
-#+BEGIN_SRC bash
+  #+BEGIN_SRC bash
 
 openssl req \ 
 
@@ -8,15 +8,15 @@ openssl req \
 
   -x509 -days 365 -out certs/domain.crt
 
-#+END_SRC
+  #+END_SRC
 
-on CN(common name) input your address(not include port part)
+  on CN(common name) input your address(not include port part)
 
-.key is private key
+  .key is private key
 
-.crt is certifacate and public key
+  .crt is certifacate and public key
 
-if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v3_ca] section
+  if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v3_ca] section
 
 * ssh
   ssh host <command> execute command on target host without open full terminal
@@ -35,17 +35,17 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
 ** Cli
    + -i, set private key
 ** generate ssh key
-  #+BEGIN_SRC bash
+   #+BEGIN_SRC bash
   ssh-keygen -t rsa -b 4096 -C 
   eval "$(ssh-agent -s)" 
   ssh-add ~/.ssh/id_rsa 
   sudo apt-get install xclip 
   xclip -sel clip < ~/.ssh/id_rsa.pub
-  #+END_SRC
+   #+END_SRC
 ** remove ssh key when host change
-  #+BEGIN_SRC bash
+   #+BEGIN_SRC bash
   ssh-keygen -R <host>
-  #+END_SRC
+   #+END_SRC
 ** ssh port forward
    in need login machine:
    #+BEGIN_SRC bash
@@ -63,6 +63,8 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   ? match one character
   Ctrl-shift-c copy
   Ctrl-shift-v paste
+  || is or, short circuit
+  && is and, short circuit
 ** ls
    list file/dir
    + -h humman readable
@@ -103,16 +105,7 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
    show program document manual
 ** journalctl
    access all system logs 
-** grep
-   filter content by keyword
-   + -r recursive
-   + -n line number
-   + -l ignroe binary
-   + -e posix extension,
-   + -P Perl regex
-   + -b binary include
-   + -l ignore case 
-   + -v reverse select
+** grep filter content by keyword + -r recursive + -n line number + -l ignroe binary + -e posix extension, + -P Perl regex + -b binary include + -l ignore case + -v reverse select
 ** arch
    get hardware is 64 or 32
 ** wget
@@ -121,13 +114,13 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
    shasum calculate file sum
 ** systemctl
    systemd controll
-  #+BEGIN_SRC bash
+   #+BEGIN_SRC bash
   systemctl status <name>
   systemctl start <name>
   systemctl stop <name>
   systemctl enable <name> # enable auto start
   systemctl disable <name> # disable auto start
-  #+END_SRC
+   #+END_SRC
 ** ip
    ip addr, get ip address for all network interface
 ** ps
@@ -139,7 +132,62 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
    + -p, show pid
 ** file
    show file detail
-  #+BEGIN_SRC bash
+** df
+   show disk usage
+   + -h, human readable
+** tar
+   tar <options> <tar name> <source file>+
+   + -c create
+   + -v verbose
+   + -x extract
+   + -f, archive filename
+   + -t show
+   + -p keep permission
+   + -z gz
+   + -J xz
+   + -j bz2
+   + +r, append insted of overwrite
+   + --one-file-system, exclude pseudo partitions
+   + --exclude, exclude partition from source file
+** split
+   split <origin> <target>, split file to multiple part, then use cat name* > newfile to merge content
+   + -b <size>, set split size
+** find
+   find every kind of file/directory
+   + -exec, execute command on find file, {} is find file name
+   + -type, set find file or directory
+** locate
+   query filesystem from /var/lib/mlocate/mlocate.db, index is updated every time the system boots
+   updatedb, manually update index
+** chmod
+   change file permission, e.g. o-r remove others read permission, g+w add group write permission
+** chown
+   change file user/group
+** dd
+   convert and copy file
+   + -of output file(device),
+   + -if input file(device),
+   + -bs base size(byte)
+   + -count number
+   + -conv convert function
+** rsync
+   incremental file sync
+   + -a, recursive and preserve special files, modification times, and owernship and permissions
+   + -v, verbose
+** useradd/adduser
+   add user, ubuntu prefer adduser
+** crontab
+   + -l, show crontab for current user
+   + -e, edit crontab
+** lsblk 
+   show all connect disk, include not mounted
+** mount
+   mount info, also used to mount disk
+   mount <path> <dev>
+** passwd
+   change user password
+   passwd <username>
+   #+BEGIN_SRC bash
   rename # batch rename file by reg
   tac/nl # show file content
   more/less/head/tail # show file progress
@@ -150,9 +198,7 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   unset # delete environment varaible
   vimdiff # diff file
   whereis # query data from db, -b binary file, -m source file, -m help file
-  locate # query by /var/lib/mlocate/mlocate.db, update by cron
   which # find executable file
-  find # find every kind of file
   wc # count number, -l line, -w word, -c character, -m bytes, -L longest line
   cut -b<f>-<to> <filename> # output set column number content
   file <filename> # get file type encode info
@@ -164,12 +210,8 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   curl # -X method, -c get cookie, -b pass cookie, -d post body
   zip <target> <source> # -o output file, -r recursive, -q quite, -e encrypt, -l \n -> \r\n
   unzip # -l show content not extract
-  tar # -c create, -x extract, -f filename, -t show, -p keep permission, -z gz, -J xz, -j bz2
-  df # disk usage
   du # file size, -h human readable, -d <num> dir nest level, -a all file, -s summarize
-  dd # copy in file, -of output file, -if input file, -bs base size(byte), -count number, -conv convert function
   mkfs.<type> # format disk to type
-  mount # mount info, also used to mount disk
   fdisk # change disk partition 
   type <command> # show command type
   help <command>
@@ -181,11 +223,11 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   join # connect two file, -t splitor, -l ignore case, -1 file 1 filed, -2 filed 2 file
   paste # similar like join, but not compare
   xargs # split long args
-  lsblk # show all connect disk, include not mount
   blkid # show disk uuid
   find . -type f -name "*.java" -exec sed -i -e 's//' {} \; # find in file and replace
 
-  #+END_SRC
+   #+END_SRC
+
 
 * User
   #+BEGIN_SRC bash
@@ -198,25 +240,25 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   #+END_SRC
 * Package manager
 ** Apt
-  Advanced Package Tool
-  Debian / Ubtunut / Mint / Kail Linux
-  #+BEGIN_SRC bash
+   Advanced Package Tool
+   Debian / Ubtunut / Mint / Kail Linux
+   #+BEGIN_SRC bash
   apt update # update package from online repositories
   apt search # search package
   apt show
   apt install -f # fix broken
   apt install -d # download only, not install
-  #+END_SRC
+   #+END_SRC
 ** RPM
    Red Hat Enterprise Linux / CentOS / Fedora
 ** YUM / DNF
    Red Hat, DNF is new package manager
-  #+BEGIN_SRC bash
+   #+BEGIN_SRC bash
   yum update # update package from online repositories
   yum search # search package
   yum info
   apt install 
-  #+END_SRC
+   #+END_SRC
 ** YaST
    SUSE linux / OpenSUSE
    
@@ -230,13 +272,8 @@ if CN set to ip, modify /etc/ssl/openssl.cnf add subjectAltName=IP:<ip> under [v
   #+END_SRC
 * back up system
   Refer to this howto: http://ubuntuforums.org/showthread.php?t=35087
-
   In simple terms, the backup command is: sudo tar czf /backup.tar.gz --exclude=/backup.tar.gz--exclude=/dev --exclude=/mnt --    exclude=/proc --exclude=/sys --exclude=/tmp --exclude=/lost+found /. Add more --exclude= parameters if you need to.
-
   It will create an archive of all your files at /backup.tar.gz, which you can then copy over to another computer/drive and restore your files if the install goes pear-shaped. You can do it from a LiveCD, by mounting the "bad" system under /media or /mnt and running tar xf /path/to/drive/with/backup.tar.gz -C /mnt (substitute for the actual path to the "bad" system).
-
-** GRUB
-
   This will not cover GRUB, however you can easily reinstall it by following this guide here. You only need to do steps Three and Four.
 * RSA
   #+BEGIN_SRC bash
@@ -279,6 +316,11 @@ echo "Overall swap used: $OVERALL"
   linux generate disk format is ext4
   usally, tehre'll be exactly one inode for each file or directory
   pseudo file, like /sys /proc is generate by system, not actually exist on disk
+  ls output format [is directory][owner read][owner write][owner execute][group read][group write][group execute][other read][other read][other execute]
+  /etc/passwd, store user/group home shell info
+  /etc/shadow, store user password
+  /etc/group, store all group info
+  /etc/gshadows, cotnain encrypted versions of group password for use if you sometimes want to allow group resource access to non-group user
   general directory
   - /etc, program configuration files
   - /var, frequently chaning content, e.g. log file
@@ -311,11 +353,69 @@ echo "Overall swap used: $OVERALL"
    lxc-attach -n <name> # attach to container
    #+END_SRC
 * add utf bom header
-   #+BEGIN_SRC bash
+  #+BEGIN_SRC bash
    sed -i '1s/^\(\xef\xbb\xbf\)\?/\xef\xbb\xbf/' foo-*
-   #+END_SRC
+  #+END_SRC
 * System
   /sbin/init is first process ubuntu start
 * Backup file system
-** Archive
-   
+  best practices:
+  - Reliable, Use only storage media that are reasonably likely to retain their integrity for the length of time you intend to use them.
+  - Tested, Test restoring as many archive runs as possible in simulated production environments.
+  - Rotaed, Maintain at least a few historical archives older than the current backup in case the latest one should somehow fail.
+  - Distributed, Make sure that at least some of your archives are stored in a physically remote location. In case of fire or other disaster, you don’t want your data to disappear along with the office.
+  - Secure, Never expose your data to insecure networks or storage sites at any time during the process.
+  - Compliant, Honor all relevant regulatory and industry standards at all times
+  - Up to date, What’s the point keeping archives that are weeks or months behind the current live version?
+  - Scripted, Never rely on a human being to remember to perform an ongoing task. Automate it
+ /etc/cron.daily contain everday running task
+** Tool
+*** tar
+    use command tar
+    archive then transfter to remote:
+    #+BEING_SRC bash
+    tar cvzf - --one-file-system / /usr /var --execute=/home | ssh <host> "cat > /home/backup.tar.gz"
+    #+END_SRC
+*** dd
+    dd if=/dev/sda1 of=xx.img, backup disk to a img file
+    dd if=/dev/zero of=/dev/sda1, wipe disk with 0
+    dd if=/dev/urandom of=/dev/sda1, wipe disk with random
+*** rsync
+* Scheduling task
+** cron
+  /etc/anocrontab, execute task after system boot
+  /etc/crontab, execute by cron expression
+  /etc/cron.d, execute by cron expression
+  /etc/cron.daily, execute everyday
+  /etc/cron.hourly, execute hourly
+  /etc/cron.monthly, execute monthly
+  /etc/cron.weekly, execute weekly
+  cron expression:
+  <minute> <hour> <day of month> <month> <day of week>
+  anoncron expression:
+  <interval> <delay>
+** systemd timer
+   more advanced than cron
+   create need follow step:
+   1. create .service file under /etc/systemd/system
+   2. create .timer file under /etc/systemd/system
+   3. systemctl start <name>
+   4. systemctl enable <name>
+*** cli
+    #+BEGIN_SRC bash
+    systemctl list-timers --all #show all timers
+    #+END_SRC
+* GRUB
+* System recover
+  ubuntu grub has recervory mode
+  use live cd Boot-Repair fix grub problem
+  GParted fix partition problem
+  TestDisk fix damaged partitions
+  use isohybrid modify iso to add MBR(Master boot record), isohybrid contain in ubuntu syslinux-utils package
+  ubuntu live cd include memory test tool
+  ddrescue, data recovery tool, include in apt gddrescue package, usage, ddrescue -d <device> <backup> <logfile>
+  photorec, file recervory
+** recovery password
+   1. mkdir /run/mountdir
+   2. mount <root device> /run/mountdir
+   3. chroot /ruun/mountdir
