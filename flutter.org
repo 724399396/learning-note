@@ -26,6 +26,7 @@
   2. State, need provide Widget build(BuildContext context) implement
   setState((){<body>}) change stateful widget state
   widget is inspiration from React, when state change it will determine the minimal changes need in the underlyring render tree
+  state can use widget to reference manager stateful widget
 ** Componenet
    - Text, styled text
    - Row/Column, create flexible alyout base on the web's flexbox layout model
@@ -55,3 +56,8 @@
   <Type>[], new a List with Type 
   @override, declare method is override
   <ClassName>({<field>}) is constructor, will initialize field
+  class <name> {}, declare a class
+  <name>({}), declare a constructor, {this.xx} will assign value to xx, {<type> <name>} will not assign value to field
+  typedef <return type> <name>(<type> <name>....) create a alias
+  <name>({}) : <filed> = <value> super(), assign field and call super
+  
