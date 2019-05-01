@@ -56,14 +56,14 @@
   - Read Commited: means can read commited data when other transaction commit. (hold write lock)
   [[./images/transaction-isolation-level.png]]
 * Mysql
+  mysql -u <user> -p, connect mysql and drop in mysql shell
   load data infile <path> into table <table>, import csv data to table
-
   select <columns> into outfile <path> from <Table>, export csv data to file
-
   mysqldump -u <user> <database> [<table>] > <path>, backup database/table
- 
   #+BEING_SRC mysql
   UPDATE swap_test SET x=(@temp:=x), x = y, y = @temp; #used to swap column value
+  CREATE USER <name>@<host> IDENTIFIED BY <password>
+  GRANT ALL PRIVILEGES ON <db> TO <user>@<host> IDENTIFIED BY <password>
   #+END_SRC
 ** get column type
    SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = '' AND COLUMN_TYPE= '';

@@ -228,7 +228,7 @@ openssl req \
 
    #+END_SRC
 
-
+   
 * User
   #+BEGIN_SRC bash
   whoami # show current log in user
@@ -368,7 +368,7 @@ echo "Overall swap used: $OVERALL"
   - Compliant, Honor all relevant regulatory and industry standards at all times
   - Up to date, What’s the point keeping archives that are weeks or months behind the current live version?
   - Scripted, Never rely on a human being to remember to perform an ongoing task. Automate it
- /etc/cron.daily contain everday running task
+  /etc/cron.daily contain everday running task
 ** Tool
 *** tar
     use command tar
@@ -383,17 +383,17 @@ echo "Overall swap used: $OVERALL"
 *** rsync
 * Scheduling task
 ** cron
-  /etc/anocrontab, execute task after system boot
-  /etc/crontab, execute by cron expression
-  /etc/cron.d, execute by cron expression
-  /etc/cron.daily, execute everyday
-  /etc/cron.hourly, execute hourly
-  /etc/cron.monthly, execute monthly
-  /etc/cron.weekly, execute weekly
-  cron expression:
-  <minute> <hour> <day of month> <month> <day of week>
-  anoncron expression:
-  <interval> <delay>
+   /etc/anocrontab, execute task after system boot
+   /etc/crontab, execute by cron expression
+   /etc/cron.d, execute by cron expression
+   /etc/cron.daily, execute everyday
+   /etc/cron.hourly, execute hourly
+   /etc/cron.monthly, execute monthly
+   /etc/cron.weekly, execute weekly
+   cron expression:
+   <minute> <hour> <day of month> <month> <day of week>
+   anoncron expression:
+   <interval> <delay>
 ** systemd timer
    more advanced than cron
    create need follow step:
@@ -419,3 +419,27 @@ echo "Overall swap used: $OVERALL"
    1. mkdir /run/mountdir
    2. mount <root device> /run/mountdir
    3. chroot /ruun/mountdir
+* Iptables
+  configure firewall rules
+  firewalld(Centos Ubuntu) and UncomplicatedFirewall(ubuntu) is build on top of firewall
+** firewalld
+*** Cli
+    #+BEGIN_SRC bash
+    firewall-cmd --state # show running state
+    firewall-cmd --permanent --add-port=80/tcp # permanent add port to allow port
+    firewall-cmd --reload
+    firewall-cmd --list-services
+    firewall-cmd --add-service=
+    firewall-cmd --add-rich-rule  # https://fedoraproject.org/wiki/Features/FirewalldRichLanguage
+    #+END_SRC
+** UFW
+   UncomplicatedFirewall
+*** Cli
+    #+BEGIN_SRC bash
+    ufw allow ssh # allow service
+    ufw enable
+    ufw disable
+    ufw status # show running rule
+    ufw delete <number> # delete rule from ufw status list
+    ufw allow from <ip> to any port 22 # set rule for ip port
+    #+END_SRC
