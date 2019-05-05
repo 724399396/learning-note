@@ -69,6 +69,7 @@ openssl req \
    list file/dir
    + -h humman readable
    + -R recursive show subdirs and subfiles
+   + +z display file security context
 ** pwd
    present work directory
 ** cd
@@ -120,6 +121,7 @@ openssl req \
   systemctl stop <name>
   systemctl enable <name> # enable auto start
   systemctl disable <name> # disable auto start
+  systemctl list-unit-files --type=service --state=enabled
    #+END_SRC
 ** ip
    ip addr, get ip address for all network interface
@@ -163,6 +165,10 @@ openssl req \
    change file permission, e.g. o-r remove others read permission, g+w add group write permission
 ** chown
    change file user/group
+** usermod
+   #+BEGIN_SRC bash
+   usermod -aG <group> <user> #add user to group
+   #+END_SRC
 ** dd
    convert and copy file
    + -of output file(device),
@@ -176,6 +182,8 @@ openssl req \
    + -v, verbose
 ** useradd/adduser
    add user, ubuntu prefer adduser
+** groupadd
+   add group
 ** crontab
    + -l, show crontab for current user
    + -e, edit crontab
@@ -187,7 +195,20 @@ openssl req \
 ** passwd
    change user password
    passwd <username>
-   #+BEGIN_SRC bash
+** awk
+   process/filter/show content
+   + -F spliter
+   + -v set varaible
+   + -f set file
+** netstat
+   show listen port status
+   + -n show numeric ports and address
+   + -l includes only listening sockets
+   + -p  show process id
+** ss
+   replace netstat
+   example ss -o state established '( dport = :ssh or sport = :ssh )'
+ #+BEGIN_SRC bash
   rename # batch rename file by reg
   tac/nl # show file content
   more/less/head/tail # show file progress
@@ -206,7 +227,6 @@ openssl req \
   uniq # delete continue duplicate
   tee # output data to file
   sed # find -> replace, -n only output affect line, -i modify file, -m-n, from line m to n,
-  awk # column get, -F spliter -v set varaible -f file
   curl # -X method, -c get cookie, -b pass cookie, -d post body
   zip <target> <source> # -o output file, -r recursive, -q quite, -e encrypt, -l \n -> \r\n
   unzip # -l show content not extract
@@ -419,9 +439,9 @@ echo "Overall swap used: $OVERALL"
    1. mkdir /run/mountdir
    2. mount <root device> /run/mountdir
    3. chroot /ruun/mountdir
-* Iptables
+* Security system
   configure firewall rules
-  firewalld(Centos Ubuntu) and UncomplicatedFirewall(ubuntu) is build on top of firewall
+  firewalld(Centos Ubuntu) and UncomplicatedFirewall(ubuntu) is build on top of iptables
 ** firewalld
 *** Cli
     #+BEGIN_SRC bash
@@ -442,4 +462,13 @@ echo "Overall swap used: $OVERALL"
     ufw status # show running rule
     ufw delete <number> # delete rule from ufw status list
     ufw allow from <ip> to any port 22 # set rule for ip port
+    ufw allow <from port>:<to port> # open range port
+    #+END_SRC
+
+** SELinux
+*** Cli
+    #+BEGIN_SRC bash
+    sestatus # show current SELinux status
+    selinux-activate # enable SELinux
+    setenforce <number> # set policy type
     #+END_SRC
