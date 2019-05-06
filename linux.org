@@ -78,6 +78,8 @@ openssl req \
 ** cat
    accessing content of text file
    + -A show invisible character
+** zcat
+   accessing content of zip file
 ** less
    display file contents
 ** touch 
@@ -106,7 +108,22 @@ openssl req \
    show program document manual
 ** journalctl
    access all system logs 
-** grep filter content by keyword + -r recursive + -n line number + -l ignroe binary + -e posix extension, + -P Perl regex + -b binary include + -l ignore case + -v reverse select
+   -n <number>, show last n log
+   -p emerg, filter emergency log
+   -f ,folow output, watch events in real time
+   --since --until filter by date
+** grep 
+   filter content by keyword 
+   + -r recursive 
+   + -n line number 
+   + -l ignroe binary 
+   + -e posix extension
+   + -P Perl regex 
+   + -b binary include 
+   + -l ignore case 
+   + -v reverse select
+   + -A after lines number
+   + -B before line number
 ** arch
    get hardware is 64 or 32
 ** wget
@@ -137,20 +154,8 @@ openssl req \
 ** df
    show disk usage
    + -h, human readable
-** tar
-   tar <options> <tar name> <source file>+
-   + -c create
-   + -v verbose
-   + -x extract
-   + -f, archive filename
-   + -t show
-   + -p keep permission
-   + -z gz
-   + -J xz
-   + -j bz2
-   + +r, append insted of overwrite
-   + --one-file-system, exclude pseudo partitions
-   + --exclude, exclude partition from source file
+   + -i, show inode info(used/free)
+** tar tar <options> <tar name> <source file>+ + -c create + -v verbose + -x extract + -f, archive filename + -t show + -p keep permission + -z gz + -J xz + -j bz2 + +r, append insted of overwrite + --one-file-system, exclude pseudo partitions + --exclude, exclude partition from source file
 ** split
    split <origin> <target>, split file to multiple part, then use cat name* > newfile to merge content
    + -b <size>, set split size
@@ -208,6 +213,50 @@ openssl req \
 ** ss
    replace netstat
    example ss -o state established '( dport = :ssh or sport = :ssh )'
+** iptables
+   + -L, list all current rulese
+   + -A FORWARD/REJECTED/PREROUTING,
+   + -t nat,
+   + -i, source
+   + -d, domain
+   + -dport, port
+   + --to-destionation
+** sed
+  find -> replace,
+  + -n only output affect line,
+  + -i modify file
+  + -m-n, from line m to n,
+** ln
+   create symbol link
+   hard link duplicate file share same inode with origin file
+   + -s soft
+** top
+   provides a rich, self-updating display of process information.
+   | metric | meaning                                        |
+   | us     | Time running high-priority(un-niced) processes |
+   | sy     | Time running kernel processes                  |
+   | nice   | Time running low-priority(nice) processes      |
+   | id     | Time spent idling                              |
+   | wa     | Time waiting for I/O Events to complete        |
+   | hi     | Time spent managing hardware interrupts        |
+   | si     | Time spent managing software interrupts        |
+   | st     | Time sotlen from this Vm by its hypervisor                                                |
+** nice
+   start command with nice value
+** renice
+   set a running process nice value
+** free
+   show memory info
+** vmstat
+   show swap status
+** iftop
+   dispaly a self-updating record of the greediest network activity traveling throught network interface
+** tc
+   network traffic control
+   tc qdisc add dev <device> root netem delay 100ms, add 100ms delay for all network traffic for <device>
+   tc -s qdisc ls dev <device>, show device controll status
+   tc qdisc del dev <device> root, delete rule
+   
  #+BEGIN_SRC bash
   rename # batch rename file by reg
   tac/nl # show file content
@@ -226,7 +275,6 @@ openssl req \
   sort # -n number order, -r reverse, -t split character, -k sort by column number
   uniq # delete continue duplicate
   tee # output data to file
-  sed # find -> replace, -n only output affect line, -i modify file, -m-n, from line m to n,
   curl # -X method, -c get cookie, -b pass cookie, -d post body
   zip <target> <source> # -o output file, -r recursive, -q quite, -e encrypt, -l \n -> \r\n
   unzip # -l show content not extract
@@ -247,8 +295,6 @@ openssl req \
   find . -type f -name "*.java" -exec sed -i -e 's//' {} \; # find in file and replace
 
    #+END_SRC
-
-   
 * User
   #+BEGIN_SRC bash
   whoami # show current log in user
@@ -350,6 +396,15 @@ echo "Overall swap used: $OVERALL"
   - /lib, share library
   - /usr, third-part binary
   - /sys/block, disk info
+  /etc/fstab configure automatically mount 
+  fstabe format:
+  | field       | purpose                                                                                                      |
+  | File system | Identifies a device either by its boot-time designation(/dev/sda1) or, preferably, by its more reliable UUID |
+  | Mount point | Identifies the location on the file system where the devices is currently mounted                            |
+  | Type        | the file system type                                                                                         |
+  | Options     | MOunt options assigned to the device                                                                         |
+  | Dump        | tells the (outdated) Dump program whether(1) or not(0) to back up the device                                 |
+  | Pass        | tells the fsck program which file system to check first at boot time, the root partions should be first      |
 * Virtualbox
 ** Cli
    #+BEGIN_SRC bash
@@ -472,3 +527,106 @@ echo "Overall swap used: $OVERALL"
     selinux-activate # enable SELinux
     setenforce <number> # set policy type
     #+END_SRC
+* OpenVPN
+** Server
+   1. install package: openvpn easy-rsa
+   2. generate public key infrasturecture
+      + cp -r /usr/share/easy-rsa/ /etc/openvpn/
+      + edit /etc/openvpn/easy-rsa/vars
+      + . ./vars
+      + ./clean-all
+      + ./build-ca
+      + ./build-key-server server
+      + cp /etc/openvpn/easy-rsa/keys/server* /etc/openvpn
+      + cp /etc/openvpn/easy-rsa/keys/dh2048.pem /etc/openvpn
+      + cp /etc/openvpn/easy-rsa/keys/ca.crt /etc/openvpn
+      + ./pkitool client  # genearte client.crt and client.key
+   3. configure server.conf
+      + zcat /usr/share/doc/openvpn/examples/sample-config-files/server.conf.gz > /etc/openvpn/server.conf
+      + edit server.conf
+      + systemctl start openvpn
+** Client
+   1. install package: openvpn
+   2. configure client.conf
+      + cp /usr/share/doc/openvpn/examples/sample-config-files/client.conf /etc/openvpn/
+   3. copy generate client key
+   4. openvpn --tls-client --config /etc/openvpn/client.conf
+* DMZ(Demilitarized zones)
+** Iptables
+   
+** Shorewall
+* System log
+** syslogd
+  linux logging has ever managed by syslogd daemon, collect log from /dev/log pseudo device, then send to correspond /var/log file
+  all syslogd log will send to /var/log/syslog, and /etc/rsyslog.d/ config file decide part of them send to other /var/log file
+  | filename | purpose                                                          |
+  | auth.log | system authntication and security events                         |
+  | boot.log | a record of boot-related events                                  |
+  | dmesg    | kernal-ring buffer events related to device drivers              |
+  | dpkg.log | software package-management events                               |
+  | kern.log | Linux kernel events                                              |
+  | syslog   | A collection of all logs                                         |
+  | wtmp     | Tracks user sessions(accessed through the who and last commands) |
+
+  | level  | description                   |
+  | debug  | helpful for debugging         |
+  | info   | Informational                 |
+  | notice | Normal conditions             |
+  | warn   | Conditions requiring warnings |
+  | err    | Error conditions              |
+  | crit   | Critical conditions           |
+  | alert  | Immediate action required     |
+  | emerg  | System unusable               |
+  syslogd rotate control by /etc/logrotate.conf
+** journald
+  linux logging now is handled by journald(syslogd hasn't gone anywhere)
+  journald is binary format, use journalctl to access log
+  journald auto remove old msg when maximum disk space reached, control by /etc/systemd/journald.conf file SYstemMaxUse= and RuntimeMaxUse= parameter
+* System file monitor
+  Tripwire scans your server and add key attribute of import system files, when any file change/delete/add will notice admin by email
+** mail server
+   install postfix
+   configure /etc/postfix/main.cf set inet_interfaces to localhost
+   systemctl restart postfix
+** Tripwire
+   apt install tripwire
+   tripwire --init
+   edit /etc/tripwire/twcfg.txt then execute twadmin --create-cfgfile --site-keyfile site.key twcfg.txt
+   edit /etc/tripwire/twpol.txt then execute twadmin --create-polfile twpol.txt
+   delete /etc/tripwire/twcfg.txt and /etc/tripwire/twpol.txt file(tw.cfg and tw.pol is encrypt binary file)
+   twadmin --print-cfgfile and twadmin --print-polfile can geneate txt content from tw.cfg and tw.pol
+   tripwire -m c, execute check command
+   tripwire -m u -r <file>, update database from scan result(/var/lib/tripwire/report)
+* Network File System(NFS)
+** server
+   1. apt install nfs-kernel-server
+   2. edit /etc/exports config file
+   3. exportfs, let nfs adopt new settings
+   4. exportfs, show current exposed
+** client
+   1. apt install nfs-common
+   2. mkdir -p /nfs/home
+   3. mount <ip>:<path> /nfs/home
+** windows
+   use samba share linux file system to windows
+* Troubleshooting performance issue
+** CPU 
+   cpu load average is from 0, for 1 core processor, 1 means fully usage, bigger than 1 means some process wait cpu
+   cat /proc/cpuinfo | grep processor, check cpu core number
+   you can set process nice value, range from -20 to 19, higher value means grab less resource
+** Memory
+** Storage
+   space limit
+   inode number limit
+   find . -xdev -type f | cut -d "/" -f 2 | sort | uniq -c | sort -n, show every directory subfile number
+   dpkg --configure -a, remove older directory free inode
+** network
+   iftop, show network traffic with ip
+   nethogs, show network traffic with pid
+   tc, controll network bandwith
+** Monitor
+   nmon is a multi-target system monitoring and benchmarking tool
+   nmon use short key to show/hide monitor
+   nmon -f -s 30 -c 120, save collected data every 30 seconds over a full hour(120 * 30 seconds)
+   
+   
