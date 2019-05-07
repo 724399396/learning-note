@@ -142,6 +142,9 @@ openssl req \
    #+END_SRC
 ** ip
    ip addr, get ip address for all network interface
+   ip route, show router(gateway)
+   ip addr add <ip> dev <device>, configure static ip address, need reboot to take effect
+   ip link set dev <device> up/down, up/down network interface
 ** ps
    show system process
    + -e, show process from all parent shells
@@ -210,6 +213,13 @@ openssl req \
    + -n show numeric ports and address
    + -l includes only listening sockets
    + -p  show process id
+   + -i, show network interface
+** nc(netcat)
+   connect a remote address and output content
+   + -z, restrict output to the result of a scan for listeninging daemons(rather than trying make a connection)
+   + -v, verbosity output
+** nmap
+   nmap -St -p<from>-<to> <host> scan host open port
 ** ss
    replace netstat
    example ss -o state established '( dport = :ssh or sport = :ssh )'
@@ -256,6 +266,14 @@ openssl req \
    tc qdisc add dev <device> root netem delay 100ms, add 100ms delay for all network traffic for <device>
    tc -s qdisc ls dev <device>, show device controll status
    tc qdisc del dev <device> root, delete rule
+** lspci
+   show Peripheral Component Interconnect (PCI) hardware
+** lshw
+   show hardware
+** traceroute
+   trace end-to-end package trip
+** dmesg
+   show device connection debug info
    
  #+BEGIN_SRC bash
   rename # batch rename file by reg
@@ -628,5 +646,16 @@ echo "Overall swap used: $OVERALL"
    nmon is a multi-target system monitoring and benchmarking tool
    nmon use short key to show/hide monitor
    nmon -f -s 30 -c 120, save collected data every 30 seconds over a full hour(120 * 30 seconds)
+* Network Address Translation(NAT)
+  three NAT address range: 10.0.0.0 <-> 10.255.255.255, 172.16.0.0 <-> 172.31.255.255, 192.168.0.0 <-> 192.168.255.255
+  Classless Inter-Domain Routing(CIDR) present subnet netmask, e.g 192.168.1.0/24, 24 means first 3 octets make up the network portion
+** Assign Ip address
+   ip route add default via <ip> dev <device>, add route to device
+   dhclient <device>, dhcp get ip address
+   ubuntu ip config file is /etc/network/interfaces
+   centos ip config file is /etc/sysconfig/network-scripts/ifcfg-<dev>
+   systemctl restart networking restart network service
+   
+   
    
    
