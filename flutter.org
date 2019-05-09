@@ -27,6 +27,7 @@
   setState((){<body>}) change stateful widget state
   widget is inspiration from React, when state change it will determine the minimal changes need in the underlyring render tree
   state can use widget to reference manager stateful widget
+  statefulwidget lifecycle, initState -> run -> dispose
 ** Componenet
    - Text, styled text
    - Row/Column, create flexible alyout base on the web's flexbox layout model
