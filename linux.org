@@ -195,8 +195,6 @@ openssl req \
 ** crontab
    + -l, show crontab for current user
    + -e, edit crontab
-** lsblk 
-   show all connect disk, include not mounted
 ** mount
    mount info, also used to mount disk
    mount <path> <dev>
@@ -266,14 +264,23 @@ openssl req \
    tc qdisc add dev <device> root netem delay 100ms, add 100ms delay for all network traffic for <device>
    tc -s qdisc ls dev <device>, show device controll status
    tc qdisc del dev <device> root, delete rule
+** lsblk 
+   show all connect disk, include not mounted
 ** lspci
    show Peripheral Component Interconnect (PCI) hardware
 ** lshw
    show hardware
+   + -html, output html format
+   + -class(-c), filter by hardware type network/memory/storage/multimedia/cpu
+** lsusb
 ** traceroute
    trace end-to-end package trip
 ** dmesg
    show device connection debug info
+** uname
+   uname -a, show linux kernal info
+** lsmod
+   show loaded module information
    
  #+BEGIN_SRC bash
   rename # batch rename file by reg
@@ -655,6 +662,10 @@ echo "Overall swap used: $OVERALL"
    ubuntu ip config file is /etc/network/interfaces
    centos ip config file is /etc/sysconfig/network-scripts/ifcfg-<dev>
    systemctl restart networking restart network service
+* Hardware troubleshooting
+  use lshw and other command check is hardware connected
+  to create an effective balance between the opposing virtues of stability and usability, linux isolates the kernal and let you add function on the fly through loadable kernal modules(LKMs)
+  kernel module is location on /lib/modules/<linux kernel version>, file extension is ko(kernel object)
    
    
    
