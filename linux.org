@@ -281,6 +281,11 @@ openssl req \
    uname -a, show linux kernal info
 ** lsmod
    show loaded module information
+** modprobe
+   manually active kernel mod
+   + -c show available mods
+** lp
+   use printer print file
    
  #+BEGIN_SRC bash
   rename # batch rename file by reg
@@ -666,7 +671,34 @@ echo "Overall swap used: $OVERALL"
   use lshw and other command check is hardware connected
   to create an effective balance between the opposing virtues of stability and usability, linux isolates the kernal and let you add function on the fly through loadable kernal modules(LKMs)
   kernel module is location on /lib/modules/<linux kernel version>, file extension is ko(kernel object)
-   
-   
-   
-   
+  grub can pass parameters to kernel mod when start
+* CUPS(Common Unix Printer System)
+  The CUPS modular printing system has been adopted by many, if not all, Linux distributions to manage printers and printing
+  The major printer manufacturers now generally provide Linux drivers
+  Starting with release 17.04, Ubuntu now offers driverless printing
+  localhost:631 is CUPS manage page
+  troubleshooting:
+  + systemctl status cpus, check logs
+  + lsusb and lpinfo -v, check is system can see printer
+  + make shure /etc/cups/printers.conf no duplicate printer
+  + Make sure that the <Policy default> section of the /etc/cups/cupsd.conf file doesn’t have any overly restrictive settings that might be blocking legitimate requests.
+* DevOps
+  popular deployment orchestrators:
+  - puppet
+  - chef
+  - ansible
+  - salt
+** Ansible
+   fast connections work via SSH
+   Run via text-based files (called playbooks)
+   andible get information about which host to manage from /etc/ansible/hosts file
+*** Install
+    apt install software-properties-common
+    add-apt-repository ppa:ansible/ansible
+    apt update
+    apt install ansible
+*** Cli
+    #+BEGIN_SRC bash
+    ansible <target> -m ping # test is all service reachable, target can be all or group in /etc/ansible/hosts file
+    ansible <target> -a "<command>" # execute command in servers
+    #+END_SRC
