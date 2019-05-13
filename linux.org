@@ -692,6 +692,8 @@ echo "Overall swap used: $OVERALL"
    fast connections work via SSH
    Run via text-based files (called playbooks)
    andible get information about which host to manage from /etc/ansible/hosts file
+   /etc/ansible/ansible.cfg controll authentication
+   Playbook is ansible configure way to controll orchestrate
 *** Install
     apt install software-properties-common
     add-apt-repository ppa:ansible/ansible
@@ -701,4 +703,7 @@ echo "Overall swap used: $OVERALL"
     #+BEGIN_SRC bash
     ansible <target> -m ping # test is all service reachable, target can be all or group in /etc/ansible/hosts file
     ansible <target> -a "<command>" # execute command in servers
+    ansible <target> -m copy -a "src=/home/ dest=/etc" # execute copy local to remote
+    ansible-playbook <yml file> # execute playbook from yaml file
+    ansible-vault create <file> # create vault store sensitive data
     #+END_SRC
