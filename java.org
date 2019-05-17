@@ -416,6 +416,15 @@
    - LiveReload support
    - Remote development
    - Development property defaults
+** Reactor
+   Flux is Ractor's base type, a container holding 0..N items, none of which will be reached unitl the client call reactive stream's subsctribe method
+   Mono is a container holding 0..1 items
+   | Operation | Description                                                                                             |
+   | map()     | Converts one Flux into another Flux of identical size using a function applied to each element          |
+   | flatMap() | Converts one Flux into another Flux of a different size by first mapping, and then removing any nesting |
+   | filter()  | Converts one Flux into a smaller Flux with elements removed based on a filtering function               |
+   | groupBy() | Converts the Flux into a bundled set of subgroups based on the grouping function                        |
+   | sort()    | Converts one Flux into a sorted Flux based on the sorting function                                                                                                        |
 * Servlet
 
 ** Lifecycle
