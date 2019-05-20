@@ -316,7 +316,13 @@
   [[https://start.spring.io]] spring initlizer web version
   SpringApplication.run() let application can run from a jar file, e.g. gradle bootRun, mvn spring-boot:run
   add META-INF/spring-devtools.properties set devtools restart classloader, e.g restart.include.dools=/(drools|kie)\-.*\.jar include jar to include in restart, restart.exclude.<name>= execlude from restarter
-
+** makeing local chnage to target system
+  1. spring.devtools.remote.secret=<key>
+  2. build application
+  3. push application to remote
+  4. run Sprint Boot's RemoteSpringApplication
+  5. add <remote url> as program argument
+  6. launch RemoteSpringApplication runner
 ** Install
    [[https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html]]
 ** Cli
