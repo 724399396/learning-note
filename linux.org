@@ -217,7 +217,7 @@ openssl req \
    + -z, restrict output to the result of a scan for listeninging daemons(rather than trying make a connection)
    + -v, verbosity output
 ** nmap
-   nmap -St -p<from>-<to> <host> scan host open port
+   nmap -sT -p<from>-<to> <host> scan host open port
 ** ss
    replace netstat
    example ss -o state established '( dport = :ssh or sport = :ssh )'

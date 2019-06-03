@@ -431,6 +431,27 @@
    | filter()  | Converts one Flux into a smaller Flux with elements removed based on a filtering function               |
    | groupBy() | Converts the Flux into a bundled set of subgroups based on the grouping function                        |
    | sort()    | Converts one Flux into a sorted Flux based on the sorting function                                                                                                        |
+* Sprint Cloud
+** Sprint Cloud config
+   central config server
+** Consul
+   service discover tool
+** Eureka
+   Service discover
+** Hystric and Ribbon
+   circuit breaker, bulkhead pattern, client-side load-balancing
+** Netflix Zuul
+   service routing, let microservice go throught a signle "front door"
+** Spring cloud stream
+   async event
+** Spring cloud sleuth
+   integrate unique tracking identifiers to http calls and message channels
+** Papertail
+   cloud-based logging platform used to aggregate logs
+** Zipkin
+   takes data produced by Spring Cloud Sleuth and allows you to visualize the flow of your service calls involved for a single transaction
+** Spring Cloud Security
+
 * Servlet
 
 ** Lifecycle
