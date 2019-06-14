@@ -67,9 +67,17 @@ openssl req \
   && is and, short circuit
 ** ls
    list file/dir
-   + -h humman readable
+   + -h --human-readable, display file size in human-readable format
    + -R recursive show subdirs and subfiles
-   + +z display file security context
+   + -z display file security context
+   + -a --all, List all fiels, even those with names that begin with a period
+   + -d --directory, see detail about the directory rathen that its contents
+   + -F --classify, append an indicator to end of each listed name
+   + -l , display results in long format
+   + -r --reverse, display result in reverse order
+   + -S, sort result by file sizes
+   + -t, sort by modification time
+   
 ** pwd
    present work directory
 ** cd
@@ -286,6 +294,9 @@ openssl req \
    + -c show available mods
 ** lp
    use printer print file
+** date
+** cal
+   show calander in command line
    
  #+BEGIN_SRC bash
   rename # batch rename file by reg
@@ -325,6 +336,7 @@ openssl req \
   find . -type f -name "*.java" -exec sed -i -e 's//' {} \; # find in file and replace
 
    #+END_SRC
+
 * User
   #+BEGIN_SRC bash
   whoami # show current log in user

@@ -139,6 +139,8 @@
   [[https://downloads.haskell.org/~ghc/master/users-guide/glasgow_exts.htm]]
 
   on source file top, use {-# LANGUAGE xx #-} enable language extension
+  when compile, use -X to enable language extension
+  :set -X<extension>, enable language extionsion on ghci
 
   available extensions:
   - OverloadedStrings, treat string literal as different type. e.g ByteString, implmenet by IsString class
@@ -166,6 +168,10 @@
   - BinaryLiterals, allow use binary notation in interer literals, e.g 0x
   - ForeignFunctionInterface, allow ffi
   - CPP, allow c preprocessor
+  - ViewPatterns, allow for more sophisticated pattern matching
+  - TemplateHaskell, provides tools for haskell metaprogramming
+  - DuplicateRecordFields, solves the anooying problem when using same field name for dirrerent type using record syntax
+  - NoImplicitPrelude, not use default prelude
 
 * typeclass
   typeclass similar to interface
@@ -388,6 +394,12 @@
     pure . <*> u <*> v <*> w = u <*> (v <*> w)
     pure f <*> pure x = pure (f x)
     u <*> pure y = pure($ y) <*> u
+** Semigroup
+*** Definition
+    #+BEGIN_SRC haskell
+    class Semigroup a where
+      (<>) :: a -> a -> a
+    #+END_SRC
 ** Monoid
 *** Definition
     #+BEGIN_SRC haskell
