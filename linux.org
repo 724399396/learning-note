@@ -59,12 +59,28 @@ openssl req \
 ** allow port forward work
    GatewayPorts on
 * Bash
-  * is wildcard, match any number character
-  ? match one character
+  | wildcard        | matches                                               |
+  | *               | Any character                                         |
+  | ?               | Any single character                                  |
+  | [characters]    | any character that is a memeber of the set characters |
+  | [!characters]   | any character that is not a memeber of the characters |
+  | [ [ :class: ] ] | any character that is a member of the specified class |
   Ctrl-shift-c copy
   Ctrl-shift-v paste
   || is or, short circuit
   && is and, short circuit
+  > redirect stdout to overwrite file
+  >> redirect stdout append to file
+  2> redirect stderr to overwrite file
+  > [file] 2>&1 (old shell) &> [file] (new shell) redirect stdout and stderr to same file
+  < redirect stdin from file
+  | is pipe, redirect previous command stdout to next command stdin
+  tilde(~) is user home placeholder
+  $(()) is arithmetic expansion
+  {} brace expansion, support choose {A,B}, range {A..Z}
+  $() and `` is command subsitution
+  all special chatacaters used by shell lose their special meanning and are treated as ordinary characters in doule quotes, exceptions are $ \ `
+  single quotes supress all expansions
 ** ls
    list file/dir
    + -h --human-readable, display file size in human-readable format
@@ -77,7 +93,7 @@ openssl req \
    + -r --reverse, display result in reverse order
    + -S, sort result by file sizes
    + -t, sort by modification time
-   
+   + -i, show inode info
 ** pwd
    present work directory
 ** cd
@@ -102,13 +118,27 @@ openssl req \
    remove directory
 ** rm
    remove file/directory
-   + -r revursive remove
-   + -f no prompt
+   + -i --interactive, before deleting an existing file, prompt the user for confirmation
+   + -r --recursive, revursive remove
+   + -f --force, ignore nonexistent files and do not prompt
+   + -v --verbose
 ** cp
    copy file
-   + -r recursive copy
+   + -a --archive, copy the fires and directorys and alll of their attributes, include ownerships and permissions
+   + -i --interractive, before overritingan exising file, prompt the user for confirmation
+   + -r --recursive, recursively copy directories and their contents
+   + -u --update, copy only files that either don't exist or are newer that the existing corresponding files in the destination directory
+   + -v --verbose
 ** mv
    permanently move an object from one place to another
+   + -i --interractive, before overritingan exising file, prompt the user for confirmation
+   + -r --recursive, recursively copy directories and their contents
+   + -u --update, copy only files that either don't exist or are newer that the existing corresponding files in the destination directory
+** su
+   run a shell with substitute User and Group ids
+   + -l, the resulting shell session is a login shell, means user's environment is loaded and the working directory is changed to user's home direcotry
+   + -, same as -l
+   + -c, execute command
 ** sudo
    execute command by root user
    sudo su, drop in root shell
@@ -178,20 +208,26 @@ openssl req \
    query filesystem from /var/lib/mlocate/mlocate.db, index is updated every time the system boots
    updatedb, manually update index
 ** chmod
-   change file permission, e.g. o-r remove others read permission, g+w add group write permission
+   change file permission
+   octal representation 4 r 2 w 1 x
+   symbolic representation. 
+   | symbol | meaning                                               |
+   | u      | Short for user but means the file or directory owner. |
+   | g      | Group owner.                                          |
+   | o      | Short for others but means world.                     |
+   | a      | Short for all; the combination of u, g, and o.        |
+
+   | Notation | Meaning           |
+   | +        | add permision     |
+   | -        | remove permission |
+   | =        | set permision     |
+   o-r remove others read permission, g+w add group write permission
 ** chown
    change file user/group
 ** usermod
    #+BEGIN_SRC bash
    usermod -aG <group> <user> #add user to group
    #+END_SRC
-** dd
-   convert and copy file
-   + -of output file(device),
-   + -if input file(device),
-   + -bs base size(byte)
-   + -count number
-   + -conv convert function
 ** rsync
    incremental file sync
    + -a, recursive and preserve special files, modification times, and owernship and permissions
@@ -206,6 +242,21 @@ openssl req \
 ** mount
    mount info, also used to mount disk
    mount <path> <dev>
+** umount
+   unmount a filesystem
+** fdisk  
+   partition table manipulator
+** fsck
+   check and repair a filesystem
+** mkfs
+   format disk to type
+** dd
+   write block-oriented data directtly to a device
+   + -of output file(device),
+   + -if input file(device),
+   + -bs base size(byte)
+   + -count number
+   + -conv convert function
 ** passwd
    change user password
    passwd <username>
@@ -220,6 +271,7 @@ openssl req \
    + -l includes only listening sockets
    + -p  show process id
    + -i, show network interface
+   + -r, show route table
 ** nc(netcat)
    connect a remote address and output content
    + -z, restrict output to the result of a scan for listeninging daemons(rather than trying make a connection)
@@ -243,8 +295,10 @@ openssl req \
   + -i modify file
   + -m-n, from line m to n,
 ** ln
-   create symbol link
+   create either hard or symbolic links 
    hard link duplicate file share same inode with origin file
+   A hard link cannot reference a file outside its own filesystem
+   A hard link cannot reference a directory
    + -s soft
 ** top
    provides a rich, self-updating display of process information.
@@ -264,7 +318,7 @@ openssl req \
 ** free
    show memory info
 ** vmstat
-   show swap status
+   output a snapshot of systm resource usage includeing memory, swap and disk io
 ** iftop
    dispaly a self-updating record of the greediest network activity traveling throught network interface
 ** tc
@@ -297,11 +351,64 @@ openssl req \
 ** date
 ** cal
    show calander in command line
+** type
+   indicate how a command name is interpreted
+** which 
+   display which executable program will be executed
+** man
+   display a command manual page
+** apropos
+   display a list of appropriate commands.
+** info
+   display a command's info entry
+** whatis
+   display a very brief description of a command
+** alias
+   create an alias for a command
+** sort
+   sort lines of text
+  + -n number order
+  + -r reverse
+  + -t split character
+  + -k sort by column number
+** uniq
+  report or omit repeated lines
+** wc 
+   count number
+   + -l line
+   + -w word
+   + -c character
+   + -m bytes
+   + -L longest line
+** more/less/head/tail 
+   show file content
+** tee
+   read from standard input and write to standard output and files
+** id
+   display user identity
+** umask
+   set default permission when file create
+** jobs
+   list active jobs
+** bg
+   place a job in the background
+** fg
+   place a job in the foreground
+** kill
+   send a signal to a process
+** killall
+   kill processes by name
+   + -l, show available signal type
+** shutdown
+** printenv
+   show environment varaibles
+** set
+   show bash and environment varaibles
+
    
  #+BEGIN_SRC bash
   rename # batch rename file by reg
   tac/nl # show file content
-  more/less/head/tail # show file progress
   echo $<var> # show environment varaible 
   set # show all environment
   env # show current user environment
@@ -309,22 +416,12 @@ openssl req \
   unset # delete environment varaible
   vimdiff # diff file
   whereis # query data from db, -b binary file, -m source file, -m help file
-  which # find executable file
-  wc # count number, -l line, -w word, -c character, -m bytes, -L longest line
   cut -b<f>-<to> <filename> # output set column number content
   file <filename> # get file type encode info
-  sort # -n number order, -r reverse, -t split character, -k sort by column number
-  uniq # delete continue duplicate
-  tee # output data to file
   curl # -X method, -c get cookie, -b pass cookie, -d post body
   zip <target> <source> # -o output file, -r recursive, -q quite, -e encrypt, -l \n -> \r\n
   unzip # -l show content not extract
   du # file size, -h human readable, -d <num> dir nest level, -a all file, -s summarize
-  mkfs.<type> # format disk to type
-  fdisk # change disk partition 
-  type <command> # show command type
-  help <command>
-  man <command>
   corntab # -f start -e edit -l show -r delete
   $? # previous command exit code
   tr # delete special character
@@ -337,6 +434,17 @@ openssl req \
 
    #+END_SRC
 
+* Login vs Non-Login shell
+  start up file for login shell sessions:
+  | file            | contents                                                                                                                               |
+  | /etc/profile    | gobal confiugration script that applies to all users                                                                                   |
+  | ~/.bash_profile | user's personal startup file. can be used to extend or override settings in the global configuration script                            |
+  | ~/.bash_loigin  | if ~/.bash_profile is not found, bash attempts to read this script.                                                                    |
+  | ~/.profile      | if neither ~/.bash_profile nor ~/.bash_login is found, bash attempts read this file. This is the default in Debian-based distributions |
+  non-login shell sessions:
+  | file             | contents                                                                                                        |
+  | /etc/bash.bashrc | A global configuration script that applies to all users                                                         |
+  | ~/.bashrc        | A user’s personal startup file. Can be used to extend or soverride settings in the global configuration script. |
 * User
   #+BEGIN_SRC bash
   whoami # show current log in user

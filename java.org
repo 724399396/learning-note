@@ -438,7 +438,7 @@
    service discover tool
 ** Eureka
    Service discover
-** Hystric and Ribbon
+** Hystrix and Robbin
    circuit breaker, bulkhead pattern, client-side load-balancing
 ** Netflix Zuul
    service routing, let microservice go throught a signle "front door"
