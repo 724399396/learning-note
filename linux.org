@@ -102,6 +102,8 @@ openssl req \
 ** cat
    accessing content of text file
    + -A show invisible character
+   + -n show line number
+   + -s supresses output multiple blank lines
 ** zcat
    accessing content of zip file
 ** less
@@ -154,7 +156,7 @@ openssl req \
    filter content by keyword 
    + -r recursive 
    + -n line number 
-   + -l ignroe binary 
+   + -l only show file name
    + -e posix extension
    + -P Perl regex 
    + -b binary include 
@@ -162,6 +164,8 @@ openssl req \
    + -v reverse select
    + -A after lines number
    + -B before line number
+   + -i ignore case
+
 ** arch
    get hardware is 64 or 32
 ** wget
@@ -196,7 +200,28 @@ openssl req \
    show disk usage
    + -h, human readable
    + -i, show inode info(used/free)
-** tar tar <options> <tar name> <source file>+ + -c create + -v verbose + -x extract + -f, archive filename + -t show + -p keep permission + -z gz + -J xz + -j bz2 + +r, append insted of overwrite + --one-file-system, exclude pseudo partitions + --exclude, exclude partition from source file
+** gzip
+   without lost compress or expand file
+** gunzip
+   unzip gzip compress file
+** bzip2
+   without lost compress file
+** bunzip2
+** zip
+  zip <target> <source> # -o output file, -r recursive, -q quite, -e encrypt, -l \n -> \r\n
+** tar 
+   tar <options> <tar name> <source file>
+   + -c create 
+   + -v verbose 
+   + -x extract 
+   + -f, archive filename 
+   + -t show 
+   + -p keep permission 
+   + -z gz + -J xz 
+   + -j bz2 
+   + +r, append insted of overwrite  
+   + --one-file-system, exclude pseudo partitions 
+   + --exclude, exclude partition from source file
 ** split
    split <origin> <target>, split file to multiple part, then use cat name* > newfile to merge content
    + -b <size>, set split size
@@ -204,6 +229,26 @@ openssl req \
    find every kind of file/directory
    + -exec, execute command on find file, {} is find file name
    + -type, set find file or directory
+   
+*** file type
+    | file type | description                   |
+    |-----------+-------------------------------|
+    | b         | Block special device file     |
+    | c         | Character special device file |
+    | d         | Directory                     |
+    | f         | Regular file                  |
+    | l         | Symbolic link                 |
+*** test
+*** action
+    | action             | description                                                                                                                   |
+    |--------------------+-------------------------------------------------------------------------------------------------------------------------------|
+    | -delete            | Delete the currently matching file.                                                                                           |
+    | -ls                | Perform the equivalent of ls -dils on the matching file.   Output is sent to standard output.                                 |
+    | -print             | Output the full pathname of the matching file to standard output. This is the default action if no other action is specified. |
+    | -quit              | Quit once a match has been made.                                                                                              |
+    | -exec command {} ; | User define action                                                                                                            |
+    | -exec command {} + | all find result will once pass to command with space separate                                                                 |
+
 ** locate
    query filesystem from /var/lib/mlocate/mlocate.db, index is updated every time the system boots
    updatedb, manually update index
@@ -370,7 +415,7 @@ openssl req \
   + -n number order
   + -r reverse
   + -t split character
-  + -k sort by column number
+  + -k sort by multiple column number, range, type
 ** uniq
   report or omit repeated lines
 ** wc 
@@ -404,6 +449,48 @@ openssl req \
    show environment varaibles
 ** set
    show bash and environment varaibles
+** cut 
+   | Option        | Description                                                                         |
+   |---------------+-------------------------------------------------------------------------------------|
+   | -c char_list  | extract the portion of the line defined by char_list                                |
+   | -f field_list | extract one or more fields from the line as defined by field_list                   |
+   | -d delim_char | when -f is specified, use delim_char as the field delimiting character              |
+   | --complement  | extract the entire line of text, except for those portons specified by -c and/or -f |
+** paste 
+   merge lines of files
+** join
+   join lines of two fiels on a common field
+** comm
+   compare two sorted files line by line
+   -<n>, output which columns, 1 is file1 only, 2 is file2 only, 3 is common
+** diff
+   compare files line by line
+** tr
+   transliterate or delete character
+** sed
+   stream editor for filtering and transforming text
+   address notation
+   | address     | description                                                                                |
+   |-------------+--------------------------------------------------------------------------------------------|
+   | n           | A line number where n is a positive integer                                                |
+   | $           | the last line                                                                              |
+   | /regexp/    | lines matcing a posix basic regular expression                                             |
+   | addr1,addr2 | a range oflines from addr1 to addr2                                                        |
+   | first~step  | match line represented by the number first and then each subsequent line at step intervals |
+   | addr1,+n    | match addr1 and the follwing n lines                                                       |
+   | addr!       | match all lines except addr                                                                |
+   basic editing commands
+   | command               | description                                                                                            |
+   |-----------------------+--------------------------------------------------------------------------------------------------------|
+   | =                     | output current line number                                                                             |
+   | a                     | append text after the current line                                                                     |
+   | d                     | delete the current line                                                                                |
+   | i                     | insert text in front of the current line                                                               |
+   | p                     | print the current line                                                                                 |
+   | q                     | exit sed without processing any more lines. if the -n option is not specified, output the current line |
+   | Q                     | exit sed without processing any more lines                                                             |
+   | s/regexp/replacement/ | substitue the contents of replacement wherever regexp is fund                                          |
+   | y/set1/set2           | perfrm transliteration by converting characters from set1 to the corresponding charcters in set2       |
 
    
  #+BEGIN_SRC bash
@@ -416,36 +503,21 @@ openssl req \
   unset # delete environment varaible
   vimdiff # diff file
   whereis # query data from db, -b binary file, -m source file, -m help file
-  cut -b<f>-<to> <filename> # output set column number content
   file <filename> # get file type encode info
   curl # -X method, -c get cookie, -b pass cookie, -d post body
-  zip <target> <source> # -o output file, -r recursive, -q quite, -e encrypt, -l \n -> \r\n
   unzip # -l show content not extract
   du # file size, -h human readable, -d <num> dir nest level, -a all file, -s summarize
   corntab # -f start -e edit -l show -r delete
   $? # previous command exit code
-  tr # delete special character
   col # tab <-> space, -x tab -> space, -h space -> tab
   join # connect two file, -t splitor, -l ignore case, -1 file 1 filed, -2 filed 2 file
-  paste # similar like join, but not compare
   xargs # split long args
   blkid # show disk uuid
   find . -type f -name "*.java" -exec sed -i -e 's//' {} \; # find in file and replace
 
    #+END_SRC
 
-* Login vs Non-Login shell
-  start up file for login shell sessions:
-  | file            | contents                                                                                                                               |
-  | /etc/profile    | gobal confiugration script that applies to all users                                                                                   |
-  | ~/.bash_profile | user's personal startup file. can be used to extend or override settings in the global configuration script                            |
-  | ~/.bash_loigin  | if ~/.bash_profile is not found, bash attempts to read this script.                                                                    |
-  | ~/.profile      | if neither ~/.bash_profile nor ~/.bash_login is found, bash attempts read this file. This is the default in Debian-based distributions |
-  non-login shell sessions:
-  | file             | contents                                                                                                        |
-  | /etc/bash.bashrc | A global configuration script that applies to all users                                                         |
-  | ~/.bashrc        | A user’s personal startup file. Can be used to extend or soverride settings in the global configuration script. |
-* User
+* Login vs Non-Login shell start up file for login shell sessions: | file            | contents                                                                                                                               | | /etc/profile    | gobal confiugration script that applies to all users                                                                                   | | ~/.bash_profile | user's personal startup file. can be used to extend or override settings in the global configuration script                            | | ~/.bash_loigin  | if ~/.bash_profile is not found, bash attempts to read this script.                                                                    | | ~/.profile      | if neither ~/.bash_profile nor ~/.bash_login is found, bash attempts read this file. This is the default in Debian-based distributions | non-login shell sessions: | file             | contents                                                                                                        | | /etc/bash.bashrc | A global configuration script that applies to all users                                                         | | ~/.bashrc        | A user’s personal startup file. Can be used to extend or soverride settings in the global configuration script. | * User
   #+BEGIN_SRC bash
   whoami # show current log in user
   groups # show user group, full group store in /etc/groups
@@ -827,3 +899,6 @@ echo "Overall swap used: $OVERALL"
     ansible-playbook <yml file> # execute playbook from yaml file
     ansible-vault create <file> # create vault store sensitive data
     #+END_SRC
+* Regular Expression
+  basic regular expressions: ^ $ . [ ] * are special character, other is literal
+  extended regular expression, following meta-characters added: ( ) { } ? + |
