@@ -317,6 +317,15 @@ openssl req \
    + -p  show process id
    + -i, show network interface
    + -r, show route table
+   + -a, list all ports (both TCP and UDP)
+   + -at, list all tcp ports
+   + -au, list all udp ports
+   + -lt, all listen tcp ports
+   + -lu, all listen udp ports
+   + -lx, all listen UNIX ports
+   + -s, show statistics by protocol
+   + -ac, display promiscuous mode, refresh secreen every define seconds
+   + -i, show network interface transactions
 ** nc(netcat)
    connect a remote address and output content
    + -z, restrict output to the result of a scan for listeninging daemons(rather than trying make a connection)
