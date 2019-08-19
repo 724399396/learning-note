@@ -5,3 +5,35 @@
    where the malicious string originates from the victim's request.
 ** DOM-based XSS 
    where the vulnerability is in the client-side code rather than the server-side code.
+* Cryptography
+** Symmetric Cryptography
+   key is used to encrypt and decrypt data
+   two types symmetric ciphters:
+   - stream ciphers:
+     + Data Ecnryption Standard(DES)
+     + Advanced Encryption Standard(AES)
+   - block ciphters:
+     + RC4
+     + A5
+** Asymmetric Cryptography
+   Asymmetric cryptography refers to a type of cryptography whereby the key that is used to encrypt the data is different from the key that is used to decrypt the data
+   e.g RSA DSA El-Gammal
+* Openssl
+#+BEGIN_SRC bash
+openssl enc -<cryptography-algorithms> -in <file in> -out <file out> # encrypt file 
+openssl enc -d  -<cryptography-algorithms> -in <file in> -out <file out> # decrypt file
+openssl genpkey -algorithm RSA -out privakey.pem -pkeyopt rsa_keygen_bits:1024 # generate rsa private key
+openssl rsa -pubout -in privatekey.pem -out publickey.pem # calculate rsa public key from private key
+openssl rsa -text -in privatekey.pem # show private key modulus prime numbers
+openssl pkey -in publickey.pem -pubin -text # show public key modules
+openssl rsautl -encrypt -inkey publickey.pem -pubin -in message.txt -out message.rsa # encrypt use rsa public key
+openssl rsautl -decrypt -inkey privatekey.pem -in message.ras -out message.dec # decrypt use rsa private key
+openssl ecparam -list_curves # list recommended curves available in openssl
+openssl ecparam -name secp256k1 -genkey -noout -out ec-privatekey.pem # generate ecc private key
+openssl ec -in ec-privatekey.pem -pubout -out ec-pubkey.pem # caculcate ecc public key from private key
+echo -n 'Hello' | openssl dgst -sha256 # use sha256 produce a hash
+openssl dgst -sha256 message.txt # generate a digital signature
+openssl dgst -sha256 -sign privatekey.pem -out signature.bin message.txt # sha256 hash then sign
+openssl dgst -sha256 -verify publickey.pem -signature signature.bin message.txt # sha256 verify degital sign
+openssl dgst -ecdsa-with-SHA1 -sign eccprivatekey.pemtestsign.txt > ecsign.bin # ecc hash then sign
+#+END_SRC
