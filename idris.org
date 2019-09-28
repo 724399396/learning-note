@@ -1,0 +1,9 @@
+* REPL
+  idris, drop in repl
+** command
+  + :t check type without evaluating
+  + :r reload current load file
+  + :exec execute current load file
+  + :let define value
+  + :doc get document
+  + :total check is function total
