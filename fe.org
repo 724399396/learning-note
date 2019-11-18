@@ -491,3 +491,13 @@
    Align-content: set multiple line order, 
 
    Flex-start, flex-end, center, space-between, space-around, stretch 
+
+* webpack
+** loader
+   config by module -> rules 
+   loader process from right to left
+*** css-loader
+    goes through possible @import and url() lookups within the matched files and treats them as a regular es2015 import
+*** style-loader
+    inject the styling through a style element
+    style loader support HMR

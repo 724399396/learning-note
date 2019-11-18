@@ -526,6 +526,9 @@ openssl req \
 
    #+END_SRC
 
+** stress-ng
+   memory test util
+   stress-ng --vm-bytes $(awk '/MemAvailable/{printf "%d\n", $2 * 0.9;}' < /proc/meminfo)k --vm-keep -m 1
 * Login vs Non-Login shell start up file for login shell sessions: | file            | contents                                                                                                                               | | /etc/profile    | gobal confiugration script that applies to all users                                                                                   | | ~/.bash_profile | user's personal startup file. can be used to extend or override settings in the global configuration script                            | | ~/.bash_loigin  | if ~/.bash_profile is not found, bash attempts to read this script.                                                                    | | ~/.profile      | if neither ~/.bash_profile nor ~/.bash_login is found, bash attempts read this file. This is the default in Debian-based distributions | non-login shell sessions: | file             | contents                                                                                                        | | /etc/bash.bashrc | A global configuration script that applies to all users                                                         | | ~/.bashrc        | A user’s personal startup file. Can be used to extend or soverride settings in the global configuration script. | * User
   #+BEGIN_SRC bash
   whoami # show current log in user
