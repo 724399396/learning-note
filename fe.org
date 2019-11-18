@@ -516,6 +516,33 @@ npm install webpack webpack-cli --save-dev
        ],
      };
      #+END_SRC
+*** MiniCssExtractPlugin
+    npm install mini-css-extract-plugin --save-dev
+    extract css to separate file, avoid Flash of Unstyled Content (FOUC), allow browser to manage css file
+    not work with Hot Module Replacement together, has overhead during compilation phase
+    general used in production build
+**** config
+     #+BEGIN_SRC javascript
+     const MniCssExtractPlugin = require("mini-css-extract-plugin");
+
+     {
+       module: {
+        rules: [
+         {
+           test: /\.css$/,
+           use: [
+             MiniCssExtractPlugin.loader
+           ]
+         }
+        ]
+       },
+       plugins: [
+       new MinicssExtractPlugin({
+         filename: "[name.css"
+       });
+       ]
+     }
+     #+END_SRC
 ** loader
    config by module -> rules 
    loader process from right to left
@@ -569,6 +596,16 @@ npm install webpack webpack-cli --save-dev
    use to merge webpack config file
 *** install
     npm install webpack-merge --save-dev
+** PurifyCSS/uncss
+   tool eliminate aren't using css
+   npm install glob purifycss-webpack purify-css --save-dev
+*** config
+    #+BEGIN_SRC javascript
+    const PurifyCSSPlugin = require("purifycss-webpack");
+    {
+      plugins: [new PurifyCSSPlugin({ paths: [] })]
+    }
+    #+END_SRC
 * npm
 ** cli
 *** bin
