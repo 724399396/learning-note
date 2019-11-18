@@ -3,7 +3,8 @@
 ** command
   + :t check type without evaluating
   + :r reload current load file
-  + :exec execute current load file
+  + :exec execute current load file IO action or set IO action
   + :let define value
   + :doc get document
   + :total check is function total
+  + :module load module
