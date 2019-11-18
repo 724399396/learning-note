@@ -23,7 +23,7 @@
 
   <div>用于划分板块 里面的id元素用于区分, 经常用于划分不同的块,使用不同的css 
 
-  <table>表格的标记 <tbody>元素嵌套在<table>里,代表所有信息下载玩后再显示 <tr>代表行<td>代表列,<th>代表表头 <table>里面的summary属性代表摘要(不显示),<caption>是标题 
+  <table>表格的标记 <tbody>元素嵌套在<table>里,代表所有信息下载玩后再显示 <tr>代表行<td>代表列,<th>代表表头 <table>里面的1summary属性代表摘要(不显示),<caption>是标题 
 
   <a href="目标网址" title="鼠标滑过显示的文本">链接显示的文本</a> 
 
@@ -491,8 +491,31 @@
    Align-content: set multiple line order, 
 
    Flex-start, flex-end, center, space-between, space-around, stretch 
-
 * webpack
+** install
+#+BEGIN_SRC bash
+npm install webpack webpack-cli --save-dev
+#+END_SRC
+** cli option
+   - --mode, development or produduction mode
+   - --devtool, true or false, false will disable source map
+   - --watch, detects change of file and recompiles automatically, webpack-dev-server implment watch mode
+   - --env, env can pass string, or use env.xx pass object
+** plugins
+*** html-webpack-plugin
+**** install
+    npm install html-webpack-plugin --save-dev
+**** webpack.config.js
+     #+BEGIN_SRC javascript
+     const HtmlWebpackPlugin = require("html-webpack-plugin")
+     module.exports = {
+       plugins: [
+         new HtmlWebpackPlugin({
+           title: "Webpack demo",
+         }),
+       ],
+     };
+     #+END_SRC
 ** loader
    config by module -> rules 
    loader process from right to left
@@ -501,3 +524,59 @@
 *** style-loader
     inject the styling through a style element
     style loader support HMR
+** webpack-dev-server
+*** install
+    npm install webpack-dev-server --save-dev
+*** config
+    #+BEGIN_SRC javascript
+    module.exports = {
+      devServer: {
+        // Display only errors to reduce the amount of output
+        stats: "errors-only",
+        // Parse host and port from env to allow customization.
+        // If you use Docker, Vargrant or Cloud9, set
+        // host: "0.0.0.0";
+        host: process.env.HOST, // Defaults to `localhost`
+        port: process.env.PORT, // Defaults to 8080
+        open: true, // Open the page in browser
+        historyApiFallback: true, // enable html5 history api based routing
+        overlay: true, // capturing complilation related warnings and errors
+        contentBase:  //assuming you don't generate index.html dynmically and prefer to maintian it yourself in a specific directory
+        proxy: //proxy request, default is disable
+        headers: // attach custom headers to your request
+        // old system not work on watch file, config below use polling instead
+        watchOptions: {
+          // Delay the rebuild after the first change
+          aggregateTimeout: 300,
+          // Poll useing interval (in ms, accepts boolean too)
+          poll: 1000,
+        }
+      },
+      plugins: [
+        // Ignore node_modules so CPU usage with poll
+        // watching drops significantly.
+        new webpack.WatchIgnorePlugin([
+          path.join(__dirname, "node_modules")
+        ]),
+      ]
+    }
+    #+END_SRC
+** nodemon
+   allow restrart dev server when config change
+   npm install nodemon --save-dev
+   nodemon --watch webpack.config.js --exec "webpack-dev-server --mode development"
+** webpack-merge
+   use to merge webpack config file
+*** install
+    npm install webpack-merge --save-dev
+* npm
+** cli
+*** bin
+    show npm bin location
+*** run
+    execute script define in package.json scripts
+*** install
+    install package to node_modules
+     - --save-dev, install and add package to devDependencies
+     - --save, install and add package to dependencies
+     - -g, global install
