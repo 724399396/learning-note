@@ -545,12 +545,33 @@ npm install webpack webpack-cli --save-dev
      #+END_SRC
 ** loader
    config by module -> rules 
-   loader process from right to left
+   loader process from right to left, bottom to top(separate definitions)
+   loader-runner, allow run loader in isolation without webpack
+   inspect-loader allow inspect what's being passed between loaders
+   loader format: 
+   - use, execute action , can be string, object, array of object, array of string
+   - test, is match file condition, accept RegExp/String/function/object or array of conditons like these
+   - include, same as test
+   - exclude, same as test
+   - enforce: "post" "pre" can change loader process order
+   - resource, match against a resource path include query
+   - resourcePath, match against a resource path without its query
+   - resourceQuery, match against a resource based on it query
+   - issuer, match against a resource requested from the match
+   - oneOf: route webpack to a specific loader base on a resource related match
 *** css-loader
     goes through possible @import and url() lookups within the matched files and treats them as a regular es2015 import
 *** style-loader
     inject the styling through a style element
     style loader support HMR
+*** url-loader
+    emits image as base64 string with javascript bundles
+    options:
+    - limit, allow decide use url-loader/file-loader based on file size
+*** file-loader
+    output image files and returns paths to them insted of inlining
+    options:
+    - name: "[path][name].[hash].[ext]"
 ** webpack-dev-server
 *** install
     npm install webpack-dev-server --save-dev
@@ -604,6 +625,24 @@ npm install webpack webpack-cli --save-dev
     const PurifyCSSPlugin = require("purifycss-webpack");
     {
       plugins: [new PurifyCSSPlugin({ paths: [] })]
+    }
+    #+END_SRC
+** Autoprefixing css
+   auto process css to support config different browser
+   .browserslistrc file config supported browser
+   #+BEGIN_SRC
+   > 1% # Browser usage over 1%
+   Last 2 versions # Or last two versions
+   IE 8 # Or IE 8
+   #+END_SRC
+   npm install postcss-loader autoprefixer --save-dev
+*** config
+    #+BEGIN_SRC javascript
+    {
+      loader: "postcss-loader",
+      options: {
+        plugins: () => [require("autoprefixer")()],
+      }
     }
     #+END_SRC
 * npm
