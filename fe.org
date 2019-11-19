@@ -569,9 +569,16 @@ npm install webpack webpack-cli --save-dev
     options:
     - limit, allow decide use url-loader/file-loader based on file size
 *** file-loader
-    output image files and returns paths to them insted of inlining
+    output image files or fonts and returns paths to them insted of inlining
+    woff is support by most browser
     options:
     - name: "[path][name].[hash].[ext]"
+*** babel-loader
+    webpack processes es2015 module definitions by default
+    npm install babel-loader @babel/core @babel/preset-env --save-dev
+    babel config by a .babelrc file
+    @babel/preset-enn, enable the required blugins based on the optional environment definition
+    @babel/polyfill support polyfill certain language features for old browser
 ** webpack-dev-server
 *** install
     npm install webpack-dev-server --save-dev
