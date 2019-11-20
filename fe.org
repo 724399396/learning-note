@@ -652,6 +652,9 @@ npm install webpack webpack-cli --save-dev
       }
     }
     #+END_SRC
+** source map
+   source map providing a mapping between original and transformed source code, work on js and css
+   enable be "devtool" options
 * npm
 ** cli
 *** bin
