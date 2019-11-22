@@ -655,6 +655,17 @@ npm install webpack webpack-cli --save-dev
 ** source map
    source map providing a mapping between original and transformed source code, work on js and css
    enable be "devtool" options
+   inline type options:
+   - eval
+   - cheap-eval-source-map
+   - cheap-module-eval-source-map
+   - eval-source-map
+   separate type options:
+   - cheap-source-map
+   - cheap-module-source-map
+   - hidden-source-map
+   - nosources-source-map
+   - source-map
 * npm
 ** cli
 *** bin

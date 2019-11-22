@@ -1,0 +1,5 @@
+#+BEGIN_SRC cmd
+netsh int ip sh int
+netsh int ip add addr <IDX> <IP>/32 st=ac sk=tr
+netsh interface portproxy add v4tov4 listenport=<port> connectaddress=<remote-address> connectport=<remote-port>
+#+END_SRC
