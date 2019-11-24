@@ -666,6 +666,100 @@ npm install webpack webpack-cli --save-dev
    - hidden-source-map
    - nosources-source-map
    - source-map
+** bundle splitting
+   webpack 4 support bundle bundle splitting, before webpack 4, use CommonsChunkPlugin
+   webpack prodive more control over the generated chunks by two plugins: 
+   - AggressiveSplittingPlugin 
+   - AggressiveMergingPlugin
+*** config
+    #+BEGIN_SRC javascript
+    {
+      optimization: {
+        splitChunks: {
+          cacheGroups: {
+            commons: {
+              test: /[\\/]node_modules[\\/]/,
+              name: "vendor",
+              chunks: "initial",
+            }
+          }
+        }
+      }
+    }
+    #+END_SRC
+** code splitting
+   npm install @babel/plugin-syntax-dynamic-import --save-dev
+   config .babelrc
+*** config
+    #+BEGIN_SRC javascript
+    {
+     "plugins": ["@babel/plugin-syntax-dynamic-import"],
+    }
+    #+END_SRC
+** tidy up 
+*** clean build directory
+    npm install clean-webpack-plugin --save-dev
+    #+BEGIN_SRC javascript
+    {
+      plugins: [new CleanWebpackPlugin()],
+    }
+    #+END_SRC
+*** attach revision to the build
+    npm install git-revision-webpack-plugin --save-dev
+    #+BEGIN_SRC javascript
+    {
+      plugins: [new webpack.BannerPlugin({
+        banner: new GitRevisionPlugion().version(),
+      })
+      ],
+    }
+    #+END_SRC
+** minifying javascript
+   webpack 4 minifies the output by default
+   in webpack 4, minification process by two configuration:
+   - optimization.minimize
+   - optimization.minimizer
+** tree shaking
+   Tree shaking is a feature enabled by the ES2015 module definition. The idea is that given it's possible to analyze the module definition statically without running it
+** environment variables
+   webpack can replace free varaibles
+   #+BEGIN_SRC javascript
+   exports.setFreeVaraible = (key, value) => {
+     const env = {};
+     env[key] = JSON.stringify(value);
+     return {
+       plugins: [new webpack.DefinePlugin(env)],
+     };
+   };
+   #+END_SRC
+** add hash to output file
+   available palceholders:
+   - id, chunk id
+   - path, file path
+   - name, file name
+   - ext, extension
+   - hash, return the build hash
+   - chunkhash, chunk-speciifc hash
+   - contenthash, hash generated based on content
+** build analyze
+   add --json flag to webpack get build analyze output
+   --profile, capture timing-related information
+   --progress, show how long webpack spent in different stages of the build
+   available analyze tool:
+   - the official analyse tool
+   - webpack visulizer
+   - duplicate-package-checker-webpack-plugin
+   - webpack chart
+   - webpack-unused
+   - webpack-bundle-analyzer
+   - webpack-bundle-size-analyzer
+   - inspectpack
+   - jarvis
+   - webpack-runtime-analyzer
+   - webpack monitor
+   - webpack-deps-tree
+   - source-map-explorer
+   - madge
 * npm
 ** cli
 *** bin
