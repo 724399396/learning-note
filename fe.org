@@ -760,6 +760,7 @@ npm install webpack webpack-cli --save-dev
    - webpack-deps-tree
    - source-map-explorer
    - madge
+** multiple pages
 * npm
 ** cli
 *** bin
