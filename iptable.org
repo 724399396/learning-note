@@ -1,0 +1,28 @@
+* tables
+  each table has its own set of built-in chains
+** filter
+** nat
+** mangle
+** raw
+* chains
+  [[./images/iptables.png]]
+** INPUT
+** OUTPUT
+** FORWARD
+** PREROUTING
+** POSTROUTEING
+* command options
+  - --source -s, match on a source ip address or network
+  - --destination -d, match on a destination ip address or network
+  - --protocol -p, match on an ip value
+  - --in-interface -i, input interface
+  - --out-interface -o, output interface
+  - --state, match on a set of connection states
+  - --string, match on a sequence of application layer data bytes
+  - --comment, associate up to 256 bytes of comment data with a rule within kernel memory
+* target
+  - ACCEPT allow a package to continue on its way
+  - DROP drops a packet. Not further processing is performed, and as far as the receiving stack is concerned, it is as though the packet was never sent.
+  - LOG logs a packet to syslog
+  - REJECT drops a packet and simulaneously sends an appropriate response packet(e.g., a tcp reset packet for a tcp connection or an iCMP Port Unreachable messafe for a UDP packet).
+  - RETURN Continues processing a packet within the calling chain.
