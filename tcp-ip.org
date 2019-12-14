@@ -1,0 +1,8 @@
+* data link layer
+  SLIP
+  CSLIP
+  PPP
+* ip
+  normal ipv4 header size is 20 bytes:
+  [[./images/ipheader.gif]]
+  network byte order is big endian byte order
