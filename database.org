@@ -65,6 +65,11 @@
   CREATE USER <name>@<host> IDENTIFIED BY <password>
   GRANT ALL PRIVILEGES ON <db> TO <user>@<host> IDENTIFIED BY <password>
   #+END_SRC
+** create user and grant permission
+   #+BEGIN_SRC mysql
+   CREATE USER '<name>'@'<allow access host>' IDENTIFIED BY '<password>';
+   GRANT ALL ON <database>.<tables> TO '<name>'@'<allow access host>';
+   #+END_SRC
 ** get column type
    SELECT COLUMN_TYPE FROM information_schema.COLUMNS WHERE TABLE_NAME = '' AND COLUMN_TYPE= '';
 ** record sql
