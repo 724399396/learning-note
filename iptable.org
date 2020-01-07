@@ -1,16 +1,27 @@
 * tables
   each table has its own set of built-in chains
 ** filter
+   mainly used for filter packets
 ** nat
+   only used to change package source/destination field
+   include target:
+   - DNAT
+   - SNAT
+   - MASQUERADE, like SNAT, but when this  target hit, it automatically check for ip address to use insted of snat static ip
 ** mangle
+   used to mangle package filed: TOS TTL MARK SECMARK CONNSECMARK
 ** raw
+   only used for set a mark on packets that they should not be handled by the connection tracking system
 * chains
   [[./images/iptables.png]]
+  [[./images/iptables-2.png]]
+  when packet match chain, we can specify a ump rule to a different chian within same table, new chain must be userspecified
 ** INPUT
 ** OUTPUT
 ** FORWARD
 ** PREROUTING
 ** POSTROUTEING
+
 * command options
   - --source -s, match on a source ip address or network
   - --destination -d, match on a destination ip address or network
@@ -53,3 +64,18 @@ iptables -t nat -A OUTPUT -p tcp --dport 80 -j REDSOCKS
 iptables -t nat -A PREROUTING -s 172.17.0.0/16 ! -d 172.17.0.0/16 -p tcp --dport 80 -j DNAT  --to 184.1.11.231:12345
 iptables -t nat -A PREROUTING -s 172.17.0.0/16 ! -d 172.17.0.0/16 -p tcp --dport 443 -j DNAT  --to 184.1.11.231:12345
   #+END_SRC
+* state
+  connectiion tracking is done by kernel module conntrack
+  incomming connection tracking is handled in the PREROUTING chain of nat table
+  local generated packets handled in the OUTPUT chain of nat table
+** NEW
+   packet is first packat that we see
+** ESTABLISHED
+   has seen traffic in both directions
+** RELATED
+   connection related to ESTABLISHED connection, e.g ftp data connection to ftp control connection
+** INVALID
+** UNTRACKED
+   if packet is marked with the raw table with the NOTRACK target, then on this state
+   
+    

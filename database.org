@@ -1,3 +1,12 @@
+* ACID
+** Atomicity
+   entrie transaction is either applied or rolled back
+** Consistency
+   the databse should always move from one consistent state to the next
+** Isolation
+   The results of a transaction are usually invisible to other transactions until the transaction is complete
+** Durability
+   a transaction’s changes are permanent
 * Sql
  and or precedence should explicit by () 
  
@@ -52,14 +61,18 @@
 
 * Transaction Isolation Level
   - Serializable: means can't read uncommited data, any query data by this transaction can't be update by another transaction, if insert data will affect this transaction query also be blocked.(hold read, write, range-read lock) 
-  - Repeatable Read: means can't read uncommited data and any query data by this transaction can't be update by another transaction. (hold read, write lock) 
+  - Repeatable Read(mysql default): means can't read uncommited data and any query data by this transaction can't be update by another transaction. (hold read, write lock), maybe phantom read(means read other transcation insert new data)
   - Read Commited: means can read commited data when other transaction commit. (hold write lock)
+  - Read Uncommited: can view the results of uncommited transcation. best performance but rarely reasonble in practice
   [[./images/transaction-isolation-level.png]]
 * Mysql
   mysql -u <user> -p, connect mysql and drop in mysql shell
   load data infile <path> into table <table>, import csv data to table
   select <columns> into outfile <path> from <Table>, export csv data to file
   mysqldump -u <user> <database> [<table>] > <path>, backup database/table
+  MyISAM don't support transcation, mix InnoDB and MyISAM table in one transcation can't rollback MyISAM table
+  lock can acquire any time in transcation execute, but all lock is release when transcation finish
+  innodb use next-key locking strategy avoid phantom read by locking gap
   #+BEING_SRC mysql
   UPDATE swap_test SET x=(@temp:=x), x = y, y = @temp; #used to swap column value
   CREATE USER <name>@<host> IDENTIFIED BY <password>
@@ -94,6 +107,11 @@
    #+BEGIN_SRC mysql
    SELECT table_name AS `Table`, round(((data_length + index_length) / 1024 / 1024), 2) `Size in MB`  FROM information_schema.TABLES  WHERE table_schema = "";
    #+END_SRC
+
+** change session transaction isolation level
+  #+BEING_SRC mysql
+  SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITED;
+  #+END_SRC
 
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
