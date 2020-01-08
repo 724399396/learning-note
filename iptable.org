@@ -23,14 +23,172 @@
 ** POSTROUTEING
 
 * command options
-  - --source -s, match on a source ip address or network
-  - --destination -d, match on a destination ip address or network
-  - --protocol -p, match on an ip value
-  - --in-interface -i, input interface
-  - --out-interface -o, output interface
-  - --state, match on a set of connection states
-  - --string, match on a sequence of application layer data bytes
-  - --comment, associate up to 256 bytes of comment data with a rule within kernel memory
+** command
+  - -t, table, default filter table is used
+  - --append, -A, appends rule to end of the chain
+  - --delete, -D,  delete a rule in a chain, either by entering the whole rule to match or by specifying the rule number, number start top from 1
+  - --replace, -R, replaces the old entry at the specified line
+  - --insert, -I, insert a rule smoewhere in a chain
+  - --list, -L, lists all the entries in the specified chain
+  - --flush, -F, flushes all rules from the specified chain and is equivalent to deleting each rule one by one
+  - --zero, -Z, zero all counters in a specific chain
+  - --new-chain, -N, create a new chain of  the specified name in the specified table
+  - --delete-chain, -X, deletes the specified chain from the table
+  - --policy, -P, set a specified default target or policy on a chain
+  - --rename-chain, -E, change the first name of a chain to a second name
+  - --verbose, -v, used in --list --append --insert --delete --replace
+** general match
+  - --source --src -s, match on a source ip address or network, support ! inversed match
+  - --destination --dst -d, match on a destination ip address or network, support ! inversed match
+  - --protocol -p, check for certain protocol, all protocol list in /etc/protocols, use ! inversed match
+  - --in-interface -i, input interface, only legal in the INPUT FORWARD and PREROUTING, + means all, support eth+, support ! inversed match
+  - --out-interface -o, output interface, only legal in the OUTPUT FORWARD and POSTROUTEING
+  - --fragment -f, match the second and third part of a fragmented packet
+** tcp match 
+  need set --protocol tcp
+  - --source-port --sport, match packaet base on their source port, either be number of name from /etc/services, support range <start port>:<end port>, emit first means 0, emit last means 65536, from big to small means reverse(eg 80:22), support ! inversed match
+  - --destination-port --dport, match destination port
+  - --tcp-flags, SYN,FIN,ACK,RST,URG,PSH support inversed match
+  - --sync, backward compatibility, used match SYN bit set and the ACK and RST bit unset
+  - --tcp-options
+** UDP match
+   need set --protocol udp
+   - --source-port -sport, same as tcp
+   - --destination-port -dport, same as tcp
+** ICMP match
+   need set --protocol icmp
+   - --icmp-type, match icmp type by their numbric value or name, support ! inversed match
+** SCTP match
+   need set --protocol sctp
+   - --source-port --sport, same as tcp/udp
+   - --destination-port --dport, same as tcp/udp
+   - --chunk-types, match chunktype of the sctp packet
+** explicit match
+*** addrtype match
+    use -m addrtype enable
+    avialable type: anycast blackhole broadcast local multicst nat prohibit throw unicast unreachable unspec xresolve
+    - --src-type
+    - --dst-type
+*** ash/esp match
+    match are used for the ipsec ah and esp protocols
+    use -m ah or -m msp enable
+    - --ahspi, match AH security Parameter Index number of the AH packets
+    - --espspi, match Security Parameter Index number of the ESP packets
+*** comment match
+    add comments inside the iptables ruleset and the kernel
+    use -m comment enable
+    - --comment, associate up to 256 bytes of comment data with a rule within kernel memory
+*** connmark match
+    --mark, match specific mark associated with a connection
+*** contract match
+    use -m conntrack enable
+    - --ctstate, match state of a packet, INVALID ESTABLISHED NEW RELATED SNAT DMAT, support ! invert match
+    - --ctproto, same as --protocol does
+    - --ctorigsrc, match original source ip specification of the contrack entry
+    - --ctorigdst
+    - --ctreplsrc, match base on the original contrack reply source
+    - --ctrepldst
+    - --ctstatus, match status of the connection, NONE EXPECTED SEEN_REPLY ASSURED
+    - --ctexpire, match on packets base on how long is left on the expiration timer
+*** Dscp match
+    use -m dscp enable
+    - --dscp
+    - --dscp-class
+*** Ecn match
+    use -m ecn enable
+    - --ecn, match the CWR(COngestion Window Received) bit
+    - --ecn-tcp-ece, match ECE(ECN-Echo) bit
+    - --ecn-ip-ect, match ECT(ECN Capable Transport) codepoints
+*** Hashlimit match
+    use -m hashlimit enable
+    - --hashlimit, specifies limit of each bucket, e.g 1000/sec, limit can take a /sec /minute /hour or /day postfix
+    - --hashlimit-mode, specifies which values should use as the hash value, support dstip(Destination IP), srcip(Source ip), dstport(Destination port), srcport(Source port)
+    - --hashlimit-name, specifies the name that this specific hash will be available as
+    - --hashlimit-burst, same as --limit-burst, set maimum size of the bucket
+    - --hashlimit-htable-size, maximum availabel buckets to be used
+    - --hashlimit-htable-max, set maximum number of hashtable entries
+    - --hashlimit-htable-gcinterval, how often should the garbage collection function be run
+    - --hashlimit-htable-expire, how long time an idle hashtable entry should expire
+*** helpoer match
+    use -m helper enable
+    - --helper
+*** ip range match
+    use -m iprange enable
+    - --src-range, match a range of source ip addrss
+    - --dst-range
+*** length match
+    use -m length enable
+    --length, match packet length in range
+*** limit match
+    use -m limit enable
+    - --limit
+    - --limit-burst
+*** Mac match 
+    match Ethernet MEdia Access Control source address
+    use -m mac enable
+    - --mac-source, match packets based on their MAC source address, only valid in the PREROUTING, FORWARD and INPUT chains
+*** mark match 
+    mark is setting by MARK target, mark is an unsigned 32 bit integer
+    use -m mark enable
+    - --mark, match packets that have prviously been marked
+*** multiport match
+    can't mixing starnd matching and multiport matching same time
+    use -m multiport enable
+    - --source-port, match multiple source port
+    - --destination-port, match multiple destination port, a maximum of 15 separate ports mayb e specified
+    - --port, match source and destination port
+*** owner match
+    only works within the OUTPUT chain
+    use -m owner enable
+    - --cmd-owner, command owner match, match based on the command name of  the process that is sending the packet
+    - --uid-owner,  match packet by User ID
+    - --gid-owner, match packet by Group ID
+    - --pid-owner, match packet by Process ID
+    - --sid-owner, match packet by session ID
+*** packet type match 
+    use -m pkttype enable
+    - --pkt-type, unicast broadcast or multicast
+*** realm match
+    A routing realm is used in Linux to classify routes into logical groups of routes.
+*** recent match
+    use -m recent enable
+    - --name, name of the list to use
+    - --set, create a new list entry in the named recent list
+    - --rcheck, check if the source ip address of packet is in the named list
+    - --update,  this match is true if the source combination is available in the specified list and it also updates the last-seen time in the list
+    - --remove, this match will try to find the source address of the packet in the list, and returns true if the packet is there. It will also remove the corresponding list entry from the list
+    - --seconds, only valid together with --check and --update matche, if last seen column was order than this amount in seconds, match return false
+    - --hitcount, used with --check or --update matches and will limit the match to only include packets that have seen at least the hitcount amount of packets.
+    - --rttl, verify TTL value of current packet same as the original packet
+    - --rsource, save source anddress and port
+    - --rdest, save the destination address and port to recent list
+*** state match
+    use -m state enable
+    - --state, match on a set of connection states
+*** tcpmss match
+    match a packet based on the Maximum Segment Size in TCP
+    use -m tcpmss enable
+    - --mss
+*** tos match
+    use -m tos enable
+    - --tos, match on tos field value
+*** ttl match 
+    use -m ttl enable
+    - --ttl-eq
+    - --ttl-gt
+    - --ttl-lt
+*** unclean match
+    The unclean match tries to match packets that seem malformed or unusual
+* utils
+** iptables-save
+   save current iptables rule to file
+   -c means keep byte/packet counter, -t special table
+   format:
+   *<table-name>
+   :<chain-name> <chain-policy> [<packet-counter>:<byte-counter>]
+** iptables-restore
+   load rule from iptables-save
+   -c means keep byte/packet counter from input, -n means not flush current rule
 * target
   - ACCEPT allow a package to continue on its way
   - DROP drops a packet. Not further processing is performed, and as far as the receiving stack is concerned, it is as though the packet was never sent.
