@@ -127,6 +127,12 @@
     - Database Test Suite
     - Percona's TPCC-MySQL Tool
     - sysbench
+      prepare data: 
+        sysbench /home/weili/work/public/sysbench/src/lua/oltp_read_only.lua --threads=4 --mysql-host=127.0.0.1 --mysql-user=root --mysql-password= --mysql-port=3306 --tables=10 --table-size=1000000 prepare
+      test select:
+        sysbench /home/weili/work/public/sysbench/src/lua/oltp_read_only.lua --threads=16 --events=0 --time=300 --mysql-host=127.0.0.1 --mysql-user=root --mysql-password= --mysql-port=3306 --tables=10 --table-size=1000000 --range_selects=off --db-ps-mode=disable --report-interval=1 run
+      clean up:
+        sysbench /home/weili/work/public/sysbench/src/lua/oltp_read_only.lua --threads=16 --events=0 --time=300 --mysql-host=127.0.0.1 --mysql-user=root --mysql-password= --mysql-port=3306 --tables=10 --table-size=1000000 --range_selects=off --db-ps-mode=disable --report-interval=1 cleanup
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
