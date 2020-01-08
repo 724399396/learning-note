@@ -190,11 +190,97 @@
    load rule from iptables-save
    -c means keep byte/packet counter from input, -n means not flush current rule
 * target
-  - ACCEPT allow a package to continue on its way
-  - DROP drops a packet. Not further processing is performed, and as far as the receiving stack is concerned, it is as though the packet was never sent.
-  - LOG logs a packet to syslog
-  - REJECT drops a packet and simulaneously sends an appropriate response packet(e.g., a tcp reset packet for a tcp connection or an iCMP Port Unreachable messafe for a UDP packet).
-  - RETURN Continues processing a packet within the calling chain.
+** ACCEPT
+   when use ACCEPT as target, the rule is accepted and will not continue traversing the current chain or any other ones in the same table
+** CLASSIFY
+   only valid in the POSTROUTING chain, used by couple of different qdiscs
+   - --set-class
+** CLUSTERIP
+   used to create simple clusters of nodes answering to the same IP and MAC address in a round robin fashion
+** CONNMARK 
+   used to set a mark on a whole connection, available in all chains and all tbales, but nat table is only traversed by the first packet in a connection
+   - --set-mark, set a mark on the connection
+   - --save-mark, save the packet mark into the connection mark
+   - --restore-mark, restore packet mark from the connection mark
+   - --mask
+** CONNSECMARK
+   set a SELinux security context mark to or from a packet mark
+** DNAT
+   used to do destination Network Addresss Translation
+   only valid in PREROUTING and OUTPUT chains in the nat table
+   - --to-destination, support set host(range) and port(range)
+** DROP
+   drops a packet. Not further processing is performed, and as far as the receiving stack is concerned, it is as though the packet was never sent.
+   none any other table and chains see this packet
+** DSCP
+   set Differentiated Services Field on tcp header
+** ECN
+   used to set ecn value
+** LOG
+   logging detailed information about packets, save to syslogd
+   - --log-level
+   - --log-prefix, prefix all log messag with a specific prefix
+   - --log-tcp-sequence
+   - --log-tcp-options
+   - --log-ip-options
+** MARK
+   only valid in the mangle table
+   mark set is by record in kernel not in packet self
+   - --set-mark
+** MASQUERADE
+   basically same as SNAT, but no --to-source options, it made to work with dynamic get ip
+   only valid in POSTROUTING chain in the nat table
+   - --to-ports
+** MIRROR
+   has security issue and remove in kernel 2.6
+** NETMAP
+   new implementation of the SNAT and DNAT target
+   - --to, translate between ip
+** NFQUEUE
+   sending packets for separate and specific queues
+** NOTRACK
+   turn off connection tracking, only valid in raw table
+** QUEUE
+   queue packets to User-land programs and applications
+** REDIRECT
+   used to redirect packets and streams to machine itself
+   only valid in PREROUTING and OURPUT chains of the nat table, also valid with user-defined chains that are called by previous chain rule
+   - --to-ports
+** REJECT 
+   drops a packet and simulaneously sends an appropriate response packet(e.g., a tcp reset packet for a tcp connection or an iCMP Port Unreachable messafe for a UDP packet).
+   only valid in INPUT FORWARD and OUTPUT chains and sub chains
+   - --reject-with
+** RETURN
+   will cause the current packet to stop traveling through the chain where it hit the rule. If it is the subchain of another chain, the packet will continue to travel through the superior chains as if nothing had happened
+** SAME
+   same as SANT, but will try to always use the same outgoing IP address for all connections initiated by a single host on your network.
+   - --to
+   - --nodst
+** SECMARK
+   used to set a security context mark on a single packet
+** SNAT
+   used to do Source Network Address Translation
+   only valid in POSTOUTING of nat table
+   - --to-source
+** TCPMSS
+   can be used to alter the MSS (Maximum Segment Size) value of TCP SYN packets
+   - --set-mss
+   - --clamp-mss-to-pmtu
+** TOS
+   used to set the Type of Service field within the IP header
+   - --set-tos
+** TTL
+   used to modify the Time To Live field in the IP header
+   onlyc valid with mangle table
+   - --ttl-set
+   - --ttl-dec
+   - --ttl-inc
+** ULOG
+   used to provide user-space logging of matching packets
+   - --ulog-nlgroup, tell ulog target with netlink group to send the packet to
+   - --ulog-prefix
+   - --ulog-cprange
+   - --ulog-qthreshold
 * redsocks
 [[https://github.com/darkk/redsocks]]
 [[https://gist.github.com/ChronoMonochrome/7ce4e0f4eba9c1ee7521774e7b7e504a]]
