@@ -112,7 +112,21 @@
   #+BEING_SRC mysql
   SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITED;
   #+END_SRC
-
+** db status
+   SHOW ENGINE INNODB STATUS
+   SHOW FULL PROCESSLIST
+** benchmark tools
+*** Full Stack
+    - ab, apcahe http server beanchmarking tool
+    - http_load
+    - JMeter
+*** Single component
+    - mysqlslap
+    - MySQL Beanchmark Suite (sql-bench)
+    - Super Smack
+    - Database Test Suite
+    - Percona's TPCC-MySQL Tool
+    - sysbench
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
