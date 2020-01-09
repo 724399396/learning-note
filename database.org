@@ -133,6 +133,20 @@
         sysbench /home/weili/work/public/sysbench/src/lua/oltp_read_only.lua --threads=16 --events=0 --time=300 --mysql-host=127.0.0.1 --mysql-user=root --mysql-password= --mysql-port=3306 --tables=10 --table-size=1000000 --range_selects=off --db-ps-mode=disable --report-interval=1 run
       clean up:
         sysbench /home/weili/work/public/sysbench/src/lua/oltp_read_only.lua --threads=16 --events=0 --time=300 --mysql-host=127.0.0.1 --mysql-user=root --mysql-password= --mysql-port=3306 --tables=10 --table-size=1000000 --range_selects=off --db-ps-mode=disable --report-interval=1 cleanup
+** profile tool
+*** percona toolkit
+    pt-query-digest < slow.log, analyze slow query log file
+    pt-query-digest < tcmpdump, analyze query from tcpdump result
+*** SHOW PROFILE
+    SET profiling = 1; enable profiling in this session
+    execute query then use SHOW PROFILES get execute duration table
+    SHOW PROFILE FOR QUERY <number> get query detail
+    if need sort by execute time, use blow sql:
+    SELECT STATE, SUM(DURATION) AS Total_R, ROUND(100 * SUM(DURATION) / (SELECT SUM(DURATION) FROM INFORMATION_SCHEMA.PROFILING WHERE QUERY_ID = @query_id), 2) AS Pct_R, COUNT(*) AS Calls, SUM(DURATION) / COUNT(*) AS "R/Call" FROM INFORMATION_SCHEMA.PROFILING WHERE QUERY_ID = <query_id> GROUP BY STATE ORDER BY Total_R DESC;
+*** SHOW STATUS
+    FLUSH STATUS;
+    SHOW STATUS WHERE Variable_name like 'Handler%' Or Variable_name like 'Created%'
+*** performance schema
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login

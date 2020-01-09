@@ -13,6 +13,7 @@
 ** raw
    only used for set a mark on packets that they should not be handled by the connection tracking system
 * chains
+[[https://upload.wikimedia.org/wikipedia/commons/3/37/Netfilter-packet-flow.svg]]
   [[./images/iptables.png]]
   [[./images/iptables-2.png]]
   when packet match chain, we can specify a ump rule to a different chian within same table, new chain must be userspecified
