@@ -147,6 +147,17 @@
     FLUSH STATUS;
     SHOW STATUS WHERE Variable_name like 'Handler%' Or Variable_name like 'Created%'
 *** performance schema
+*** show global status
+    mysqladmin ext -i1 | awk '/Queries/{q=$4-qp;qp=$4} /Threads_connected/{tc=$4} /Threads_running/{printf "%5d %5d %5d\n", q, tc, $4}'
+*** show processlist
+    mysql -e 'SHOW PROCESSLIST\G' | grep State: | sort | uniq -c | sort -rn
+*** pt-stalk pt-mpmp pt-collect pt-summary pt-mysql-summary
+    use to monitor metric and collect diagnostic data
+    need install gdb and oprofile
+*** strace
+    strace -cfp $(pidof mysqld)
+** schema online change
+   use tool pt-online-schema-change 
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
