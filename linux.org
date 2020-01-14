@@ -49,7 +49,19 @@ openssl req \
 ** ssh port forward
    in need login machine:
    #+BEGIN_SRC bash
-   autossh -R <remote port>:localhost:<local ssh port> <name>@<remote ip>
+[Unit]
+Description=Keeps a tunnel to 'remote-coonect' open
+After=network.target sshd.service
+
+[Service]
+User=root
+Environment="AUTOSSH_GATETIME=0"
+ExecStartPre=-/usr/bin/ssh-keygen -f "/root/.ssh/known_hosts" -R "yn.weili-self.tk"
+ExecStart=/usr/bin/autossh -v -M 0 -o "StrictHostKeyChecking=no" -o "ServerAliveInterval 30" -o "ServerAliveCountMax 3" -NR 2222:localhost:22 remote-connect@yn.weili-self.tk -i /root/.ssh/id_rsa
+ExecStop=/usr/bin/kill -9 autossh
+
+[Install]
+WantedBy=multi-user.target
    #+END_SRC
    in remote machine:
    #+BEGIN_SRC bash
