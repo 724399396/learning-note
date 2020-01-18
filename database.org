@@ -158,6 +158,16 @@
     strace -cfp $(pidof mysqld)
 ** schema online change
    use tool pt-online-schema-change 
+** duplicate index found
+   pt-duplicate-key-checker
+** unused index
+   INFORMATION_SCHEMA.INDEX_SATISTICS on mariadb
+   pt-index-usage
+** Table Maintenance
+   use CHECK TABLE to check table status
+   use REPAIR TABLE to fix corrupt tables
+   use ANALYZE TABLE to update index statistics
+   use OPTIMIZE TABLE to solve fragmentation issue
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
