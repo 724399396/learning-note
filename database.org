@@ -168,6 +168,17 @@
    use REPAIR TABLE to fix corrupt tables
    use ANALYZE TABLE to update index statistics
    use OPTIMIZE TABLE to solve fragmentation issue
+mysql protocl is half-duplex, either client send or server send, when server send data it on Sending data state, when is finish then unlock it lock resources 
+** query states
+   - sleep, thread is waiting for a new query from the client
+   - query, the thread is either executing the query or sending the result back to the client
+   - locked, the thread is waiting for a table lock to be granted at the server level
+   - Analyzing and statistics, checking sotrage engine statistics and optimizing the query
+   - Copying to tmp table [on disk], the thread is processing the query and copying results to a temporary table
+   - Sorting result
+   - Sending data, tcan mean several things: the thread might be sending data between stages of the query, generating the result set, or returing the result set to the client
+** statis query analysis
+   pt-query-advisor
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
