@@ -97,10 +97,15 @@
     SET GLOBAL slow_query_log_file="/var/lib/mysql/logs/slow.log";
     SET GLOBAL general_log = 'ON';
     SET GLOBAL slow_query_log = 'ON';
-** utf-8
+** character set
    SHOW VARIABLES LIKE 'character_set_%';
    SHOW VARIABLES LIKE 'collation_%';
    SET NAMES 'utf8';
+   when you create a database, it inherits from the server-wide character_set_server setting
+   when you create a table, it inherits from the database
+   when you create a column, it inherits from the table
+   columns are the only place MySQL stores values, higher levels are only defaults
+   when client conmmunitate with server, client -> server,  server convert character_set_client to character_set_connection, when server to client, server convert character_set_connection to character_set_result
 ** docker utf-8
    sudo docker run -d --restart=always -p 3306:3306 --name mysql -e MYSQL_ROOT_PASSWORD=ud6UomooxuiZa3h -e LANG=C.UTF-8 -d mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci 
 ** table size
@@ -179,6 +184,15 @@ mysql protocl is half-duplex, either client send or server send, when server sen
    - Sending data, tcan mean several things: the thread might be sending data between stages of the query, generating the result set, or returing the result set to the client
 ** statis query analysis
    pt-query-advisor
+** restore view create sql from frm file
+   SELECT REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
+   SUBSTRING_INDEX(LOAD_FILE('/var/lib/mysql/world/Oceania.frm'),
+   '\nsource=', −1), '\\_','\_'), '\\%','\%'), '\\\\','\\'), '\\Z','\Z'), '\\t','\t'),
+   '\\r','\r'), '\\n','\n'), '\\b','\b'), '\\\"','\"'), '\\\'','\''),
+   '\\0','\0') AS source;
+** FULLTEXT MATCH
+   use FULLTEXT INDEX create fulltext match index
+   use match([columns]) agianst keyword to select match result
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
