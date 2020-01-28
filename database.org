@@ -193,6 +193,37 @@ mysql protocl is half-duplex, either client send or server send, when server sen
 ** FULLTEXT MATCH
    use FULLTEXT INDEX create fulltext match index
    use match([columns]) agianst keyword to select match result
+** get config file location
+/usr/sbin/mysqld --verbose --help | grep -A 1 'Default options
+** replication
+*** create replication accounts
+    CREATE USER 'repl'@'%.example.com' IDENTIFIED BY 'p4ssword';
+    GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%.example.com';
+    GRANT REPLICATION CLIENT ON *.* TO 'repl'@'%.example.com';
+*** config master and replica
+**** master
+     log_bin = mysql-bin
+     server_id = 10
+     sync_master_info = 1 # after 5.5, has performance overhead but more safe on crash
+**** slave
+     log_bin = mysql-bin
+     server_id = 2
+     relay_log = /var/lib/mysql/mysql-reply-bin
+     skip_slave_start
+     log_slave_updates = 1 # can use this replica as a mater of other replicas
+     read_only = 1
+     innodb_flush_logs_at_trx_commit=1 # Flush every log write
+     innodb_support_xa=1 # MySQL 5.0 and newer only
+     innodb_safe_binlog # MySQL 4.1 only, roughly equivalent to innodb_support_xa
+     sync_relay_log = 1 # after 5.5, has performance overhead but more safe on crash
+     sync_relay_log_info = 1 # after 5.5, has performance overhead but more safe on crash
+*** starting replica
+    on slave run this statement
+    CHANGE MASTER TO MASTER_HOST = 'server1', MASTER_USER='repl', MASTER_PASSWORD='p4ssword', MASTER_LOG_FILE='mysql-bin.000001', MASTER_LOG_POS=0;
+    START SLAVE;
+*** show status
+    show master status;
+    show slave status;
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
