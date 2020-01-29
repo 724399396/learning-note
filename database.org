@@ -224,6 +224,8 @@ mysql protocl is half-duplex, either client send or server send, when server sen
 *** show status
     show master status;
     show slave status;
+    show master logs;
+    show binlog events in 'binlog.000001' from 123
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
