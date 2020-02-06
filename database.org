@@ -16,7 +16,7 @@
 
  limit x = limit 0,x
 
- union, used to union has same column tables, remove duplicate row
+ uniDataon, used to union has same column tables, remove duplicate row
  
  union all, same as union, but not remove duplicate row
 
@@ -226,6 +226,27 @@ mysql protocl is half-duplex, either client send or server send, when server sen
     show slave status;
     show master logs;
     show binlog events in 'binlog.000001' from 123
+** shard tool
+   Hibernate Shards
+   HiveDB
+** mysql cluster
+   NDB Cluster
+   Clustrix
+** load balance
+   HAProxy
+** backup
+   logical backup (myqldump or select into outfile)
+   raw backup(copy mysql file, innodb not work good on this way)
+   binary log backup
+   delete expiry days binlog 'PURGE MASTER LOGS BEFORE CURRENT_DATE - INTERVAL N DAY' or set expire_logs_days
+   tools:
+   - mysql enterprise backup
+   - percona XtraBackup
+   - mylvmbackup
+   - Zmanda Recovery Manager
+   - mydumper
+   - mysqldump
+
 * Postgresql
   grant permission has ALL/SELECT/INSERT/UPDATE?DELETE/RULE/REFERENCES/TRIGGER/CREATE/TEMPORARY/EXECUTE/USAGE
 ** default super login
