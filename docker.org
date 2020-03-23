@@ -138,3 +138,38 @@ systemctl restart docker
   - shell, e.g. ENTRYPOINT node app.js, in this mode, pid 1 is /bin/sh -c <APP>, then <APP> run as another process
   - exec, e.g ENTRYPOINT ["node", "app.js"], in this mode, pid 1 is <APP>
  
+* public registry
+  use nginx proxy need add
+  #+BEGIN_SRC nginx
+  http {
+
+  ...
+
+  # If X-Forwarded-Proto was set, use that, otherwise fallback to
+  # $scheme. Used below to set X-Forwarded-Proto when proxying to the
+  # registry.
+  map $http_x_forwarded_proto $my_scheme {
+    default $http_x_forwarded_proto;
+    '' $scheme;
+  }
+
+  server {
+    ...
+    location /v2/ {
+      ...
+      proxy_set_header X-Forwarded-Proto $my_scheme;
+    }
+  }
+  #+END_SRC
+
+#+BEGIN_SRC bash
+mkdir auth
+docker run --entrypoint htpasswd registry:2 -Bbn <user name> <passwd> > auth/htpasswd
+docker run -d -p 5000:5000 --restart=always --name docker-registry \
+  -v "$(pwd)"/auth:/auth \
+  -e "REGISTRY_AUTH=htpasswd" \
+  -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+  -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd \
+  registry:2
+docker login xxxx
+#+END_SRC
