@@ -1,0 +1,25 @@
+* shell
+** command
+   use <databse>
+   db.<collection>.insert -- sotre data
+   db.<collection>.save -- insert or update data
+   db.<collection>.find -- query data
+   db.<collection>.count() -- count data
+   db.<collection>.update -- update data
+   db.<collection>.find().explain -- show execute plan
+   db.<collection>.createIndex -- create index
+   db.<collecttion>.getIndexes() -- return created index
+** operator
+   $gt
+   $lt
+   $set
+   $and
+   $or
+   $addToSet
+   $push
+* administration
+  show dbs  -- print all databases
+  show collections -- show current datbase defined collections
+  db.stats() -- show db info
+  db.<collection>.stats()
+  
