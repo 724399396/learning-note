@@ -1,0 +1,22 @@
+* install package
+** online machine
+   yum install -y yum-utils
+   yumdownloader --assumeyes --destdir=<your_rpm_dir> --resolve <package>
+   # copy rpm to offline machine
+** offline machine
+   yum install -y --cacheonly --disablerepo=* <your_rpm_dir>/*.rpm
+* upgrade system
+** offline machine
+   cd /var/lib/rpm/
+   tar -cvzf /tmp/rpmdb.tgz *
+   # copy rpmdb.tgz to online machine
+** online machine
+  yum install yum-plugin-downloadonly
+  cp -r /var/lib/rpm{,.bak} # back up your rpmdb from your online system. Make sure not to lose this!!
+  rm -rf /var/lib/rpm/*
+  cd /var/lib/rpm
+  tar -xvf /tmp/rpmdb.tgz # now your online system pretends to have the rpm database from the offline system. Don't start really installing / uninstalling rpms or you'll break everything
+  yum update --assumeyes --downloaddir=/data/update --downloadonly
+  # copy update package to offline machine
+** offline machine
+   yum install -y --cacheonly --disablerepo=* /root/docker-k8s-offline-install/update/*.rpm

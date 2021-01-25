@@ -10,16 +10,87 @@
    db.<collection>.createIndex -- create index
    db.<collecttion>.getIndexes() -- return created index
 ** operator
-   $gt
-   $lt
-   $set
-   $and
-   $or
+   | operator     | comment                                                                      |   
+   | $gt          |                                                                              |   
+   | $lt          |                                                                              |   
+   | $set         |                                                                              |   
+   | $and         |                                                                              |   
+   | $or          |                                                                              |   
+   | $inc         | Increment fields by given values.                                            |   
+   | $set         | Set fields to the given values.                                              |   
+   | $unset       | Unset the passed-in fields.                                                  |   
+   | $rename      | Rename fields to the given values.                                           |   
+   | $setOnInsert | In an upsert, set fields only when an insert occurs.                         |   
+   | $bit         | It performs a bitwise update of a field.                                     |   
+   | \$           | Update the subdocument at the position discovered by the query selector.     |   
+   | $push        | Add a value to an array.                                                     |   
+   | $pushAll     | Add an array of values to an array. Deprecated in favor of $each .           |   
+   | $addToSet    | Add a value to an array but do nothing if it’s a duplicate.                  |   
+   | $pop         | Remove first or last item from an array.                                     |   
+   | $pull        | Remove values from an array that match a given query.                        |   
+   | $pullAll     | Remove multiple values from an array.                                        |   
+   | $each        | Used with $push and $addToSet to apply these operators to multiple values.   |   
+   | $slice       | Used with $push and $each to slice the updated array down to a certain size. |   
+   | $sort        | Used with $push , $ea                                                        |   
+** aggregation oprators
+   $project
+   $group
+   $match
+   $limit
+   $skip
+   $unwind
+   $sort
+   $geoNear
+   $out
+   $redact
+** group functions
    $addToSet
+   $first
+   $last
+   $max
+   $min
+   $avg
    $push
+   $sum
 * administration
   show dbs  -- print all databases
   show collections -- show current datbase defined collections
   db.stats() -- show db info
   db.<collection>.stats()
   
+* replica set
+  mongod --replSet xxx --dbpath xxx --port xxx 
+  rs.initiate()
+  rs.add("xxxx")
+  rs.add("xxxx", {arbiterOnly: true}) or rs.addArb("xxxx")
+  db.isMaster()
+  rs.status()
+  db.getReplicationInfo()
+
+* shard
+# start mongod
+  mongod --shardsvr --replSet shard-a --dbpath xxx --port xxx --logpath xxx
+# start config server
+  mongod --configsvr --replSet conf --dbpath xxx --port xxx --logpath xxx 
+# config config server
+  mongo --port 27019
+rs.initiate(
+  {
+    _id: "conf",
+    configsvr: true,
+    members: [
+      { _id : 0, host : "localhost:27019" },
+      { _id : 1, host : "localhost:27020" },
+      { _id : 2, host : "localhost:27021" }
+    ]
+  }
+)
+# start mongos
+  mongos --configdb 'conf/<list ofconfig server host>' --logpath xxx --port xxx
+# connect mongos config shard
+  sh.help()
+  sh.addShar("shard-name/host1,host2")
+  sh.enableSharding("database")
+  sh.shardCollection("db.collection", {key1: 1, key2: 1})
+  db.getSiblingDB("config").collections.find()
+  db.chunks.count({"shard": "shard-a"})
