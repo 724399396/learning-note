@@ -364,6 +364,8 @@ mysql protocl is half-duplex, either client send or server send, when server sen
    SELECT <column>->>'<key>' FROM <table>; -- extracting an attribute as text
    SELECT <column>->>'<key>' FROM <table> WHERE <column>->'key' ? 'value'; -- filter by key holds value
    #+END_SRC
+** Mysql sync to pg
+   k run --image=docker.lingrit.com/dimitri/pgloader:latest -it --rm --overrides='{ "apiVersion": "v1", "spec": {"imagePullSecrets": [{"name": "regcred"}]} }' pgloader -- pgloader --verbose  --with "prefetch rows = 1000" mysql://username:password@address/database postgresql://username:password@address/database
 * sqlite3
   #+BEGIN_SRC sql
   VACUUM; # flush wal and shm file to db file
