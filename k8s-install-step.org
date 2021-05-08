@@ -125,6 +125,14 @@
         systemctl restart docker
         systemctl enable kubelet
         systemctl start kubelet
+    kubeadm init --pod-network-cidr=10.1.0.0/16
+    mkdir -p $HOME/.kube
+    sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    sudo chown $(id -u):$(id -g) $HOME/.kube/config
+    kubectl create -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+    wget https://docs.projectcalico.org/manifests/custom-resources.yaml
+    # update cidr
+    kubectl create -f custom-resources
     kubeadm token create --print-join-command
     docker save <> | bzip2 | ssh root@192.168.2.32 'bunzip2 | docker load'
   #+END_SRC
