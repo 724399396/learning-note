@@ -159,50 +159,58 @@
   gcc -shared -fPIC -o <xx.so> <input>, create a share library
 
 * gdb
-
-  gdb xx start gdb
-
-  run <args> start program
-
-  gdb x/17xb sum get assembly 16 encode presentation
-
-  print <format> <variable> show variable value with format
-
-  x /<num> <size> <format> <location> show register value with format
-
-  strings -t x <file> show all strings
-
-  backtrack(bt) show call stack, command `up` let frame go up
-
-  step(s) <num> execute num line code, if no num execut one line
-
-  stepi(si) execute one line assembly
-
-  nexti similar as stepi, but don't go into method
-
-  break(b) set break point, can break on function, file_name:line
-
-  continue skip breakpoint, resume execute
-
-  finish run to current method finish
-
-  delete/disable/enable can opeart break point
-
-  watch <expression>, can stop when expression is true
-
-  watch -l <address>, stop when address content change
-
-  info register show register info
-
-  info frame
-
-  disas show current frame assembly
-
-  list show source code
-
-  :quit, exit gdb
-
-  kill, stop program
+  #+BEGIN_SRC bash
+    #start gdb
+    gdb <program>
+    #run
+    run <args>
+    # show memory value
+    x/<num><format>
+    # print variable
+    print <format> <variable>
+    # show all strings
+    strings -t x <file>
+    # show call stack
+    bracktrace(bt)
+    #command `up` let frame go up
+    up
+    # execute num line code, if no num execut one line
+    step(s) <num> 
+    # execute one line assembly
+    stepi(si) 
+    # similar as stepi, but don't go into method
+    nexti(ni)
+    # set break point, can break on function, file_name:line
+    break(b) 
+    # skip breakpoint, resume execute
+    continue(c)
+    # run to set line
+    finish 
+    # opeart break point
+    delete/disable/enable 
+    # stop when expression is true
+    watch <expression>
+    # stop when address content change
+    watch -l <address>
+    # show register info
+    info register 
+    # show frame info
+    info frame
+    # show current frame assembly
+    disassblem
+    # show source code
+    list
+    # exit
+    :quit
+    # stop program
+    kill
+    # show segment info
+    info target
+    # show functions
+    info function
+    # show variables
+    info variable
+  #+END_SRC
 
 * Objdump
 
