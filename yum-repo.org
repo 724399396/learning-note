@@ -1,0 +1,51 @@
+* online config
+
+yum -y install epel-release createrepo
+repotrack $PACKAGE_NAME
+repotrack  --repoid=<online repo id>  --download_path=<path> <package name>
+createrepo <path> 
+
+* offline install config
+** /etc/yum.repos.d/local-repo.conf
+   #+BEGIN_SRC
+[local-base]
+name=CentOS Base
+baseurl=http://192.168.1.180:8888/base/
+gpgcheck=0
+enabled=1
+
+[local-extras]
+name=CentOS Extras
+baseurl=http://192.168.1.180:8888/extras/
+gpgcheck=0
+enabled=1
+
+
+[docker-ce-stable]
+name=docker ce
+baseurl=http://192.168.1.180:8888/docker-ce-stable/
+gpgcheck=0
+enabled=1
+
+
+[kubernetes]
+name=kubernetes
+baseurl=http://192.168.1.180:8888/kubernetes/
+gpgcheck=0
+enabled=1
+#+END_SRC
+
+** /etc/nginx/conf.d/repo.conf
+   #+BEING_SRC
+   server {
+    listen       80;
+    listen  [::]:80;
+    server_name  localhost;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+        autoindex on;
+    }
+    }
+   #+END_SRC
